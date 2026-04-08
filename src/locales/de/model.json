@@ -1,0 +1,29 @@
+{
+  "decisionTree": {
+    "A1": {
+      "label": "Ist die vorgeschlagene Lösung ein KI-System nach dem EU AI Act?",
+      "info": "Zuerst wird geprüft, ob die vorgeschlagene Lösung die Definition eines KI-Systems erfüllt. Nur dann sind weitere Anforderungen des EU AI Act relevant.",
+      "examples": [
+        "Ein Machine-Learning-Modell, das Kredit-Scores automatisch bewertet.",
+        "Ein statisches, regelbasiertes System ohne Lern- oder Inferenzlogik.",
+        "Ein Drittanbieter-LLM wird in einem kritischen Prozess genutzt."
+      ]
+    }
+  },
+  "obligationsCatalog": {
+    "AI_ACT_NICHT_ZUTREFFEND": {
+      "label": "EU AI Act: Nicht anwendbar – Basis-Hinweise",
+      "items": {
+        "KI_NZ_KLASSIFIZIERUNGSHINWEIS": {
+          "question": "Ist dokumentiert, warum das System nicht als KI-System nach EU AI Act gilt (Definition/Abgrenzung)?",
+          "todo": "Dokumentieren, warum das System nicht als KI-System nach EU AI Act gilt (Geltungsbereich, Systembeschreibung, Abgrenzung).",
+          "info": "Die Begründung sollte nachvollziehbar erklären, warum die Definition nach Art. 3 EU AI Act nicht erfüllt ist.",
+          "examples": [
+            "Notiz enthält Abgrenzung zu regelbasierten Entscheidungstabellen ohne Modell.",
+            "Systembeschreibung nennt Inputs/Outputs und begründet fehlende KI-Definitionselemente."
+          ]
+        }
+      }
+    }
+  }
+}

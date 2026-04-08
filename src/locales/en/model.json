@@ -1,0 +1,119 @@
+{
+  "decisionTree": {
+    "A1": {
+      "label": "Is the proposed solution an AI system according to the EU AI Act?",
+      "info": "First, it is assessed whether the proposed solution meets the definition of an AI system. Only then do additional EU AI Act requirements become relevant.",
+      "examples": [
+        "A machine learning model that automatically rates credit scores.",
+        "A static, rule-based system without learning or inference logic.",
+        "A third-party LLM is used in a critical process."
+      ]
+    }
+  },
+  "obligationsCatalog": {
+    "AI_ACT_NICHT_ZUTREFFEND": {
+      "label": "EU AI Act: Not applicable – baseline notes",
+      "items": {
+        "KI_NZ_KLASSIFIZIERUNGSHINWEIS": {
+          "question": "Is it documented why the system does not qualify as an AI system under the EU AI Act (definition/boundary)?",
+          "todo": "Document why the system does not qualify as an AI system under the EU AI Act (scope, system description, boundary).",
+          "info": "The rationale should clearly explain why the definition in Art. 3 EU AI Act is not met.",
+          "examples": [
+            "A note explains the distinction from rule-based decision tables without a model.",
+            "The system description lists inputs/outputs and explains which AI definition elements are missing."
+          ]
+        }
+      }
+    },
+    "KI_VERBOTENE_PRAKTIKEN": {
+      "label": "EU AI Act: Prohibited practices – immediate measures & escalation"
+    },
+    "KI_ROLLENKLAERUNG_NACHWEIS_BASIS": {
+      "label": "EU AI Act: Role clarification – baseline"
+    },
+    "KI_KENNTNIS_ART_4": {
+      "label": "EU AI Act: AI literacy (training & enablement)"
+    },
+    "KI_GPAI_SCREENING_ART_51_52": {
+      "label": "EU AI Act: GPAI screening & supply-chain transparency"
+    },
+    "KI_GPAI_SYSTEMISCHES_RISIKO_ART_55": {
+      "label": "EU AI Act: GPAI (systemic risk) – model assessment"
+    },
+    "KI_HR_ANBIETER": {
+      "label": "EU AI Act: High-risk AI – core obligations (provider)"
+    },
+    "KI_HR_BETREIBER": {
+      "label": "EU AI Act: High-risk AI – obligations (deployer) incl. Art. 26"
+    },
+    "KI_TRANSPARENZ_ART_50": {
+      "label": "EU AI Act: Transparency obligations"
+    },
+    "KI_KONFORMITAET_UND_DOKU": {
+      "label": "EU AI Act: Conformity assessment & technical documentation"
+    },
+    "KI_REGISTRIERUNG_UND_KENNZEICHNUNG": {
+      "label": "EU AI Act: Registration & marking"
+    },
+    "KI_GRFA_PFLICHTPRUEFUNG_ART_27": {
+      "label": "EU AI Act: FRIA – mandatory review (Art. 27) – evidence"
+    },
+    "KI_HR_GRUNDRECHTE_FOLGENABSCHAETZUNG_ART_27": {
+      "label": "EU AI Act: High-risk – fundamental rights impact assessment (FRIA) in operation"
+    },
+    "KI_UEBERWACHUNG_NACH_INVERKEHRBRINGEN_ART_72": {
+      "label": "EU AI Act: Post-market monitoring"
+    },
+    "KI_MELDUNG_SCHWERWIEGENDER_VORFAELLE_ART_73": {
+      "label": "EU AI Act: Reporting serious incidents – triggers, process, evidence"
+    },
+    "DORA_BASIS": {
+      "label": "DORA: ICT risk management – baseline"
+    },
+    "DORA_KRITISCHE_FUNKTION_SCOPE": {
+      "label": "DORA: Critical or important function (Art. 8)"
+    },
+    "DORA_DRITTANBIETER_STANDARD": {
+      "label": "DORA: ICT third-party providers – standard requirements"
+    },
+    "DORA_DRITTANBIETER_ERWEITERT": {
+      "label": "DORA: (Potentially) critical ICT third-party provider – enhanced requirements"
+    },
+    "DORA_KRITISCHE_IKT_DRITTANBIETER_AUFSICHTSREGIME": {
+      "label": "DORA: Critical ICT third-party providers"
+    },
+    "DORA_DATENUEBERMITTLUNG_EXTERNE_KI_SCHUTZ": {
+      "label": "DORA: Data transfers to external AI – safeguards"
+    },
+    "DORA_GENERATIVE_KI_LLM_ALS_DIENST_KONTROLLEN": {
+      "label": "DORA: Generative AI/LLM as a service – additional controls"
+    },
+    "DORA_MODELLBETRIEB_UEBERWACHUNG": {
+      "label": "DORA: Model operations – monitoring, change management and controls"
+    },
+    "DORA_KOMMUNIKATIONSPLAENE": {
+      "label": "DORA: Communication"
+    },
+    "DORA_VEREINFACHTE_BASIS": {
+      "label": "DORA: Simplified ICT risk management framework (Art. 16) – minimum requirements"
+    },
+    "DORA_VORFALLMANAGEMENT": {
+      "label": "DORA: ICT incident management & reporting processes"
+    },
+    "DORA_MELDUNG_ERHEBLICHER_CYBERBEDROHUNGEN": {
+      "label": "DORA: (Voluntary) reporting of significant cyber threats"
+    },
+    "DORA_TESTPROGRAMM": {
+      "label": "DORA: ICT testing program (without TLPT)"
+    },
+    "DORA_TLPT": {
+      "label": "DORA: TLPT (Threat-Led Penetration Testing)"
+    },
+    "DORA_DRITTANBIETER_SORGFALTSPRUEFUNG": {
+      "label": "DORA: Third-party providers – due diligence, contracts and monitoring"
+    },
+    "DORA_BASIS_KRITIKALITAET": {
+      "label": "DORA: ICT risk management – baseline requirements by criticality"
+    }
+  }
+}

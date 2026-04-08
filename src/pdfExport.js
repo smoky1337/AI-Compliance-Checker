@@ -6,8 +6,9 @@ export async function exportAssessmentPdf({
   title,
   payload,
   pathRows,
-  packageGroups,
   groupedMissing,
+  labels = {},
+  locale = 'de',
 }) {
   const doc = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
 
@@ -17,7 +18,7 @@ export async function exportAssessmentPdf({
   const pageHeight = doc.internal.pageSize.getHeight();
   const contentWidth = pageWidth - marginX * 2;
 
-  const fileName = `Entscheidungsbaum_Prüfung-${safeFilePart(payload?.assessmentId || 'export')}.pdf`;
+  const fileName = `${safeFilePart(labels.fileNamePrefix || 'Entscheidungsbaum_Prüfung')}-${safeFilePart(payload?.assessmentId || 'export')}.pdf`;
 
   const headStylesNeutral = {
     fontStyle: 'bold',
@@ -39,9 +40,9 @@ export async function exportAssessmentPdf({
   doc.setFontSize(10);
 
   const metaLine = [
-    `Assessment-ID: ${normalizeText(payload?.assessmentId || '')}`,
-    `Ersteller: ${normalizeText(payload?.createdBy || 'Unbekannt')}`,
-    `Bearbeitungszeitpunkt: ${formatDateDe(payload?.lastUpdated)}`,
+    `${labels.metaVersion || 'Version'}: ${normalizeText(payload?.assessmentId || '')}`,
+    `${labels.metaCreator || 'Ersteller'}: ${normalizeText(payload?.createdBy || 'Unbekannt')}`,
+    `${labels.metaUpdatedAt || 'Bearbeitungszeitpunkt'}: ${formatDate(payload?.lastUpdated, locale)}`,
   ].join('  •  ');
 
   doc.text(metaLine, marginX, y);
@@ -49,13 +50,17 @@ export async function exportAssessmentPdf({
 
   // ---- Abschnitt: Pfad ----
   y = ensureSpace(doc, y, pageHeight, marginY, 110);
-  y = drawSectionTitle(doc, 'Pfad', marginX, y);
+  y = drawSectionTitle(doc, labels.pathSection || 'Pfad', marginX, y);
 
   y = drawThreeColTable(doc, {
     startY: y,
     marginX,
     contentWidth,
-    head: ['Schritt', 'Frage', 'Antwort'],
+    head: [
+      labels.stepColumn || 'Schritt',
+      labels.questionColumn || 'Frage',
+      labels.answerColumn || 'Antwort',
+    ],
     body: (pathRows || []).map(([step, q, a]) => [
       stripUrls(String(step ?? '')),
       stripUrls(String(q ?? '')),
@@ -76,10 +81,10 @@ export async function exportAssessmentPdf({
 
   if (hasMissing) {
     y = ensureSpace(doc, y, pageHeight, marginY, 110);
-    y = drawSectionTitle(doc, 'Fehlende Anforderungen', marginX, y);
+    y = drawSectionTitle(doc, labels.missingSection || 'Fehlende Anforderungen', marginX, y);
 
     for (const reg of groupedMissing) {
-      const regLabel = normalizeText(reg?.regulation || 'Unbekannte Verordnung');
+      const regLabel = normalizeText(reg?.regulation || labels.unknownRegulation || 'Unbekannte Verordnung');
 
       y = ensureSpace(doc, y, pageHeight, marginY, 70);
       doc.setFont('helvetica', 'bold');
@@ -94,15 +99,13 @@ export async function exportAssessmentPdf({
         const items = article?.items || [];
         if (!items.length) continue;
 
-        const articleTitleRaw = normalizeText(article?.article || 'Ohne Artikel/Referenz');
+        const articleTitleRaw = normalizeText(article?.article || labels.noArticleReference || 'Ohne Artikel/Referenz');
         const articleTitle = stripUrls(articleTitleRaw);
 
         const body = items.map((r) => {
-          const meta = [r?.pkgLabel, r?.leafLabel].filter(Boolean).join(' • ');
           const mainRaw = normalizeText(r?.todo || r?.question || '');
           const main = stripUrls(mainRaw);
-          const full = meta ? `${main}\n${stripUrls(meta)}` : main;
-          return [full, '', ''];
+          return [main, '', ''];
         });
 
         y = ensureSpace(doc, y, pageHeight, marginY, 130);
@@ -127,7 +130,11 @@ export async function exportAssessmentPdf({
                 },
               },
             ],
-            ['Fehlende Anforderung', 'Durchgeführt durch', 'Kontrolliert durch'],
+            [
+              labels.missingRequirementColumn || 'Fehlende Anforderung',
+              labels.performedByColumn || 'Durchgeführt durch',
+              labels.controlledByColumn || 'Kontrolliert durch',
+            ],
           ],
           body,
           styles: {
@@ -168,38 +175,6 @@ export async function exportAssessmentPdf({
 
         y = doc.lastAutoTable.finalY + 20;
       }
-    }
-  }
-
-  // ---- Abschnitt: Pflichtenpakete (Bulletpoints) ----
-  if (Array.isArray(packageGroups) && packageGroups.length > 0) {
-    y = ensureSpace(doc, y, pageHeight, marginY, 90);
-    y = drawSectionTitle(doc, 'Pflichtenpakete', marginX, y);
-
-    for (const group of packageGroups) {
-      const leafTitle = stripUrls(normalizeText(group?.leafLabel || group?.leafId || 'Leaf'));
-
-      y = ensureSpace(doc, y, pageHeight, marginY, 70);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(11);
-      y = drawWrappedText(doc, leafTitle, marginX, y, contentWidth, 14) + 2;
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-
-      const pkgs = Array.isArray(group?.packages) ? group.packages : [];
-      y = drawBulletList(doc, {
-        x: marginX,
-        y,
-        maxWidth: contentWidth,
-        items: pkgs.map((p) => stripUrls(String(p))),
-        bulletIndent: 12,
-        lineHeight: 13,
-        pageHeight,
-        marginY,
-      });
-
-      y += 6;
     }
   }
 
@@ -267,7 +242,7 @@ function drawThreeColTable(doc, { startY, marginX, contentWidth, head, body, col
   return doc.lastAutoTable.finalY + 20;
 }
 
-function drawBulletList(doc, { x, y, maxWidth, items, bulletIndent, lineHeight, pageHeight, marginY }) {
+function _drawBulletList(doc, { x, y, maxWidth, items, bulletIndent, lineHeight, pageHeight, marginY }) {
     const bullet = '•';
     const textX = x + bulletIndent;
     const textWidth = Math.max(60, maxWidth - bulletIndent - 2);
@@ -492,11 +467,11 @@ function safeFilePart(s) {
     .slice(0, 80);
 }
 
-function formatDateDe(isoOrDate) {
+function formatDate(isoOrDate, locale = 'de') {
   try {
     const d = isoOrDate ? new Date(isoOrDate) : null;
     if (!d || Number.isNaN(d.getTime())) return '';
-    return d.toLocaleString('de-DE');
+    return d.toLocaleString(locale === 'en' ? 'en-US' : 'de-DE');
   } catch {
     return '';
   }

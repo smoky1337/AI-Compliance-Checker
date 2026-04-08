@@ -1,0 +1,149 @@
+{
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "unknown": "Unknown",
+    "back": "Back",
+    "continue": "Continue",
+    "close": "Close",
+    "examples": "Examples:",
+    "reference": "Legal reference:",
+    "language": "Language"
+  },
+  "languages": {
+    "de": "DE",
+    "en": "EN"
+  },
+  "welcome": {
+    "badge": "AI Governance · Financial Institutions",
+    "title": "Welcome to the decision tree for the secure integration of AI systems",
+    "description": "This decision tree helps financial institutions systematically review and implement the regulatory requirements of the EU AI Act and the DORA Regulation (Digital Operational Resilience Act).",
+    "expectTitle": "What to expect",
+    "expectItem1": "Guided individual questions with a documented decision path",
+    "expectItem2": "Coverage of the EU AI Act & DORA for financial institutions",
+    "expectItem3": "Automatic alignment with relevant regulatory requirements",
+    "featuresTitle": "Features",
+    "featuresItem1": "Export of the path and outstanding requirements as a PDF",
+    "featuresItem2": "Option to reset or restart the path",
+    "featuresItem3": "Navigation to any step in the existing path",
+    "notePrefix": "Note:",
+    "noteText": "This application is intended for internal preliminary review and does not replace legal advice. For binding assessments, you should involve your legal department and external legal counsel.",
+    "durationTitle": "Duration: approx. 45–60 minutes",
+    "durationSubline": "(Quick check: ~15–30 min · Thorough review incl. evidence: 60+ min)",
+    "durationText": "The duration depends on how many obligation packages are triggered and whether supporting evidence is directly available.",
+    "auditTrail": "The path is fully logged during use.",
+    "start": "Review AI system!"
+  },
+  "creator": {
+    "title": "Who is conducting the assessment?",
+    "description": "Please enter the name or team completing the decision tree. This information is shown in the header and export.",
+    "label": "Creator (first name last name)",
+    "continue": "Continue to assessment"
+  },
+  "errorBoundary": {
+    "title": "⚠️ Something went wrong",
+    "unknownError": "Unknown error (no error message available)",
+    "reset": "Reset",
+    "reload": "Reload page",
+    "details": "Technical details"
+  },
+  "wizard": {
+    "title": "Decision tree for the secure integration of AI",
+    "createdBy": "Created by: {value}",
+    "updatedAt": "Updated at: {value}",
+    "export": "Export PDF",
+    "exporting": "Exporting…",
+    "exportTitle": "Export PDF summary",
+    "resetVersion": "Reset version to v1.0",
+    "resetVersionTitle": "Resets the assessment ID (revision) to v1.0",
+    "resetPath": "Reset path",
+    "resetPathTitle": "Reset path",
+    "pathTitle": "Path",
+    "answerLabel": "Answer:",
+    "summaryPrefix": "Summary – {label}",
+    "summaryPrefixExport": "Summary – {label}",
+    "unknownNode": "Unknown node"
+  },
+  "nodes": {
+    "hideHints": "Hide hints & examples",
+    "showHints": "Show hints & examples",
+    "leaf": {
+      "prohibitedTitle": "Prohibited practice",
+      "prohibitedText": "This scenario is generally prohibited under the EU AI Act. Stop use and trigger escalation.",
+      "obligationPackages": "Obligation packages:",
+      "articleReferences": "Legal references",
+      "startRequirements": "Check requirements",
+      "goToDora": "Go to DORA section",
+      "finish": "Finish"
+    },
+    "summary": {
+      "missing": "Missing requirements",
+      "complete": "All requirements fulfilled",
+      "canContinue": "You can continue with the integration.",
+      "unknownRegulation": "Unknown regulation",
+      "noArticleReference": "No article/reference"
+    }
+  },
+  "consistency": {
+    "bannerTitle": "Conflict detected",
+    "bannerText": "The wizard blocks the next step until the conflict is resolved.",
+    "reviewHelp": "Review help",
+    "generatedBy": "Conflict caused by",
+    "recommendation": "Recommendation",
+    "reviewStep": "Go to review step",
+    "dialogTitleFallback": "Conflict – Review help",
+    "dialogApproach": "Suggested approach",
+    "a1NoButLaterAnswered": {
+      "message": "You answered “No” for “AI system?” (A1) but later answered additional EU AI Act steps. That is contradictory.",
+      "noteA1": "Definition: not an AI system",
+      "noteLater": "Later answered step",
+      "recommendation1": "Jump back to A1 and review the classification.",
+      "recommendation2": "If A1 is truly “No”, the flow should end at A0/ENDE and later answers are not meaningful."
+    },
+    "highRiskDownstage": {
+      "message": "You already reached a high-risk path but later tried to switch to “not high-risk”. This is blocked in the wizard.",
+      "noteHighRisk": "Reached result: high-risk (lock active)",
+      "noteDownstage": "Answer leads to down-staging",
+      "recommendation1": "Jump back to the marked step and correct the answer or add the justification.",
+      "recommendation2": "If unclear, classify conservatively (high-risk = yes) and apply the obligations."
+    },
+    "highRiskConflict": {
+      "message": "A high-risk result has been reached, but the path also contains non-high-risk transparency/governance steps. That is contradictory.",
+      "noteHighRisk": "Reached result: high-risk (lock active)",
+      "noteNonHighRisk": "Non-high-risk path step in the same flow",
+      "recommendation1": "Jump back to the first non-high-risk step and review whether you classified something incorrectly earlier.",
+      "recommendation2": "Document the classification clearly (use case, Annex III check, context)."
+    },
+    "prohibitedContinued": {
+      "message": "You reached a “prohibited practice” result but continued answering later steps. The wizard should stop here.",
+      "noteProhibited": "Reached result: prohibited practice",
+      "noteAfter": "Step after prohibited result",
+      "recommendation1": "Jump back to the prohibited result and stop/escalate as described.",
+      "recommendation2": "If your review concludes this is not a prohibited practice, return to the trigger step and adjust the answer."
+    },
+    "doraRejectedButContinued": {
+      "message": "The DORA section was rejected (D0=No), but DORA questions were answered afterwards.",
+      "noteStart": "DORA start",
+      "noteQuestion": "DORA question answered",
+      "recommendation1": "Jump back to D0 and decide whether DORA is truly not applicable.",
+      "recommendation2": "If DORA is not applicable, remove/ignore downstream DORA steps and document the boundary."
+    }
+  },
+  "pdf": {
+    "title": "AI Act & DORA – Decision tree",
+    "fileNamePrefix": "Decision_Tree_Assessment",
+    "metaVersion": "Version",
+    "metaCreator": "Created by",
+    "metaUpdatedAt": "Updated at",
+    "pathSection": "Path",
+    "stepColumn": "Step",
+    "questionColumn": "Question",
+    "answerColumn": "Answer",
+    "missingSection": "Missing requirements",
+    "unknownRegulation": "Unknown regulation",
+    "noArticleReference": "No article/reference",
+    "missingRequirementColumn": "Missing requirement",
+    "performedByColumn": "Performed by",
+    "controlledByColumn": "Controlled by"
+  }
+}

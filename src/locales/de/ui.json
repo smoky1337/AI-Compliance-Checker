@@ -1,0 +1,149 @@
+{
+  "common": {
+    "yes": "Ja",
+    "no": "Nein",
+    "unknown": "Unbekannt",
+    "back": "Zurück",
+    "continue": "Weiter",
+    "close": "Schließen",
+    "examples": "Beispiele:",
+    "reference": "Rechtsgrundlage:",
+    "language": "Sprache"
+  },
+  "languages": {
+    "de": "DE",
+    "en": "EN"
+  },
+  "welcome": {
+    "badge": "KI-Governance · Finanzunternehmen",
+    "title": "Willkommen zum Entscheidungsbaum für die sichere Integration von KI-Systemen",
+    "description": "Dieser Entscheidungsbaum hilft Finanzunternehmen dabei, die regulatorischen Anforderungen des EU AI Act und der DORA-Verordnung (Digital Operational Resilience Act) strukturiert zu prüfen und umzusetzen.",
+    "expectTitle": "Was Sie erwartet",
+    "expectItem1": "Geführte Einzelfragen mit dokumentiertem Entscheidungspfad",
+    "expectItem2": "Abdeckung von EU AI Act & DORA für Finanzunternehmen",
+    "expectItem3": "Automatischer Abgleich mit relevanten regulatorischen Anforderungen",
+    "featuresTitle": "Funktionen",
+    "featuresItem1": "Export des Pfads und offener Anforderungen als PDF",
+    "featuresItem2": "Möglichkeit, den Pfad zurückzusetzen oder neu zu starten",
+    "featuresItem3": "Navigation zu beliebigen Schritten im bisherigen Pfad",
+    "notePrefix": "Hinweis:",
+    "noteText": "Diese Anwendung dient der internen Vorabprüfung und ersetzt keine juristische Beratung. Für verbindliche Bewertungen sollten Sie Ihre Rechtsabteilung und externe Rechtsberatung einbeziehen.",
+    "durationTitle": "Dauer: ca. 45–60 Minuten",
+    "durationSubline": "(Schnellcheck: ~15–30 Min · Gründlich inkl. Nachweisen: 60+ Min)",
+    "durationText": "Die Dauer hängt davon ab, wie viele Pflichtenpakete ausgelöst werden und ob Nachweise direkt verfügbar sind.",
+    "auditTrail": "Der Pfad wird während der Nutzung vollständig protokolliert.",
+    "start": "KI-System prüfen!"
+  },
+  "creator": {
+    "title": "Wer führt die Prüfung durch?",
+    "description": "Bitte geben Sie den Namen oder das Team an, das den Entscheidungsbaum ausfüllt. Diese Information wird im Header und im Export ausgewiesen.",
+    "label": "Ersteller (Vorname Nachname)",
+    "continue": "Weiter zur Prüfung"
+  },
+  "errorBoundary": {
+    "title": "⚠️ Etwas ist schiefgelaufen",
+    "unknownError": "Unbekannter Fehler (keine Fehlermeldung)",
+    "reset": "Zurücksetzen",
+    "reload": "Seite neu laden",
+    "details": "Technische Details"
+  },
+  "wizard": {
+    "title": "Entscheidungsbaum zur sicheren Integration von KI",
+    "createdBy": "Ersteller: {value}",
+    "updatedAt": "Bearbeitungszeitpunkt: {value}",
+    "export": "PDF Export",
+    "exporting": "Exportiert…",
+    "exportTitle": "PDF-Zusammenfassung exportieren",
+    "resetVersion": "Version auf v1.0",
+    "resetVersionTitle": "Setzt die Assessment-ID (Revision) auf v1.0 zurück",
+    "resetPath": "Pfad zurücksetzen",
+    "resetPathTitle": "Pfad zurücksetzen",
+    "pathTitle": "Pfad",
+    "answerLabel": "Antwort:",
+    "summaryPrefix": "Zusammenfassung – {label}",
+    "summaryPrefixExport": "Zusammenfasung – {label}",
+    "unknownNode": "Unbekannter Knoten"
+  },
+  "nodes": {
+    "hideHints": "Hinweise & Beispiele ausblenden",
+    "showHints": "Hinweise & Beispiele anzeigen",
+    "leaf": {
+      "prohibitedTitle": "Verbotene Praxis",
+      "prohibitedText": "Diese Konstellation ist nach EU AI Act grundsätzlich unzulässig. Nutzung stoppen und Eskalation auslösen.",
+      "obligationPackages": "Pflichtenpakete:",
+      "articleReferences": "Rechtsgrundlagen",
+      "startRequirements": "Anforderungen abfragen",
+      "goToDora": "Zum DORA-Teil",
+      "finish": "Beenden"
+    },
+    "summary": {
+      "missing": "Fehlende Anforderungen",
+      "complete": "Alle Anforderungen erfüllt",
+      "canContinue": "Sie können mit der Integration fortfahren.",
+      "unknownRegulation": "Unbekannte Verordnung",
+      "noArticleReference": "Ohne Artikel/Referenz"
+    }
+  },
+  "consistency": {
+    "bannerTitle": "Widerspruch erkannt",
+    "bannerText": "Der Wizard blockiert den nächsten Schritt, bis der Konflikt aufgelöst ist.",
+    "reviewHelp": "Review-Hilfe",
+    "generatedBy": "Konflikt erzeugt durch",
+    "recommendation": "Empfehlung",
+    "reviewStep": "Zum Review-Schritt",
+    "dialogTitleFallback": "Widerspruch – Review-Hilfe",
+    "dialogApproach": "Vorgehen",
+    "a1NoButLaterAnswered": {
+      "message": "Du hast bei „KI-System?“ (A1) „Nein“ gewählt, aber später weitere EU-AI-Act-Schritte beantwortet. Das ist widersprüchlich.",
+      "noteA1": "Definition: kein KI-System",
+      "noteLater": "Später beantworteter Schritt",
+      "recommendation1": "Springe zu A1 zurück und prüfe die Einstufung.",
+      "recommendation2": "Wenn A1 wirklich „Nein“ ist: der Flow sollte auf A0/ENDE enden – späteres Beantworten ist dann nicht sinnvoll."
+    },
+    "highRiskDownstage": {
+      "message": "Du hast bereits einen Hochrisiko-Pfad erreicht, versuchst aber später auf „Nicht-Hochrisiko“ zu wechseln. Das ist im Wizard gesperrt.",
+      "noteHighRisk": "Erreichtes Ergebnis: Hochrisiko (Lock aktiv)",
+      "noteDownstage": "Antwort führt zu Down-Staging",
+      "recommendation1": "Springe zum markierten Schritt zurück und korrigiere die Antwort oder ergänze die Begründung.",
+      "recommendation2": "Wenn unklar: konservativ einstufen (Hochrisiko bejahen) und die Pflichten anwenden."
+    },
+    "highRiskConflict": {
+      "message": "Ein Hochrisiko-Ergebnis ist erreicht, aber der Pfad enthält gleichzeitig Non-High-Risk-Transparenz-/Governance-Schritte. Das ist ein Widerspruch.",
+      "noteHighRisk": "Erreichtes Ergebnis: Hochrisiko (Lock aktiv)",
+      "noteNonHighRisk": "Non-High-Risk-Pfad-Schritt im gleichen Flow",
+      "recommendation1": "Springe zum ersten Non-High-Risk-Schritt zurück und prüfe, ob du vorher falsch klassifiziert hast.",
+      "recommendation2": "Dokumentiere die Einstufung nachvollziehbar (Use-Case, Annex-III-Abgleich, Kontext)."
+    },
+    "prohibitedContinued": {
+      "message": "Du hast eine „Verbotene Praxis“ erreicht, beantwortest aber danach weitere Schritte. Der Wizard sollte hier stoppen.",
+      "noteProhibited": "Erreichtes Ergebnis: Verbotene Praxis",
+      "noteAfter": "Schritt nach verbotenem Ergebnis",
+      "recommendation1": "Springe zum verbotenen Ergebnis zurück und stoppe/eskaliere wie beschrieben.",
+      "recommendation2": "Wenn du im Review zu dem Schluss kommst, dass es keine verbotene Praxis ist: gehe zum Trigger-Schritt zurück und passe die Antwort an."
+    },
+    "doraRejectedButContinued": {
+      "message": "DORA-Teil wurde abgelehnt (D0=Nein), aber danach wurden DORA-Fragen beantwortet.",
+      "noteStart": "DORA Start",
+      "noteQuestion": "DORA-Frage beantwortet",
+      "recommendation1": "Springe zu D0 zurück und entscheide, ob DORA wirklich nicht einschlägig ist.",
+      "recommendation2": "Wenn DORA nicht einschlägig ist: entferne/ignoriere nachgelagerte DORA-Schritte und dokumentiere die Abgrenzung."
+    }
+  },
+  "pdf": {
+    "title": "AI Act & DORA – Entscheidungsbaum",
+    "fileNamePrefix": "Entscheidungsbaum_Prüfung",
+    "metaVersion": "Version",
+    "metaCreator": "Ersteller",
+    "metaUpdatedAt": "Bearbeitungszeitpunkt",
+    "pathSection": "Pfad",
+    "stepColumn": "Schritt",
+    "questionColumn": "Frage",
+    "answerColumn": "Antwort",
+    "missingSection": "Fehlende Anforderungen",
+    "unknownRegulation": "Unbekannte Verordnung",
+    "noArticleReference": "Ohne Artikel/Referenz",
+    "missingRequirementColumn": "Fehlende Anforderung",
+    "performedByColumn": "Durchgeführt durch",
+    "controlledByColumn": "Kontrolliert durch"
+  }
+}

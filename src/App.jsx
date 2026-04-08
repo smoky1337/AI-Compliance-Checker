@@ -8,8 +8,7 @@ import { Component, useCallback, useMemo, useState, useEffect } from 'react';
 // - validateNextNode: zentrale Gate-/Lock-Logik (Review, Konsistenz, Sonderpfade)
 // - getCanonicalIdForRequirementInstance: Deduplizierung von Requirements über mehrere Leaves hinweg
 import {
-  decisionTree,
-  obligationsCatalog,
+  getLocalizedModel,
   getRequirementChain,
   getNextInRequirementChain,
   validateNextNode,
@@ -17,6 +16,12 @@ import {
 } from './decisionTreeModel';
 
 import { exportAssessmentPdf } from './pdfExport';
+import {
+  createTranslator,
+  DEFAULT_LOCALE,
+  LOCALE_STORAGE_KEY,
+  SUPPORTED_LOCALES,
+} from './i18n';
 
 // UI-Styles werden als String gebündelt und im App-Root via <style>{uiCSS}</style> injiziert
 // Vorteil für die Masterarbeit: reproduzierbare Darstellung ohne Build- oder CSS-Tooling-Abhängigkeiten
@@ -193,7 +198,7 @@ class ErrorBoundary extends Component {
     if (!this.state.hasError) return this.props.children;
 
     const message =
-      this.state.error?.message || 'Unbekannter Fehler (keine Fehlermeldung)';
+      this.state.error?.message || this.props.messages?.unknownError;
     const stack =
       this.state.errorInfo?.componentStack ||
       this.state.error?.stack ||
@@ -212,7 +217,7 @@ class ErrorBoundary extends Component {
             }}
           >
             <h2 style={{ margin: 0, fontSize: 20 }}>
-              ⚠️ Etwas ist schiefgelaufen
+              {this.props.messages?.title}
             </h2>
             <p style={{ marginTop: 10, marginBottom: 14, color: '#334155' }}>
               {message}
@@ -224,21 +229,21 @@ class ErrorBoundary extends Component {
                 onClick={this.handleReset}
                 type="button"
               >
-                Zurücksetzen
+                {this.props.messages?.reset}
               </button>
               <button
                 className="btn btn-ghost"
                 onClick={() => window.location.reload()}
                 type="button"
               >
-                Seite neu laden
+                {this.props.messages?.reload}
               </button>
             </div>
 
             {stack ? (
               <details style={{ marginTop: 14 }}>
                 <summary style={{ cursor: 'pointer' }}>
-                  Technische Details
+                  {this.props.messages?.details}
                 </summary>
                 <pre
                   style={{
@@ -264,10 +269,46 @@ class ErrorBoundary extends Component {
 }
 
 /**
+ * Kleine Sprachumschaltung für Welcome-, Creator- und Wizard-Ansicht.
+ */
+function LanguageSwitcher({ locale, onChange, t }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <span className="rf-meta">{t('common.language')}:</span>
+      <div style={{ display: 'flex', gap: 6 }}>
+        {SUPPORTED_LOCALES.map((lang) => {
+          const isActive = lang === locale;
+          return (
+            <button
+              key={lang}
+              type="button"
+              onClick={() => onChange(lang)}
+              style={{
+                padding: '4px 10px',
+                borderRadius: 999,
+                border: '1px solid #d1d5db',
+                background: isActive ? '#0ea5e9' : '#ffffff',
+                color: '#0f172a',
+                fontSize: 12,
+                fontWeight: isActive ? 700 : 500,
+                cursor: isActive ? 'default' : 'pointer',
+              }}
+              disabled={isActive}
+            >
+              {t(`languages.${lang}`)}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
  * Startbildschirm: Kontext + Einstieg in den Wizard-Flow
  * Verantwortlich nur für UI und Übergang via onStart
  */
-function WelcomeScreen({ onStart }) {
+function WelcomeScreen({ onStart, locale, onLocaleChange, t }) {
   return (
     <div
       style={{
@@ -292,6 +333,10 @@ function WelcomeScreen({ onStart }) {
           color: '#0f172a',
         }}
       >
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+          <LanguageSwitcher locale={locale} onChange={onLocaleChange} t={t} />
+        </div>
+
         <div style={{ marginBottom: 16 }}>
           <div
             style={{
@@ -302,17 +347,15 @@ function WelcomeScreen({ onStart }) {
               letterSpacing: 0.06,
             }}
           >
-            KI-Governance · Finanzunternehmen
+            {t('welcome.badge')}
           </div>
 
           <h1 style={{ margin: '6px 0 4px', fontSize: 24 }}>
-            Willkommen zum Entscheidungsbaum für die sichere Integration von KI-Systemen
+            {t('welcome.title')}
           </h1>
 
           <p style={{ margin: 0, fontSize: 14, color: '#4b5563' }}>
-            Dieser Entscheidungsbaum hilft Finanzunternehmen dabei, die regulatorischen Anforderungen des
-            EU AI Act und der DORA-Verordnung (Digital Operational Resilience Act) strukturiert zu prüfen
-            und umzusetzen.
+            {t('welcome.description')}
           </p>
         </div>
 
@@ -326,20 +369,20 @@ function WelcomeScreen({ onStart }) {
           }}
         >
           <div style={{ flex: '1 1 260px' }}>
-            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Was Sie erwartet</div>
+            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>{t('welcome.expectTitle')}</div>
             <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: '#374151' }}>
-              <li>Geführte Einzelfragen mit dokumentiertem Entscheidungspfad</li>
-              <li>Abdeckung von EU AI Act &amp; DORA für Finanzunternehmen</li>
-              <li>Automatischer Abgleich mit relevanten regulatorischen Anforderungen</li>
+              <li>{t('welcome.expectItem1')}</li>
+              <li>{t('welcome.expectItem2')}</li>
+              <li>{t('welcome.expectItem3')}</li>
             </ul>
           </div>
 
           <div style={{ flex: '1 1 260px' }}>
-            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Funktionen</div>
+            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>{t('welcome.featuresTitle')}</div>
             <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: '#374151' }}>
-              <li>Export des Pfads und offener Anforderungen als PDF</li>
-              <li>Möglichkeit, den Pfad zurückzusetzen oder neu zu starten</li>
-              <li>Navigation zu beliebigen Schritten im bisherigen Pfad</li>
+              <li>{t('welcome.featuresItem1')}</li>
+              <li>{t('welcome.featuresItem2')}</li>
+              <li>{t('welcome.featuresItem3')}</li>
             </ul>
           </div>
         </div>
@@ -355,8 +398,7 @@ function WelcomeScreen({ onStart }) {
             marginBottom: 18,
           }}
         >
-          <strong>Hinweis:</strong> Diese Anwendung dient der internen Vorabprüfung und ersetzt keine juristische
-          Beratung. Für verbindliche Bewertungen sollten Sie Ihre Rechtsabteilung und externe Rechtsberatung einbeziehen.
+          <strong>{t('welcome.notePrefix')}</strong> {t('welcome.noteText')}
         </div>
 
         <div
@@ -372,18 +414,18 @@ function WelcomeScreen({ onStart }) {
           }}
         >
           <div style={{ fontWeight: 700, marginBottom: 4 }}>
-            Dauer: ca. 15–30 Minuten
+            {t('welcome.durationTitle')}
           </div>
           <div style={{ fontSize: 12, color: '#475569' }}>
-            (Schnellcheck: ~10–15 Min · Gründlich inkl. Nachweisen: 30+ Min)
+            {t('welcome.durationSubline')}
           </div>
           <div style={{ marginTop: 8, fontSize: 12, color: '#64748b' }}>
-            Die Dauer hängt davon ab, wie viele Pflichtenpakete ausgelöst werden und ob Nachweise direkt verfügbar sind.
+            {t('welcome.durationText')}
           </div>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
-          <div className="rf-meta">Der Pfad wird während der Nutzung vollständig protokolliert.</div>
+          <div className="rf-meta">{t('welcome.auditTrail')}</div>
 
           <button
             type="button"
@@ -400,7 +442,7 @@ function WelcomeScreen({ onStart }) {
               boxShadow: '0 8px 18px rgba(56,189,248,0.45)',
             }}
           >
-            KI-System prüfen!
+            {t('welcome.start')}
           </button>
         </div>
       </div>
@@ -412,7 +454,7 @@ function WelcomeScreen({ onStart }) {
  * Erfasst den "Ersteller" (Name/Team) als Metadatum für Header und Export
  * Validierung ist bewusst minimal (nicht-leerer String), um den Flow nicht zu blockieren
  */
-function CreatorScreen({ value, onChange, onBack, onConfirm }) {
+function CreatorScreen({ value, onChange, onBack, onConfirm, locale, onLocaleChange, t }) {
   const isValid = value.trim().length > 0;
 
   return (
@@ -440,26 +482,29 @@ function CreatorScreen({ value, onChange, onBack, onConfirm }) {
           boxShadow: "0 18px 45px rgba(15,23,42,0.45)",
         }}
       >
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+          <LanguageSwitcher locale={locale} onChange={onLocaleChange} t={t} />
+        </div>
+
         <h2
           className="creator-title"
           style={{ marginTop: 0, marginBottom: 8, fontSize: 20, color: "#0f172a" }}
         >
-          Wer führt die Prüfung durch?
+          {t('creator.title')}
         </h2>
 
         <p
           className="creator-text"
           style={{ marginTop: 0, marginBottom: 16, fontSize: 13, color: "#4b5563" }}
         >
-          Bitte geben Sie den Namen oder das Team an, das den Entscheidungsbaum ausfüllt.
-          Diese Information wird im Header und im Export ausgewiesen.
+          {t('creator.description')}
         </p>
 
         <label
           className="creator-label"
           style={{ display: "block", fontSize: 13, marginBottom: 6, color: "#0f172a" }}
         >
-          Ersteller (Vorname Nachname)
+          {t('creator.label')}
         </label>
 
         <input
@@ -501,7 +546,7 @@ function CreatorScreen({ value, onChange, onBack, onConfirm }) {
               cursor: "pointer",
             }}
           >
-            Zurück
+            {t('common.back')}
           </button>
 
           <button
@@ -520,7 +565,7 @@ function CreatorScreen({ value, onChange, onBack, onConfirm }) {
               cursor: isValid ? "pointer" : "not-allowed",
             }}
           >
-            Weiter zur Prüfung
+            {t('creator.continue')}
           </button>
         </div>
       </div>
@@ -533,7 +578,7 @@ function CreatorScreen({ value, onChange, onBack, onConfirm }) {
 const CLUSTER_AI = 'AI Act';
 const CLUSTER_DORA = 'DORA';
 
-function getClusterForNodeId(id) {
+function getClusterForNodeId(id, decisionTree, obligationsCatalog) {
   const baseId = id.includes('__req__') ? id.split('__req__')[0] : id;
   const node = decisionTree[baseId];
 
@@ -555,12 +600,12 @@ function ArticleLink({ label, url }) {
   );
 }
 
-function ReferenceInline({ reference, referenceUrl }) {
+function ReferenceInline({ reference, referenceUrl, t }) {
   if (!reference) return null;
 
   return (
     <div style={{ marginTop: 6, fontSize: 12, color: '#4b5563' }}>
-      Rechtsgrundlage:{' '}
+      {t('common.reference')}{' '}
       {referenceUrl ? (
         <a className="rf-link" href={referenceUrl} target="_blank" rel="noreferrer">
           {reference}
@@ -582,7 +627,7 @@ function decodeHtmlEntities(value) {
   return el.value;
 }
 
-function escapeHtml(value) {
+function _escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (c) => {
     const map = {
       '&': '&amp;',
@@ -595,11 +640,20 @@ function escapeHtml(value) {
   });
 }
 
-function normalizePdfText(value) {
+function _normalizePdfText(value) {
   return decodeHtmlEntities(value).replace(/\u00A0/g, ' ');
 }
 
 const HINTS_STORAGE_KEY = 'rfShowHints';
+
+function getStoredLocale() {
+  try {
+    const stored = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+    return SUPPORTED_LOCALES.includes(stored) ? stored : DEFAULT_LOCALE;
+  } catch {
+    return DEFAULT_LOCALE;
+  }
+}
 
 function getStoredBool(key, fallback) {
   try {
@@ -615,7 +669,31 @@ function setStoredBool(key, value) {
   try {
     window.localStorage.setItem(key, value ? '1' : '0');
   } catch {
+    return;
   }
+}
+
+/**
+ * Baut eine deduplizierte Sicht auf Requirement-Antworten für die Export-Leaves.
+ */
+function buildReqAnswerByCanonicalIdForLeaves({ answers, leavesInPath, getCanonicalIdForRequirementInstance }) {
+  const m = new Map();
+
+  for (const [id, a] of Object.entries(answers || {})) {
+    if (!id.includes('__req__') || id.includes('__req__summary')) continue;
+    if (a !== 'yes' && a !== 'no') continue;
+
+    const leafId = id.split('__req__')[0];
+    if (!leavesInPath.has(leafId)) continue;
+
+    const canonicalId = getCanonicalIdForRequirementInstance(id) ?? id.split('__req__')[1];
+    const prev = m.get(canonicalId);
+
+    if (!prev) m.set(canonicalId, a);
+    else if (prev !== a) m.set(canonicalId, 'no');
+  }
+
+  return m;
 }
 
 /**
@@ -626,11 +704,11 @@ function setStoredBool(key, value) {
  * - ReqSummaryNode: Zusammenfassung offener Requirements pro Leaf inkl. "Weiter"-Navigation
  */
 function QuestionNode({ data }) {
-  const {label, onYes, onNo, yesLabel, noLabel, disabled, answer, step, cluster, info, examples, checkpointText, reference, referenceUrl    
+  const {label, onYes, onNo, yesLabel, noLabel, disabled, answer, step, cluster, info, examples, checkpointText, reference, referenceUrl, t
   } = data;
 
-  const YES = yesLabel ?? 'Ja';
-  const NO = noLabel ?? 'Nein';
+  const YES = yesLabel ?? t('common.yes');
+  const NO = noLabel ?? t('common.no');
 
   const [showHints, setShowHints] = useState(() => getStoredBool(HINTS_STORAGE_KEY, true));
 
@@ -676,11 +754,11 @@ function QuestionNode({ data }) {
         <span className="rf-badge">{cluster}</span>
       </div>
 
-      <ReferenceInline reference={reference} referenceUrl={referenceUrl} />
+      <ReferenceInline reference={reference} referenceUrl={referenceUrl} t={t} />
 
       {answer && (
         <div style={{ marginTop: 6, fontSize: 12, color: '#111827' }}>
-          <span style={{ fontWeight: 600 }}>Antwort:</span>{' '}
+          <span style={{ fontWeight: 600 }}>{t('wizard.answerLabel')}</span>{' '}
           {answer === 'yes' ? YES : NO}
         </div>
       )}
@@ -749,7 +827,7 @@ function QuestionNode({ data }) {
               cursor: 'pointer',
             }}
           >
-            {showHints ? 'Hinweise & Beispiele ausblenden' : 'Hinweise & Beispiele anzeigen'}
+            {showHints ? t('nodes.hideHints') : t('nodes.showHints')}
           </button>
 
           {showHints && (
@@ -770,7 +848,7 @@ function QuestionNode({ data }) {
               )}
               {Array.isArray(examples) && examples.length > 0 && (
                 <>
-                  <div style={{ fontWeight: 600, marginBottom: 4 }}>Beispiele:</div>
+                  <div style={{ fontWeight: 600, marginBottom: 4 }}>{t('common.examples')}</div>
                   <ul style={{ margin: 0, paddingLeft: 18 }}>
                     {examples.map((ex, idx) => (
                       <li key={idx}>{ex}</li>
@@ -790,6 +868,7 @@ function LeafNode({ data }) {
   const {
     label,
     obligationKeys = [],
+    obligationsCatalog,
     nextId,
     onContinue,
     continueDisabled,
@@ -799,7 +878,8 @@ function LeafNode({ data }) {
     cluster,
     checkpointText,
     reference,
-    referenceUrl
+    referenceUrl,
+    t,
   } = data;
 
   const packs = useMemo(
@@ -809,10 +889,15 @@ function LeafNode({ data }) {
         label: obligationsCatalog[key]?.label ?? key,
         articles: obligationsCatalog[key]?.articles ?? [],
       })),
-    [obligationKeys]
+    [obligationKeys, obligationsCatalog]
   );
 
-  const btnNextLabel = nextId === 'D0' ? 'Zum DORA-Teil' : nextId === 'ENDE' ? 'Beenden' : 'Weiter';
+  const btnNextLabel =
+    nextId === 'D0'
+      ? t('nodes.leaf.goToDora')
+      : nextId === 'ENDE'
+        ? t('nodes.leaf.finish')
+        : t('common.continue');
 
   const rootClass = [
     'rf-node',
@@ -837,7 +922,7 @@ function LeafNode({ data }) {
     >
       <div className="step-badge">{step}</div>
 
-      {obligationKeys.includes('AI_VERBOTENE_PRAKTIKEN') && (
+      {obligationKeys.includes('KI_VERBOTENE_PRAKTIKEN') && (
         <div
           style={{
             marginBottom: 10,
@@ -847,9 +932,9 @@ function LeafNode({ data }) {
             background: '#fef2f2',
           }}
         >
-          <div style={{ fontWeight: 800, marginBottom: 4 }}>Verbotene Praxis</div>
+          <div style={{ fontWeight: 800, marginBottom: 4 }}>{t('nodes.leaf.prohibitedTitle')}</div>
           <div style={{ fontSize: 12, lineHeight: 1.35 }}>
-            Diese Konstellation ist nach EU AI Act grundsätzlich unzulässig. Nutzung stoppen und Eskalation auslösen.
+            {t('nodes.leaf.prohibitedText')}
           </div>
         </div>
       )}
@@ -859,7 +944,7 @@ function LeafNode({ data }) {
         <span className="rf-badge">{cluster}</span>
       </div>
 
-      <ReferenceInline reference={reference} referenceUrl={referenceUrl} />
+      <ReferenceInline reference={reference} referenceUrl={referenceUrl} t={t} />
 
       {checkpointText && (
         <div style={{ marginTop: 2, marginBottom: 10 }}>
@@ -869,13 +954,13 @@ function LeafNode({ data }) {
 
       {packs.length > 0 && (
         <>
-          <div style={{ marginTop: 6, fontSize: 11, fontWeight: 'bold' }}>Pflichtenpakete:</div>
+          <div style={{ marginTop: 6, fontSize: 11, fontWeight: 'bold' }}>{t('nodes.leaf.obligationPackages')}</div>
           <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {packs.map((p) => (
               <span key={p.key} className="rf-tt" style={{ marginRight: 4 }}>
                 <span className="rf-badge">{p.label}</span>
                 <div className="rf-tt-panel">
-                  <div style={{ fontWeight: 700, marginBottom: 6 }}>Rechtsgrundlagen</div>
+                  <div style={{ fontWeight: 700, marginBottom: 6 }}>{t('nodes.leaf.articleReferences')}</div>
                   <ul style={{ margin: 0, paddingLeft: 18 }} className="rf-meta">
                     {p.articles.length ? (
                       p.articles.map((a, idx) => (
@@ -908,7 +993,7 @@ function LeafNode({ data }) {
               cursor: checkStarted ? 'not-allowed' : 'pointer',
             }}
           >
-            Anforderungen abfragen
+            {t('nodes.leaf.startRequirements')}
           </button>
         )}
 
@@ -936,7 +1021,7 @@ function LeafNode({ data }) {
 }
 
 function ReqQuestionNode({ data }) {
-  const { question, onYes, onNo, disabled, answer, step, cluster, info, examples, reference, referenceUrl } = data;
+  const { question, onYes, onNo, disabled, answer, step, cluster, info, examples, reference, referenceUrl, t } = data;
 
   const [showHints, setShowHints] = useState(() => getStoredBool(HINTS_STORAGE_KEY, true));
 
@@ -991,7 +1076,7 @@ function ReqQuestionNode({ data }) {
         <span className="rf-badge">{cluster}</span>
       </div>
 
-      <ReferenceInline reference={reference} referenceUrl={referenceUrl} />
+      <ReferenceInline reference={reference} referenceUrl={referenceUrl} t={t} />
 
       <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
         <button
@@ -1008,7 +1093,7 @@ function ReqQuestionNode({ data }) {
             fontSize: 12,
           }}
         >
-          Nein
+          {t('common.no')}
         </button>
         <button
           className="rf-btn rf-btn--yes"
@@ -1024,7 +1109,7 @@ function ReqQuestionNode({ data }) {
             fontSize: 12,
           }}
         >
-          Ja
+          {t('common.yes')}
         </button>
       </div>
 
@@ -1044,7 +1129,7 @@ function ReqQuestionNode({ data }) {
               cursor: 'pointer',
             }}
           >
-            {showHints ? 'Hinweise & Beispiele ausblenden' : 'Hinweise & Beispiele anzeigen'}
+            {showHints ? t('nodes.hideHints') : t('nodes.showHints')}
           </button>
 
           {showHints && (
@@ -1064,7 +1149,7 @@ function ReqQuestionNode({ data }) {
               )}
               {Array.isArray(examples) && examples.length > 0 && (
                 <>
-                  <div style={{ fontWeight: 600, marginBottom: 4 }}>Beispiele:</div>
+                  <div style={{ fontWeight: 600, marginBottom: 4 }}>{t('common.examples')}</div>
                   <ul style={{ margin: 0, paddingLeft: 18 }}>
                     {examples.map((ex, idx) => (
                       <li key={idx}>{ex}</li>
@@ -1099,7 +1184,7 @@ function extractArticleNumberFromUrl(url) {
   const m =
     s.match(/artikel-(\d+)-/i) ||
     s.match(/artikel-(\d+)\b/i) ||
-    s.match(/art(?:ikel)?[\/_-](\d+)\b/i);
+    s.match(/art(?:ikel)?[/_-](\d+)\b/i);
   return m ? Number.parseInt(m[1], 10) : Number.POSITIVE_INFINITY;
 }
 
@@ -1123,7 +1208,7 @@ function pickBetterUrl({ currentUrl, candidateUrl, articleLabel }) {
   return currentUrl;
 }
 
-function groupMissingByRegulationAndFirstArticleOnce(missing = []) {
+function groupMissingByRegulationAndFirstArticleOnce(missing = [], t) {
   const byReg = new Map(); 
   const seen = new Set(); 
 
@@ -1134,11 +1219,11 @@ function groupMissingByRegulationAndFirstArticleOnce(missing = []) {
     if (seen.has(dedupKey)) continue;
     seen.add(dedupKey);
 
-    const regulation = m.regulation ?? 'Unbekannte Verordnung';
+    const regulation = m.regulation ?? t?.('nodes.summary.unknownRegulation') ?? 'Unbekannte Verordnung';
     const articleLabel =
       (m.reference && String(m.reference).trim()) ||
       ((Array.isArray(m.articles) && m.articles.length ? m.articles[0] : '') || '').trim() ||
-      'Ohne Artikel/Referenz';
+      (t?.('nodes.summary.noArticleReference') ?? 'Ohne Artikel/Referenz');
 
     const articleUrl = m.referenceUrl ?? null;
 
@@ -1194,12 +1279,12 @@ function groupMissingByRegulationAndFirstArticleOnce(missing = []) {
 }
 
 function ReqSummaryNode({ data }) {
-  const { missing = [], onContinue, continueDisabled, nextId, step, cluster } = data;
+  const { missing = [], onContinue, continueDisabled, nextId, step, cluster, t } = data;
   const hasMissing = missing.length > 0;
 
   const grouped = useMemo(
-    () => groupMissingByRegulationAndFirstArticleOnce(missing),
-    [missing]
+    () => groupMissingByRegulationAndFirstArticleOnce(missing, t),
+    [missing, t]
   );
 
   const rootClass = [
@@ -1227,7 +1312,7 @@ function ReqSummaryNode({ data }) {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
         <div style={{ fontWeight: 'bold', marginBottom: 8, fontSize: 15 }}>
-          {hasMissing ? 'Fehlende Anforderungen' : 'Alle Anforderungen erfüllt'}
+          {hasMissing ? t('nodes.summary.missing') : t('nodes.summary.complete')}
         </div>
         <span className="rf-badge">{cluster}</span>
       </div>
@@ -1262,7 +1347,7 @@ function ReqSummaryNode({ data }) {
           ))}
         </div>
       ) : (
-        <div className="rf-meta">Sie können mit der Integration fortfahren.</div>
+        <div className="rf-meta">{t('nodes.summary.canContinue')}</div>
       )}
 
       {nextId && (
@@ -1281,7 +1366,7 @@ function ReqSummaryNode({ data }) {
               fontSize: 12,
             }}
           >
-            {nextId === 'D0' ? 'Zum DORA-Teil' : nextId === 'ENDE' ? 'Beenden' : 'Weiter'}
+            {nextId === 'D0' ? t('nodes.leaf.goToDora') : nextId === 'ENDE' ? t('nodes.leaf.finish') : t('common.continue')}
           </button>
         </div>
       )}
@@ -1296,7 +1381,7 @@ function ReqSummaryNode({ data }) {
  * Ergebnis: Liste von Violations (Code, Message, Konfliktstellen, Empfehlungen)
  * Diese wird im Wizard als Blocker angezeigt (Review-Hilfe / Rücksprung)
  */
-function validatePathConsistency({ answers, pathIds, activePath }) {
+function validatePathConsistency({ answers, pathIds, activePath, decisionTree, t }) {
   const violations = [];
 
   const cleanPathIds = (Array.isArray(pathIds)
@@ -1307,7 +1392,7 @@ function validatePathConsistency({ answers, pathIds, activePath }) {
   const leafIdsInPath = cleanPathIds.filter((id) => decisionTree[id]?.type === 'leaf');
 
   const nodeLabel = (id) => decisionTree[id]?.label || id;
-  const answerLabel = (a) => (a === 'yes' ? 'Ja' : a === 'no' ? 'Nein' : a ?? '-');
+  const answerLabel = (a) => (a === 'yes' ? t('common.yes') : a === 'no' ? t('common.no') : a ?? '-');
 
   const hasObligation = (nodeId, obligationKey) =>
     (decisionTree[nodeId]?.obligations || []).includes(obligationKey);
@@ -1338,17 +1423,16 @@ function validatePathConsistency({ answers, pathIds, activePath }) {
     if (laterAnswered.length > 0) {
       addViolation({
         code: 'A1_NO_BUT_LATER_ANSWERED',
-        message:
-          'Du hast bei „KI-System?“ (A1) „Nein“ gewählt, aber später weitere EU-AI-Act-Schritte beantwortet. Das ist widersprüchlich.',
+        message: t('consistency.a1NoButLaterAnswered.message'),
         conflicts: [
-          conflictEntry('A1', { note: 'Definition: kein KI-System' }),
-          ...laterAnswered.slice(0, 4).map((id) => conflictEntry(id, { note: 'Später beantworteter Schritt' })),
+          conflictEntry('A1', { note: t('consistency.a1NoButLaterAnswered.noteA1') }),
+          ...laterAnswered.slice(0, 4).map((id) => conflictEntry(id, { note: t('consistency.a1NoButLaterAnswered.noteLater') })),
         ],
         suggestedNodeId: 'W_KI_WIDERSPRUCH',
         primaryActionNodeId: 'A1',
         recommendations: [
-          'Springe zu A1 zurück und prüfe die Einstufung.',
-          'Wenn A1 wirklich „Nein“ ist: der Flow sollte auf A0/ENDE enden – späteres Beantworten ist dann nicht sinnvoll.',
+          t('consistency.a1NoButLaterAnswered.recommendation1'),
+          t('consistency.a1NoButLaterAnswered.recommendation2'),
         ],
       });
     }
@@ -1363,19 +1447,18 @@ function validatePathConsistency({ answers, pathIds, activePath }) {
     if (attemptedDownstage.length > 0) {
       addViolation({
         code: 'HOCHRISIKO_HERUNTERSTUFUNG',
-        message:
-          'Du hast bereits einen Hochrisiko-Pfad erreicht, versuchst aber später auf „Nicht-Hochrisiko“ zu wechseln. Das ist im Wizard gesperrt.',
+        message: t('consistency.highRiskDownstage.message'),
         conflicts: [
           ...hrLeafIds.slice(0, 2).map((id) =>
-            conflictEntry(id, { note: 'Erreichtes Ergebnis: Hochrisiko (Lock aktiv)' })
+            conflictEntry(id, { note: t('consistency.highRiskDownstage.noteHighRisk') })
           ),
-          ...attemptedDownstage.map((id) => conflictEntry(id, { note: 'Antwort führt zu Down-Staging' })),
+          ...attemptedDownstage.map((id) => conflictEntry(id, { note: t('consistency.highRiskDownstage.noteDownstage') })),
         ],
         suggestedNodeId: 'W_KI_WIDERSPRUCH',
         primaryActionNodeId: attemptedDownstage[0] || hrLeafIds[0],
         recommendations: [
-          'Springe zum markierten Schritt zurück und korrigiere die Antwort oder ergänze die Begründung.',
-          'Wenn unklar: konservativ einstufen (Hochrisiko bejahen) und die Pflichten anwenden.',
+          t('consistency.highRiskDownstage.recommendation1'),
+          t('consistency.highRiskDownstage.recommendation2'),
         ],
       });
     }
@@ -1394,19 +1477,18 @@ function validatePathConsistency({ answers, pathIds, activePath }) {
     if (firstNonHr) {
       addViolation({
         code: 'HOCHRISIKO_PFAD_WIDERSPRUCH',
-        message:
-          'Ein Hochrisiko-Ergebnis ist erreicht, aber der Pfad enthält gleichzeitig Non-High-Risk-Transparenz-/Governance-Schritte. Das ist ein Widerspruch.',
+        message: t('consistency.highRiskConflict.message'),
         conflicts: [
           ...hrLeafIds.slice(0, 2).map((id) =>
-            conflictEntry(id, { note: 'Erreichtes Ergebnis: Hochrisiko (Lock aktiv)' })
+            conflictEntry(id, { note: t('consistency.highRiskConflict.noteHighRisk') })
           ),
-          conflictEntry(firstNonHr, { note: 'Non-High-Risk-Pfad-Schritt im gleichen Flow' }),
+          conflictEntry(firstNonHr, { note: t('consistency.highRiskConflict.noteNonHighRisk') }),
         ],
         suggestedNodeId: 'W_KI_WIDERSPRUCH',
         primaryActionNodeId: firstNonHr,
         recommendations: [
-          'Springe zum ersten Non-High-Risk-Schritt zurück und prüfe, ob du vorher falsch klassifiziert hast.',
-          'Dokumentiere die Einstufung nachvollziehbar (Use-Case, Annex-III-Abgleich, Kontext).',
+          t('consistency.highRiskConflict.recommendation1'),
+          t('consistency.highRiskConflict.recommendation2'),
         ],
       });
     }
@@ -1426,19 +1508,18 @@ function validatePathConsistency({ answers, pathIds, activePath }) {
     if (answeredLaterAfterProhibited.length > 0) {
       addViolation({
         code: 'PROHIBITED_CONTINUED',
-        message:
-          'Du hast eine „Verbotene Praxis“ erreicht, beantwortest aber danach weitere Schritte. Der Wizard sollte hier stoppen.',
+        message: t('consistency.prohibitedContinued.message'),
         conflicts: [
-          conflictEntry(prohibitedLeafId, { note: 'Erreichtes Ergebnis: Verbotene Praxis' }),
+          conflictEntry(prohibitedLeafId, { note: t('consistency.prohibitedContinued.noteProhibited') }),
           ...answeredLaterAfterProhibited.slice(0, 3).map((id) =>
-            conflictEntry(id, { note: 'Schritt nach verbotenem Ergebnis' })
+            conflictEntry(id, { note: t('consistency.prohibitedContinued.noteAfter') })
           ),
         ],
         suggestedNodeId: 'W_KI_WIDERSPRUCH',
         primaryActionNodeId: prohibitedLeafId,
         recommendations: [
-          'Springe zum verbotenen Ergebnis zurück und stoppe/eskaliere wie beschrieben.',
-          'Wenn du im Review zu dem Schluss kommst, dass es keine verbotene Praxis ist: gehe zum Trigger-Schritt zurück und passe die Antwort an.',
+          t('consistency.prohibitedContinued.recommendation1'),
+          t('consistency.prohibitedContinued.recommendation2'),
         ],
       });
     }
@@ -1453,19 +1534,19 @@ function validatePathConsistency({ answers, pathIds, activePath }) {
     if (doraQuestionAnswered) {
       addViolation({
         code: 'DORA_ABGELEHNT_ABER_FORTGESETZT',
-        message: 'DORA-Teil wurde abgelehnt (D0=Nein), aber danach wurden DORA-Fragen beantwortet.',
+        message: t('consistency.doraRejectedButContinued.message'),
         conflicts: [
-          conflictEntry('D0', { note: 'DORA Start' }),
+          conflictEntry('D0', { note: t('consistency.doraRejectedButContinued.noteStart') }),
           ...Object.keys(answers)
             .filter((id) => /^B\d+/.test(id) && answers[id] != null)
             .slice(0, 4)
-            .map((id) => conflictEntry(id, { note: 'DORA-Frage beantwortet' })),
+            .map((id) => conflictEntry(id, { note: t('consistency.doraRejectedButContinued.noteQuestion') })),
         ],
         suggestedNodeId: 'D0',
         primaryActionNodeId: 'D0',
         recommendations: [
-          'Springe zu D0 zurück und entscheide, ob DORA wirklich nicht einschlägig ist.',
-          'Wenn DORA nicht einschlägig ist: entferne/ignoriere nachgelagerte DORA-Schritte und dokumentiere die Abgrenzung.',
+          t('consistency.doraRejectedButContinued.recommendation1'),
+          t('consistency.doraRejectedButContinued.recommendation2'),
         ],
       });
     }
@@ -1490,7 +1571,10 @@ function validatePathConsistency({ answers, pathIds, activePath }) {
  * - Requirement-Nodes werden sequenziell abgearbeitet; bereits beantwortete canonicalIds werden übersprungen;
  *   am Ende steht ein __req__summary-Step, der offene Requirements aggregiert und die Fortsetzung erlaubt
  */
-function Wizard({ createdBy }) {
+function Wizard({ createdBy, locale, onLocaleChange, t }) {
+  const model = useMemo(() => getLocalizedModel(locale), [locale]);
+  const { decisionTree, obligationsCatalog } = model;
+
   const [path, setPath] = useState([{ id: 'A1' }]);
   const [answers, setAnswers] = useState({});
 
@@ -1505,25 +1589,25 @@ function Wizard({ createdBy }) {
   const [assessmentVersion, setAssessmentVersion] = useState('v1.0');
 
   const updatedAtLabel = useMemo(
-      () => updatedAt.toLocaleString('de-DE'),
-      [updatedAt]
+      () => updatedAt.toLocaleString(locale === 'en' ? 'en-US' : 'de-DE'),
+      [locale, updatedAt]
     );
   
   const [consistencyViolations, setConsistencyViolations] = useState([]);
   const [conflictHelpOpen, setConflictHelpOpen] = useState(false);
 
-  const getAnswerText = (nodeId, value) => {
+  const getAnswerText = useCallback((nodeId, value) => {
     if (!value) return '';
   
     if (nodeId.includes('__req__')) {
-      return value === 'yes' ? 'Ja' : 'Nein';
+      return value === 'yes' ? t('common.yes') : t('common.no');
     }
   
     const def = decisionTree[nodeId];
-    const YES = def?.yesLabel ?? 'Ja';
-    const NO = def?.noLabel ?? 'Nein';
+    const YES = def?.yesLabel ?? t('common.yes');
+    const NO = def?.noLabel ?? t('common.no');
     return value === 'yes' ? YES : NO;
-  };  
+  }, [decisionTree, t]);  
 
 
   useEffect(() => {
@@ -1548,7 +1632,7 @@ function Wizard({ createdBy }) {
       if (!id.includes('__req__') || id.includes('__req__summary')) continue;
       if (a !== 'yes' && a !== 'no') continue;
 
-      const canonicalId = getCanonicalIdForRequirementInstance(id) ?? id.split('__req__')[1];
+      const canonicalId = getCanonicalIdForRequirementInstance(id, model) ?? id.split('__req__')[1];
       const prev = m.get(canonicalId);
 
       if (!prev) m.set(canonicalId, a);
@@ -1556,27 +1640,27 @@ function Wizard({ createdBy }) {
     }
 
     return m;
-  }, [answers]);
+  }, [answers, model]);
 
   // Descriptor beschreibt den aktuell zu rendernden Schritt
   // und kapselt die aus dem Modell abgeleiteten UI-Daten
   const descriptor = useMemo(() => {
     if (currentId.includes('__req__summary')) {
       const leafId = currentId.split('__req__')[0];
-      const { reqs } = getRequirementChain(leafId);
+      const { reqs } = getRequirementChain(leafId, model);
       return {
         kind: 'summary',
         id: currentId,
         leafId,
         missing: reqs.filter((r) => reqAnswerByCanonicalId.get(r.canonicalId) !== 'yes'),
         nextId: decisionTree[leafId]?.next,
-        cluster: getClusterForNodeId(leafId),
+        cluster: getClusterForNodeId(leafId, decisionTree, obligationsCatalog),
       };
     }
 
     if (currentId.includes('__req__')) {
       const [leafId] = currentId.split('__req__');
-      const { reqs } = getRequirementChain(leafId);
+      const { reqs } = getRequirementChain(leafId, model);
       const req = reqs.find(r => r.id === currentId);
       if (!req) return { kind: 'unknown', id: currentId };
 
@@ -1587,7 +1671,7 @@ function Wizard({ createdBy }) {
         question: req.question,
         pkgLabel: req.pkgLabel,
         articles: req.articles ?? [],
-        cluster: getClusterForNodeId(leafId),
+        cluster: getClusterForNodeId(leafId, decisionTree, obligationsCatalog),
         info: req.info,
         examples: req.examples,
         reference: req.reference,
@@ -1603,7 +1687,7 @@ function Wizard({ createdBy }) {
         kind: 'question',
         id: currentId,
         label: def.label,
-        cluster: getClusterForNodeId(currentId),
+        cluster: getClusterForNodeId(currentId, decisionTree, obligationsCatalog),
         yesLabel: def.yesLabel,
         noLabel: def.noLabel,
         info: def.info,
@@ -1620,12 +1704,12 @@ function Wizard({ createdBy }) {
       label: def.label,
       obligationKeys: def.obligations ?? [],
       nextId: def.next,
-      cluster: getClusterForNodeId(currentId),
+      cluster: getClusterForNodeId(currentId, decisionTree, obligationsCatalog),
       checkpointText: def.checkpointText,
       reference: def.reference,
       referenceUrl: def.referenceUrl,
     };
-  }, [currentId, answers]);
+  }, [currentId, decisionTree, obligationsCatalog, model, reqAnswerByCanonicalId]);
 
 
   // Historiennavigation: Zurückspringen ist erlaubt, aber mit aktiver "Prefix"-Logik
@@ -1677,26 +1761,26 @@ function Wizard({ createdBy }) {
       const prevAnswer = answers[id];
 
       if (isRequirement) {
-        let { nextReqId, summaryId } = getNextInRequirementChain(id);
+        let { nextReqId, summaryId } = getNextInRequirementChain(id, model);
         let nextId = nextReqId ?? summaryId;
         if (!nextId) return;
 
         const nextAnswersRaw = { ...answers, [id]: answer };
 
         const answeredCanonicalIds = new Set(reqAnswerByCanonicalId.keys());
-        const currentCanonical = getCanonicalIdForRequirementInstance(id);
+        const currentCanonical = getCanonicalIdForRequirementInstance(id, model);
         if (currentCanonical) answeredCanonicalIds.add(currentCanonical);
 
         while (nextId && nextId.includes('__req__') && !nextId.includes('__req__summary')) {
           const a = nextAnswersRaw[nextId];
 
-          const canonicalId = getCanonicalIdForRequirementInstance(nextId);
+          const canonicalId = getCanonicalIdForRequirementInstance(nextId, model);
           const alreadyAnswered =
             (a === 'yes' || a === 'no') || (canonicalId && answeredCanonicalIds.has(canonicalId));
 
           if (!alreadyAnswered) break;
 
-          const step = getNextInRequirementChain(nextId);
+          const step = getNextInRequirementChain(nextId, model);
           summaryId = step.summaryId;
           nextId = step.nextReqId ?? summaryId;
         }
@@ -1717,6 +1801,7 @@ function Wizard({ createdBy }) {
           obligationsCatalog,
           answers: nextAnswersRaw,
           pathIds: nextPathIds,
+          t,
         });
 
         if (violations?.length) {
@@ -1745,6 +1830,7 @@ function Wizard({ createdBy }) {
         nextId: rawNextId,
         answers: nextAnswersRaw,
         pathIds: [...baseIds, rawNextId],
+        model,
       });
 
       const existingNext = path[currentStepIndex + 1]?.id;
@@ -1774,6 +1860,7 @@ function Wizard({ createdBy }) {
         obligationsCatalog,
         answers: nextAnswersRaw,
         pathIds: nextPathIds,
+        t,
       });
 
       if (violations?.length) {
@@ -1795,6 +1882,8 @@ function Wizard({ createdBy }) {
       decisionTree,
       obligationsCatalog,
       reqAnswerByCanonicalId,
+      model,
+      t,
     ]
   );
 
@@ -1815,6 +1904,7 @@ function Wizard({ createdBy }) {
         nextId,
         answers,
         pathIds: [...baseIds, nextId],
+        model,
       }).nextId;
   
       const nextPathIds = [...baseIds, nextId];
@@ -1823,6 +1913,7 @@ function Wizard({ createdBy }) {
         obligationsCatalog,
         answers,
         pathIds: nextPathIds,
+        t,
       });
   
       if (violations?.length) {
@@ -1836,12 +1927,12 @@ function Wizard({ createdBy }) {
       setActivePathLength(basePath.length + 1);
       setUpdatedAt(new Date());
     },
-    [answers, path, currentStepIndex, decisionTree, obligationsCatalog]
+    [answers, path, currentStepIndex, decisionTree, obligationsCatalog, model, t]
   );
 
   const startCheck = useCallback(
     (leafId) => {
-      const { reqs, summaryId } = getRequirementChain(leafId);
+      const { reqs, summaryId } = getRequirementChain(leafId, model);
       if (!reqs?.length) return;
   
       const answeredCanonicalIds = new Set(reqAnswerByCanonicalId.keys());
@@ -1852,7 +1943,7 @@ function Wizard({ createdBy }) {
   
         const cId =
           r.canonicalId ??
-          getCanonicalIdForRequirementInstance(instId) ??
+          getCanonicalIdForRequirementInstance(instId, model) ??
           instId.split('__req__')[1];
   
         return !answeredCanonicalIds.has(cId);
@@ -1873,6 +1964,7 @@ function Wizard({ createdBy }) {
         obligationsCatalog,
         answers,
         pathIds: [...baseIds, nextId],
+        t,
       });
   
       if (violations?.length) {
@@ -1894,6 +1986,8 @@ function Wizard({ createdBy }) {
       decisionTree,
       obligationsCatalog,
       setConsistencyViolations,
+      model,
+      t,
     ]
   );
 
@@ -1920,6 +2014,7 @@ function Wizard({ createdBy }) {
         nextId,
         answers,
         pathIds: [...baseIds, nextId],
+        model,
       }).nextId;
   
       const nextPathIds = [...baseIds, nextId];
@@ -1928,6 +2023,7 @@ function Wizard({ createdBy }) {
         obligationsCatalog,
         answers,
         pathIds: nextPathIds,
+        t,
       });
   
       if (violations?.length) {
@@ -1941,28 +2037,8 @@ function Wizard({ createdBy }) {
       setActivePathLength(basePath.length + 1);
       setUpdatedAt(new Date());
     },
-    [answers, path, currentStepIndex, decisionTree, obligationsCatalog]
+    [answers, path, currentStepIndex, decisionTree, obligationsCatalog, model, t]
   );
-
-  function buildReqAnswerByCanonicalIdForLeaves({ answers, leavesInPath, getCanonicalIdForRequirementInstance }) {
-    const m = new Map();
-  
-    for (const [id, a] of Object.entries(answers || {})) {
-      if (!id.includes('__req__') || id.includes('__req__summary')) continue;
-      if (a !== 'yes' && a !== 'no') continue;
-  
-      const leafId = id.split('__req__')[0];
-      if (!leavesInPath.has(leafId)) continue;
-  
-      const canonicalId = getCanonicalIdForRequirementInstance(id) ?? id.split('__req__')[1];
-      const prev = m.get(canonicalId);
-  
-      if (!prev) m.set(canonicalId, a);
-      else if (prev !== a) m.set(canonicalId, 'no');
-    }
-  
-    return m;
-  }
 
   /**
    * Verdichtet den internen Wizard-State zu einem exportierbaren, stabilen Datenmodell:
@@ -1973,18 +2049,18 @@ function Wizard({ createdBy }) {
   const buildExportPayload = useCallback((versionForExport) => {
     const exportPath = path.slice(0, activePathLength);
 
-    const pathPayload = path.map((step) => {
+    const pathPayload = exportPath.map((step) => {
       const id = step.id;
       let label = id;
       let kind = 'unknown';
 
       if (id.includes('__req__summary')) {
         const leafId = id.split('__req__')[0];
-        label = `Zusammenfasung – ${decisionTree[leafId]?.label ?? leafId}`;
+        label = t('wizard.summaryPrefixExport', { label: decisionTree[leafId]?.label ?? leafId });
         kind = 'summary';
       } else if (id.includes('__req__')) {
         const [leafId] = id.split('__req__');
-        const { reqs } = getRequirementChain(leafId);
+        const { reqs } = getRequirementChain(leafId, model);
         const req = reqs.find((r) => r.id === id);
         label = req?.question ?? id;
         kind = 'requirement';
@@ -1993,7 +2069,7 @@ function Wizard({ createdBy }) {
         label = def?.label ?? id;
         kind = def?.type ?? 'node';
       }
-
+      
       const rawAnswer = answers[id] ?? null;
 
       return {
@@ -2006,7 +2082,7 @@ function Wizard({ createdBy }) {
     });
 
     const leavesInPath = new Set(
-      path
+      exportPath
         .filter((s) => !s.id.includes('__req__'))
         .map((s) => s.id)
         .filter((id) => decisionTree[id]?.type === 'leaf')
@@ -2015,14 +2091,15 @@ function Wizard({ createdBy }) {
     const reqAnswerByCanonicalIdForExport = buildReqAnswerByCanonicalIdForLeaves({
       answers,
       leavesInPath,
-      getCanonicalIdForRequirementInstance,
+      getCanonicalIdForRequirementInstance: (instanceId) => getCanonicalIdForRequirementInstance(instanceId, model),
     });
 
     const missing = {};
     for (const leafId of leavesInPath) {
-      const { reqs } = getRequirementChain(leafId);
+      const { reqs } = getRequirementChain(leafId, model);
       if (!reqs.length) continue;
-      const missingReqs = reqs.filter((r) => reqAnswerByCanonicalId.get(r.canonicalId) !== 'yes');
+      const missingReqs = reqs.filter(
+        (r) => reqAnswerByCanonicalIdForExport.get(r.canonicalId) !== 'yes');
       if (!missingReqs.length) continue;
       missing[leafId] = missingReqs.map((r) => ({
         id: r.id,
@@ -2060,7 +2137,19 @@ function Wizard({ createdBy }) {
       missing,
       packagesByLeaf: exportIncludePkgs ? packagesByLeaf : null,
     };
-  }, [path, activePathLength, answers, createdBy, updatedAt, exportIncludePkgs, getCanonicalIdForRequirementInstance]);
+  }, [
+    answers,
+    activePathLength,
+    createdBy,
+    decisionTree,
+    exportIncludePkgs,
+    getAnswerText,
+    model,
+    obligationsCatalog,
+    path,
+    t,
+    updatedAt,
+  ]);
 
   const bumpVersion = useCallback((current) => {
     const m = /^v(\d+)/.exec(current || 'v1.0');
@@ -2095,7 +2184,7 @@ function Wizard({ createdBy }) {
         return (reqs || []).map((r) => ({ ...r, leafId, leafLabel }));
       });
 
-      const groupedMissing = groupMissingByRegulationAndFirstArticleOnce(flatMissing);
+      const groupedMissing = groupMissingByRegulationAndFirstArticleOnce(flatMissing, t);
 
       const hasMissing = Object.values(payload.missing || {}).some(
         (reqs) => Array.isArray(reqs) && reqs.length > 0
@@ -2116,11 +2205,28 @@ function Wizard({ createdBy }) {
           : [];
 
       await exportAssessmentPdf({
-        title: 'AI Act & DORA – Entscheidungsbaum',
+        title: t('pdf.title'),
         payload,
         pathRows,
         packageGroups,
         groupedMissing,
+        labels: {
+          fileNamePrefix: t('pdf.fileNamePrefix'),
+          metaVersion: t('pdf.metaVersion'),
+          metaCreator: t('pdf.metaCreator'),
+          metaUpdatedAt: t('pdf.metaUpdatedAt'),
+          pathSection: t('pdf.pathSection'),
+          stepColumn: t('pdf.stepColumn'),
+          questionColumn: t('pdf.questionColumn'),
+          answerColumn: t('pdf.answerColumn'),
+          missingSection: t('pdf.missingSection'),
+          unknownRegulation: t('pdf.unknownRegulation'),
+          noArticleReference: t('pdf.noArticleReference'),
+          missingRequirementColumn: t('pdf.missingRequirementColumn'),
+          performedByColumn: t('pdf.performedByColumn'),
+          controlledByColumn: t('pdf.controlledByColumn'),
+        },
+        locale,
       });
 
       const nextVersion = bumpVersion(assessmentVersion);
@@ -2135,6 +2241,8 @@ function Wizard({ createdBy }) {
     assessmentVersion,
     buildExportPayload,
     decisionTree,
+    locale,
+    t,
     setAssessmentVersion,
     setIsExporting,
   ]);
@@ -2144,7 +2252,7 @@ function Wizard({ createdBy }) {
   // Der Descriptor entscheidet, welche Node-Komponente gerendert wird und welche Handler gebunden werden
   let centerCard = null;
   const stepNumber = currentStepIndex + 1;
-  const cluster = descriptor.cluster ?? getClusterForNodeId(currentId);
+  const cluster = descriptor.cluster ?? getClusterForNodeId(currentId, decisionTree, obligationsCatalog);
 
   if (descriptor.kind === 'question') {
     centerCard = (
@@ -2164,6 +2272,7 @@ function Wizard({ createdBy }) {
           checkpointText: descriptor.checkpointText,
           reference: descriptor.reference,
           referenceUrl: descriptor.referenceUrl,
+          t,
         }}
       />
     );
@@ -2175,6 +2284,7 @@ function Wizard({ createdBy }) {
           step: stepNumber,
           cluster,
           obligationKeys: descriptor.obligationKeys,
+          obligationsCatalog,
           nextId: descriptor.nextId,
           onContinue: descriptor.nextId ? () => continueFromLeaf(currentId) : undefined,
           continueDisabled: !descriptor.nextId,
@@ -2183,6 +2293,7 @@ function Wizard({ createdBy }) {
           checkpointText: descriptor.checkpointText,
           reference: descriptor.reference,
           referenceUrl: descriptor.referenceUrl,
+          t,
         }}
       />
     );
@@ -2203,6 +2314,7 @@ function Wizard({ createdBy }) {
           examples: descriptor.examples,
           reference: descriptor.reference,
           referenceUrl: descriptor.referenceUrl,
+          t,
         }}
       />
     );
@@ -2218,6 +2330,7 @@ function Wizard({ createdBy }) {
           onContinue: descriptor.nextId
             ? () => continueFromSummary(descriptor.leafId)
             : undefined,
+          t,
         }}
       />
     );
@@ -2233,7 +2346,7 @@ function Wizard({ createdBy }) {
           minWidth: 320,
         }}
       >
-        <div style={{ fontWeight: 'bold', marginBottom: 6 }}>Unbekannter Knoten</div>
+        <div style={{ fontWeight: 'bold', marginBottom: 6 }}>{t('wizard.unknownNode')}</div>
         <div className="rf-meta">{currentId}</div>
       </div>
     );
@@ -2251,36 +2364,37 @@ function Wizard({ createdBy }) {
   
       <header className="app-header">
         <div className="app-header-left">
-          <span className="app-model-badge">Assessment-ID: {assessmentVersion}</span>
-          <span className="rf-meta">Ersteller: {createdBy || 'Unbekannt'}</span>
+          <span className="app-model-badge">{t('pdf.metaVersion')}: {assessmentVersion}</span>
+          <span className="rf-meta">{t('wizard.createdBy', { value: createdBy || t('common.unknown') })}</span>
         </div>
 
         <div className="app-header-center">
-          <div className="app-title">Entscheidungsbaum zur sicheren Integration von KI</div>
+          <div className="app-title">{t('wizard.title')}</div>
         </div>
 
         <div className="app-header-right app-actions">
-          <span className="rf-meta">Bearbeitungszeitpunkt: {updatedAtLabel}</span>
+          <LanguageSwitcher locale={locale} onChange={onLocaleChange} t={t} />
+          <span className="rf-meta">{t('wizard.updatedAt', { value: updatedAtLabel })}</span>
 
           <button
             type="button"
             onClick={handleExportPDF}
             disabled={isExporting}
-            title="PDF-Zusammenfassung exportieren"
+            title={t('wizard.exportTitle')}
           >
-            {isExporting ? 'Exportiert…' : 'PDF Export'}
+            {isExporting ? t('wizard.exporting') : t('wizard.export')}
           </button>
 
           <button
             type="button"
             onClick={resetAssessmentVersion}
-            title="Setzt die Assessment-ID (Revision) auf v1.0 zurück"
+            title={t('wizard.resetVersionTitle')}
           >
-            Version auf v1.0
+            {t('wizard.resetVersion')}
           </button>
 
-          <button type="button" onClick={handleReset} title="Pfad zurücksetzen">
-            Pfad zurücksetzen
+          <button type="button" onClick={handleReset} title={t('wizard.resetPathTitle')}>
+            {t('wizard.resetPath')}
           </button>
         </div>
       </header>
@@ -2290,7 +2404,7 @@ function Wizard({ createdBy }) {
       >
 
         <aside className="app-sidebar">
-          <div style={{ fontWeight: 'bold', marginBottom: 8, fontSize: 13 }}>Pfad / Historie</div>
+          <div style={{ fontWeight: 'bold', marginBottom: 8, fontSize: 13 }}>{t('wizard.pathTitle')}</div>
   
           <ol style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             {path.map((step, idx) => {
@@ -2299,10 +2413,10 @@ function Wizard({ createdBy }) {
   
               if (id.includes('__req__summary')) {
                 const leafId = id.split('__req__')[0];
-                label = `Zusammenfassung – ${decisionTree[leafId]?.label ?? leafId}`;
+                label = t('wizard.summaryPrefix', { label: decisionTree[leafId]?.label ?? leafId });
               } else if (id.includes('__req__')) {
                 const [leafId] = id.split('__req__');
-                const { reqs } = getRequirementChain(leafId);
+                const { reqs } = getRequirementChain(leafId, model);
                 const req = reqs.find((r) => r.id === id);
                 label = req?.question ?? id;
               } else {
@@ -2331,7 +2445,7 @@ function Wizard({ createdBy }) {
   
                   {answers[id] && (
                     <div className="rf-meta">
-                      Antwort: {getAnswerText(id, answers[id])}
+                      {t('wizard.answerLabel')} {getAnswerText(id, answers[id])}
                     </div>
                   )}
                 </li>
@@ -2357,9 +2471,9 @@ function Wizard({ createdBy }) {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
                     <div>
-                      <div style={{ fontWeight: 700, marginBottom: 4 }}>Widerspruch erkannt</div>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{t('consistency.bannerTitle')}</div>
                       <div style={{ fontSize: 13, opacity: 0.85 }}>
-                        Der Wizard blockiert den nächsten Schritt, bis der Konflikt aufgelöst ist.
+                        {t('consistency.bannerText')}
                       </div>
                     </div>
 
@@ -2376,7 +2490,7 @@ function Wizard({ createdBy }) {
                           fontSize: 12,
                         }}
                       >
-                        Review-Hilfe
+                        {t('consistency.reviewHelp')}
                       </button>
                       <button
                         type="button"
@@ -2390,7 +2504,7 @@ function Wizard({ createdBy }) {
                           fontSize: 12,
                         }}
                       >
-                        Schließen
+                        {t('common.close')}
                       </button>
                     </div>
                   </div>
@@ -2411,7 +2525,7 @@ function Wizard({ createdBy }) {
                         {Array.isArray(v.conflicts) && v.conflicts.length > 0 && (
                           <div style={{ marginTop: 8 }}>
                             <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-                              Konflikt erzeugt durch
+                              {t('consistency.generatedBy')}
                             </div>
                             <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, display: 'grid', gap: 4 }}>
                               {v.conflicts.map((c, cIdx) => {
@@ -2439,7 +2553,7 @@ function Wizard({ createdBy }) {
                                     <span style={{ opacity: 0.85 }}>{c.label}</span>
                                     {c.answer && c.answer !== '-' && (
                                       <span style={{ marginLeft: 8, opacity: 0.9 }}>
-                                        · Antwort: <b>{c.answer}</b>
+                                        · {t('wizard.answerLabel')} <b>{c.answer}</b>
                                       </span>
                                     )}
                                     {c.note && <span style={{ marginLeft: 8, opacity: 0.75 }}>· {c.note}</span>}
@@ -2452,7 +2566,7 @@ function Wizard({ createdBy }) {
 
                         {Array.isArray(v.recommendations) && v.recommendations.length > 0 && (
                           <div style={{ marginTop: 10, fontSize: 12 }}>
-                            <div style={{ fontWeight: 600, marginBottom: 6 }}>Empfehlung</div>
+                            <div style={{ fontWeight: 600, marginBottom: 6 }}>{t('consistency.recommendation')}</div>
                             <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 4 }}>
                               {v.recommendations.map((r, i) => (
                                 <li key={i}>{r}</li>
@@ -2476,7 +2590,7 @@ function Wizard({ createdBy }) {
                                 fontWeight: 600,
                               }}
                             >
-                              Zum Review-Schritt
+                              {t('consistency.reviewStep')}
                             </button>
                           </div>
                         )}
@@ -2516,7 +2630,7 @@ function Wizard({ createdBy }) {
                       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
                         <div>
                           <div style={{ fontWeight: 800, fontSize: 16 }}>
-                            {decisionTree.W_KI_WIDERSPRUCH?.label || 'Widerspruch – Review-Hilfe'}
+                            {decisionTree.W_KI_WIDERSPRUCH?.label || t('consistency.dialogTitleFallback')}
                           </div>
                           {decisionTree.W_KI_WIDERSPRUCH?.info && (
                             <div style={{ marginTop: 8, fontSize: 13, opacity: 0.9 }}>
@@ -2538,13 +2652,13 @@ function Wizard({ createdBy }) {
                             height: 'fit-content',
                           }}
                         >
-                          Schließen
+                          {t('common.close')}
                         </button>
                       </div>
 
                       {decisionTree.W_KI_WIDERSPRUCH?.examples && (
                         <div style={{ marginTop: 12 }}>
-                          <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 6 }}>Vorgehen</div>
+                          <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 6 }}>{t('consistency.dialogApproach')}</div>
                           {Array.isArray(decisionTree.W_KI_WIDERSPRUCH.examples) ? (
                             <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 6, fontSize: 13 }}>
                               {decisionTree.W_KI_WIDERSPRUCH.examples.map((ex, i) => (
@@ -2578,6 +2692,16 @@ function Wizard({ createdBy }) {
 export default function App() {
   const [view, setView] = useState('welcome'); 
   const [creator, setCreator] = useState('');
+  const [locale, setLocale] = useState(() => getStoredLocale());
+  const t = useMemo(() => createTranslator(locale), [locale]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+    } catch {
+      return;
+    }
+  }, [locale]);
 
   const resetApp = useCallback(() => {
     setCreator('');
@@ -2587,13 +2711,23 @@ export default function App() {
   let content = null;
 
   if (view === 'welcome') {
-    content = <WelcomeScreen onStart={() => setView('creator')} />;
+    content = (
+      <WelcomeScreen
+        onStart={() => setView('creator')}
+        locale={locale}
+        onLocaleChange={setLocale}
+        t={t}
+      />
+    );
   } else if (view === 'creator') {
     content = (
       <CreatorScreen
         value={creator}
         onChange={setCreator}
         onBack={() => setView('welcome')}
+        locale={locale}
+        onLocaleChange={setLocale}
+        t={t}
         onConfirm={() => {
           if (creator.trim()) setView('wizard');
         }}
@@ -2601,8 +2735,22 @@ export default function App() {
     );
   } else {
     content = (
-      <ErrorBoundary onReset={resetApp}>
-        <Wizard createdBy={creator || 'Unbekannt'} />
+      <ErrorBoundary
+        onReset={resetApp}
+        messages={{
+          title: t('errorBoundary.title'),
+          unknownError: t('errorBoundary.unknownError'),
+          reset: t('errorBoundary.reset'),
+          reload: t('errorBoundary.reload'),
+          details: t('errorBoundary.details'),
+        }}
+      >
+        <Wizard
+          createdBy={creator || t('common.unknown')}
+          locale={locale}
+          onLocaleChange={setLocale}
+          t={t}
+        />
       </ErrorBoundary>
     );
   }
@@ -2614,5 +2762,3 @@ export default function App() {
     </>
   );
 }
-
-

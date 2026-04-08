@@ -1,5 +1,7 @@
+import { DEFAULT_LOCALE, getModelMessages } from './i18n';
+
 // Link-Lookups für Rechtsgrundlagen
-export const EU_AI_ACT_LINKS = {
+export const EU_AI_ACT_LINKS_DE = {
   ART_3:  'https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689#art_3',
   ART_4:  'https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689#art_4',
   ART_5:  'https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689#art_5',
@@ -29,7 +31,38 @@ export const EU_AI_ACT_LINKS = {
   ANHANG_4:   'https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689#anx_IV',
 };
 
-export const DORA_LINKS = {
+// Platzhalter: kann später durch englische Fundstellen ersetzt werden.
+export const EU_AI_ACT_LINKS_ENG = {
+  ART_3:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_3',
+  ART_4:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_4',
+  ART_5:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_5',
+  ART_6:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_6',
+  ART_9:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_9',
+  ART_10: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_10',
+  ART_11: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_11',
+  ART_12: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_12',
+  ART_13: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_13',
+  ART_14: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_14',
+  ART_15: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_15',
+  ART_16: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_16',
+  ART_25: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_25',
+  ART_26: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_26',
+  ART_27: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_27',
+  ART_43: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_43',
+  ART_48: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_48',
+  ART_49: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_49',
+  ART_50: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_50',
+  ART_51: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_51',
+  ART_52: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_52',
+  ART_55: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_55',
+  ART_60: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_60',
+  ART_72: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_72',
+  ART_73: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#art_73',
+  ANHANG_III: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#anx_III',
+  ANHANG_4:   'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=OJ:L_202401689#anx_IV',
+};
+
+export const DORA_LINKS_DE = {
   ART_2:  'https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=CELEX:32022R2554#art_2',
   ART_3:  'https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=CELEX:32022R2554#art_3',
   ART_4:  'https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=CELEX:32022R2554#art_4',
@@ -58,12 +91,93 @@ export const DORA_LINKS = {
   ART_31: 'https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=CELEX:32022R2554#art_31',
 };
 
+// Platzhalter: kann später durch englische Fundstellen ersetzt werden.
+export const DORA_LINKS_ENG = {
+  ART_2:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_2',
+  ART_3:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_3',
+  ART_4:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_4',
+  ART_5:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_5',
+  ART_6:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_6',
+  ART_8:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_8',
+  ART_9:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_9',
+  ART_10:  'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_10',
+  ART_11: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_11',
+  ART_12: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_12',
+  ART_13: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_13',
+  ART_14: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_14',
+  ART_16: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_16',
+  ART_17: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_17',
+  ART_18: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_18',
+  ART_19: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_19',
+  ART_20: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_20',
+  ART_23: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_23',
+  ART_24: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_24',
+  ART_25: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_25',
+  ART_26: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_26',
+  ART_27: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_27',
+  ART_28: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_28',
+  ART_29: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_29',
+  ART_30: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_30',
+  ART_31: 'https://eur-lex.europa.eu/legal-content/ENG/TXT/HTML/?uri=CELEX:32022R2554#art_31',
+};
 
-export const obligationsCatalog = {
+const EU_AI_ACT_LINKS = EU_AI_ACT_LINKS_DE;
+const DORA_LINKS = DORA_LINKS_DE;
+
+const LEGAL_LINK_GROUPS_BY_LOCALE = {
+  de: {
+    EU_AI_ACT: EU_AI_ACT_LINKS_DE,
+    DORA: DORA_LINKS_DE,
+  },
+  en: {
+    EU_AI_ACT: EU_AI_ACT_LINKS_ENG,
+    DORA: DORA_LINKS_ENG,
+  },
+};
+
+const LEGAL_LINK_REVERSE_INDEX = buildLegalLinkReverseIndex();
+
+/**
+ * Baut einen Reverse-Index von Basis-URL auf Framework und Artikel-Key.
+ */
+function buildLegalLinkReverseIndex() {
+  const index = new Map();
+
+  for (const [frameworkKey, links] of Object.entries(LEGAL_LINK_GROUPS_BY_LOCALE.de)) {
+    for (const [articleKey, url] of Object.entries(links)) {
+      index.set(url, { frameworkKey, articleKey });
+    }
+  }
+
+  return index;
+}
+
+/**
+ * Liefert die Link-Sets für eine Sprache mit deutschem Fallback.
+ */
+export function getLegalLinkGroupsForLocale(locale = DEFAULT_LOCALE) {
+  return LEGAL_LINK_GROUPS_BY_LOCALE[locale] ?? LEGAL_LINK_GROUPS_BY_LOCALE.de;
+}
+
+/**
+ * Löst eine Basis-URL auf die sprachspezifische Fundstelle auf.
+ */
+export function localizeLegalReferenceUrl(referenceUrl, locale = DEFAULT_LOCALE) {
+  if (!referenceUrl) return referenceUrl ?? null;
+
+  const match = LEGAL_LINK_REVERSE_INDEX.get(referenceUrl);
+  if (!match) return referenceUrl;
+
+  const localizedGroups = getLegalLinkGroupsForLocale(locale);
+  return localizedGroups?.[match.frameworkKey]?.[match.articleKey] ?? referenceUrl;
+}
+
+
+const baseObligationsCatalog = {
 /**
  * Struktur eines Pflichtenpakets:
  * - label/regulation/articles: Metadaten für nachvollziehbare Referenzierung im Export/Review
- * - items: Liste konkreter Requirements; jedes Item enthält i. d. R. (id, question, reference)
+ * - items: Liste konkreter Anforderungen; jedes Item enthält i. d. R. (id, question, reference)
  * Hinweis: items werden später linearisiert (Requirement-Chain) und als Ja/Nein abgefragt
  */
 
@@ -76,8 +190,9 @@ export const obligationsCatalog = {
       {
         id: 'KI_NZ_KLASSIFIZIERUNGSHINWEIS',
         question:
-          'Ist die Einstufung „kein KI-System“ dokumentiert und begründet?',
-        todo: 'Einstufung „kein KI-System“ dokumentieren und nachvollziehbar begründen (Geltungsbereich, Systembeschreibung, Abgrenzung).',
+          'Ist dokumentiert, warum das System nicht als KI-System nach EU AI Act gilt (Definition/Abgrenzung)?',
+        todo: 
+          'Dokumentieren, warum das System nicht als KI-System nach EU AI Act gilt (Geltungsbereich, Systembeschreibung, Abgrenzung).',
         reference: 'EU AI Act (2024), Art. 3',
         referenceUrl: EU_AI_ACT_LINKS.ART_3,
         info:
@@ -92,7 +207,8 @@ export const obligationsCatalog = {
         canonicalId: 'KI_GOV_FREIGABEPROZESS',
         question:
           'Sind trotz Nicht-Anwendbarkeit des EU AI Act interne Governance- und Freigabekontrollen für das System definiert?',
-        todo: 'Interne Governance- und Freigabekontrollen für das System festlegen und dokumentieren.',
+        todo: 
+          'Interne Governance- und Freigabekontrollen für das System festlegen und dokumentieren.',
         reference: 'EU AI Act (2024) – Governance-Basis (intern)',
         info:
           'Auch wenn der EU AI Act nicht anwendbar ist, reduzieren Basis-Kontrollen Risiken.',
@@ -113,7 +229,8 @@ export const obligationsCatalog = {
         id: 'KI_VERB_STOPP_INBETRIEBNAHME',
         question:
           'Wurde die Nutzung bzw. (geplante) Inbetriebnahme des Systems gestoppt und als Maßnahme dokumentiert?',
-        todo: 'Nutzung/Inbetriebnahme des Systems stoppen und den Stopp als Maßnahme nachvollziehbar dokumentieren.',
+        todo: 
+          'Nutzung/Inbetriebnahme des Systems stoppen und den Stopp als Maßnahme nachvollziehbar dokumentieren.',
         reference: 'EU AI Act (2024), Art. 5',
         referenceUrl: EU_AI_ACT_LINKS.ART_5,
         info:
@@ -127,7 +244,8 @@ export const obligationsCatalog = {
         id: 'KI_VERB_ESKALATION',
         question:
           'Wurde eine formale Eskalation an Compliance/Risikomanagement durchgeführt und dokumentiert?',
-        todo: 'Formale Eskalation an Compliance/Risikomanagement durchführen und als Fallakte dokumentieren.',
+        todo: 
+          'Formale Eskalation an Compliance/Risikomanagement durchführen und als Fallakte dokumentieren.',
         reference: 'EU AI Act (2024), Art. 5',
         referenceUrl: EU_AI_ACT_LINKS.ART_5,
         info:
@@ -141,7 +259,8 @@ export const obligationsCatalog = {
         id: 'KI_VERB_ENTSCHEID_SANIERUNG',
         question:
           'Liegt eine dokumentierte Entscheidung vor, ob das Vorhaben abgebrochen oder regelkonform neu zugeschnitten wird?',
-        todo: 'Dokumentierte Entscheidung herbeiführen und festhalten: Vorhaben abbrechen oder regelkonform neu zuschneiden.',
+        todo: 
+          'Dokumentierte Entscheidung herbeiführen und festhalten: Vorhaben abbrechen oder regelkonform neu zuschneiden.',
         reference: 'EU AI Act (2024), Art. 5',
         referenceUrl: EU_AI_ACT_LINKS.ART_5,
         info:
@@ -285,7 +404,7 @@ export const obligationsCatalog = {
         reference: 'EU AI Act (2024), Art. 51–52',
         referenceUrl: EU_AI_ACT_LINKS.ART_52,
         info:
-        'Die Modellkarte sollte u. a. Bestimmungsgemäße Verwendung, bekannte Einschränkungen/Risiken sowie empfohlene Sicherheitsmaßnahmen abdecken; fehlende Angaben als Risiko/Offenpunkt dokumentieren.',
+          'Die Modellkarte sollte u. a. Bestimmungsgemäße Verwendung, bekannte Einschränkungen/Risiken sowie empfohlene Sicherheitsmaßnahmen abdecken; fehlende Angaben als Risiko/Offenpunkt dokumentieren.',
       },
       {
         id: 'GPAI_SCR_TRAINING_COMPUTE',
@@ -295,7 +414,7 @@ export const obligationsCatalog = {
           'Training-Indikatoren dokumentieren (falls verfügbar); ansonsten Info + Ersatzindikatoren begründen.',
         reference: 'EU AI Act (2024), Art. 51–52',
         referenceUrl: EU_AI_ACT_LINKS.ART_51,
-        iinfo:
+        info:
           'Wenn der Anbieter keine Zahlen liefert: dokumentierte Anfrage + Ersatzindikatoren.',
         examples: [
           'Ersatzindikatoren: Modellfamilie/Größenklasse, veröffentlichte Sicherheitsbericht, Anbieterrichtlinie zu Risikokontrollen.',
@@ -405,7 +524,8 @@ export const obligationsCatalog = {
         id: 'KI_HR_RM_PROZESS',
         question:
           'Gibt es einen dokumentierten KI-Risikomanagementprozess, der Risiken identifiziert, bewertet und Maßnahmen festlegt?',
-        todo: 'KI-Risikomanagementprozess definieren, dokumentieren und in Kraft setzen (Identifikation, Bewertung, Maßnahmen, Verantwortlichkeiten).',
+        todo: 
+          'KI-Risikomanagementprozess definieren, dokumentieren und in Kraft setzen (Identifikation, Bewertung, Maßnahmen, Verantwortlichkeiten).',
         reference: 'EU AI Act (2024), Art. 9',
         referenceUrl: EU_AI_ACT_LINKS.ART_9,
         info:
@@ -419,7 +539,8 @@ export const obligationsCatalog = {
         id: 'KI_HR_RM_LEBENSZYKLUS',
         question:
           'Werden KI-Risiken vor der Produktivsetzung bewertet und während des Betriebs bei relevanten Änderungen regelmäßig überprüft?',
-        todo: 'Regelmäßige Risiko-Reviews vor Produktivsetzung und im Betrieb etablieren (inkl. Review bei relevanten Änderungen).',
+        todo: 
+          'Regelmäßige Risiko-Reviews vor Produktivsetzung und im Betrieb etablieren (inkl. Review bei relevanten Änderungen).',
         reference: 'EU AI Act (2024), Art. 9',
         referenceUrl: EU_AI_ACT_LINKS.ART_9,
         info:
@@ -432,7 +553,8 @@ export const obligationsCatalog = {
         id: 'KI_HR_DATENHERKUNFT_RECHTE',
         question:
           'Sind Datenquellen, Datenherkunft und Nutzungsrechte für Training und Test dokumentiert?',
-        todo: 'Datenquellen, Datenherkunft und Nutzungsrechte für Training und Test vollständig dokumentieren und nachvollziehbar nachweisen.',
+        todo: 
+          'Datenquellen, Datenherkunft und Nutzungsrechte für Training und Test vollständig dokumentieren und nachvollziehbar nachweisen.',
         reference: 'EU AI Act (2024), Art. 10',
         referenceUrl: EU_AI_ACT_LINKS.ART_10,
         info:
@@ -446,7 +568,8 @@ export const obligationsCatalog = {
         id: 'KI_HR_DATENQUALITAET_KRITERIEN',
         question:
           'Gibt es definierte Kriterien zur Datenqualität und werden diese vor Einsatz des Modells nachweisbar geprüft?',
-        todo: 'Kriterien zur Datenqualität festlegen und die Datenqualität vor Modell-Einsatz nachweisbar prüfen.',
+        todo: 
+          'Kriterien zur Datenqualität festlegen und die Datenqualität vor Modell-Einsatz nachweisbar prüfen.',
         reference: 'EU AI Act (2024), Art. 10',
         referenceUrl: EU_AI_ACT_LINKS.ART_10,
         info:
@@ -460,7 +583,8 @@ export const obligationsCatalog = {
         id: 'KI_HR_BIAS_MINDERUNG',
         question:
           'Sind Maßnahmen zur Erkennung und Reduktion von Bias in Trainings- und Testdaten dokumentiert und umgesetzt?',
-        todo: 'Maßnahmen zur Bias-Erkennung und -Reduktion definieren, dokumentieren und umsetzen (Trainings- und Testdaten).',
+        todo: 
+          'Maßnahmen zur Bias-Erkennung und -Reduktion definieren, dokumentieren und umsetzen (Trainings- und Testdaten).',
         reference: 'EU AI Act (2024), Art. 10',
         referenceUrl: EU_AI_ACT_LINKS.ART_10,
         info:
@@ -473,8 +597,10 @@ export const obligationsCatalog = {
       {
         id: 'KI_HR_TECH_DOKU_AKTUELL',
         canonicalId: 'KI_DOK_TECH_AKTUELL',
-        question: 'Wurde eine technische Dokumentation erstellt und wird sie bei Änderungen aktuell gehalten?',
-        todo: 'Technische Dokumentation erstellen und bei Änderungen konsequent aktuell halten (versioniert, nachvollziehbar).',
+        question: 
+          'Wurde eine technische Dokumentation erstellt und wird sie bei Änderungen aktuell gehalten?',
+        todo: 
+          'Technische Dokumentation erstellen und bei Änderungen konsequent aktuell halten (versioniert, nachvollziehbar).',
         reference: 'EU AI Act (2024), Art. 11',
         referenceUrl: EU_AI_ACT_LINKS.ART_11,
         info:
@@ -564,7 +690,7 @@ export const obligationsCatalog = {
         id: 'KI_HR_SICHERHEITSBEWERTUNG',
         question:
           'Wurde eine Cybersecurity-/Sicherheitsbewertung für die KI-Komponente durchgeführt und dokumentiert?',
-        todo:
+        todo: 
           'Sicherheitsbewertung (Cybersecurity) der KI-Komponente durchführen, dokumentieren und Maßnahmen nachverfolgen.',
         reference: 'EU AI Act (2024), Art. 15',
         referenceUrl: EU_AI_ACT_LINKS.ART_15,
@@ -690,7 +816,8 @@ export const obligationsCatalog = {
         id: 'KI_TP_INTERAKTIONSHINWEIS',
         question:
           'Erhalten Nutzer einen klaren Hinweis, dass sie mit einem KI-System interagieren?',
-        todo: 'Einen klaren, sichtbaren Hinweis zur KI-Interaktion in der Benutzeroberfläche bereitstellen und formal freigeben lassen.',
+        todo: 
+          'Einen klaren, sichtbaren Hinweis zur KI-Interaktion in der Benutzeroberfläche bereitstellen und formal freigeben lassen.',
         reference: 'EU AI Act (2024), Art. 50',
         referenceUrl: EU_AI_ACT_LINKS.ART_50,
         info:
@@ -704,7 +831,8 @@ export const obligationsCatalog = {
         id: 'KI_TP_GENERATIVE_OUTPUTS',
         question:
           'Erzeugt das System Inhalte (Text, Bild, Audio oder Video), die an Nutzer ausgegeben werden?',
-        todo: 'Prüfen und dokumentieren, ob das System Inhalte generiert, die an Nutzer ausgegeben werden (Text/Bild/Audio/Video).',
+        todo: 
+          'Prüfen und dokumentieren, ob das System Inhalte generiert, die an Nutzer ausgegeben werden (Text/Bild/Audio/Video).',
         reference: 'EU AI Act (2024), Art. 50',
         referenceUrl: EU_AI_ACT_LINKS.ART_50,
         info:
@@ -718,7 +846,8 @@ export const obligationsCatalog = {
         id: 'KI_TP_INHALTSKENNZEICHNUNG',
         question:
           'Werden KI-generierte Inhalte in den relevanten Fällen eindeutig gekennzeichnet?',
-        todo: 'Kennzeichnung für KI-generierte Inhalte definieren und in allen relevanten Fällen konsistent umsetzen.',
+        todo: 
+          'Kennzeichnung für KI-generierte Inhalte definieren und in allen relevanten Fällen konsistent umsetzen.',
         reference: 'EU AI Act (2024), Art. 50',
         referenceUrl: EU_AI_ACT_LINKS.ART_50,
         info:
@@ -730,8 +859,10 @@ export const obligationsCatalog = {
       },
       {
         id: 'KI_TP_ZWECKINFO',
-        question: 'Ist der Zweck des KI-Systems für Nutzer dokumentiert und verfügbar?',
-        todo: 'Zweck des KI-Systems für Nutzer dokumentieren und leicht zugänglich bereitstellen (UI/Handbuch/Intranet).',
+        question: 
+          'Ist der Zweck des KI-Systems für Nutzer dokumentiert und verfügbar?',
+        todo: 
+          'Zweck des KI-Systems für Nutzer dokumentieren und leicht zugänglich bereitstellen (UI/Handbuch/Intranet).',
         reference: 'EU AI Act (2024), Art. 50',
         referenceUrl: EU_AI_ACT_LINKS.ART_50,
         info:
@@ -743,8 +874,10 @@ export const obligationsCatalog = {
       },
       {
         id: 'KI_TP_GRENZEN_INFO',
-        question: 'Sind bekannte Grenzen und Limitierungen des Systems dokumentiert und verfügbar?',
-        todo: 'Bekannte Grenzen und Limitierungen des Systems dokumentieren und für Nutzer verfügbar machen (inkl. Aktualisierung bei Änderungen).',
+        question: 
+          'Sind bekannte Grenzen und Limitierungen des Systems dokumentiert und verfügbar?',
+        todo: 
+          'Bekannte Grenzen und Limitierungen des Systems dokumentieren und für Nutzer verfügbar machen (inkl. Aktualisierung bei Änderungen).',
         reference: 'EU AI Act (2024), Art. 50',
         referenceUrl: EU_AI_ACT_LINKS.ART_50,
         info:
@@ -756,8 +889,10 @@ export const obligationsCatalog = {
       },
       {
         id: 'KI_TP_ZULAESSIGE_NUTZUNG',
-        question: 'Sind Vorgaben zur zulässigen Nutzung (erlaubt/unzulässig) dokumentiert und verfügbar?',
-        todo: 'Vorgaben zur zulässigen und unzulässigen Nutzung dokumentieren und für Nutzer bereitstellen (inkl. Beispiele).',
+        question: 
+          'Sind Vorgaben zur zulässigen Nutzung (erlaubt/unzulässig) dokumentiert und verfügbar?',
+        todo: 
+          'Vorgaben zur zulässigen und unzulässigen Nutzung dokumentieren und für Nutzer bereitstellen (inkl. Beispiele).',
         reference: 'EU AI Act (2024), Art. 50',
         referenceUrl: EU_AI_ACT_LINKS.ART_50,
         info:
@@ -779,7 +914,8 @@ export const obligationsCatalog = {
         id: 'KI_KONF_PFLICHT_GEPRUEFT',
         question:
           'Wurde dokumentiert festgestellt, ob für das System eine Konformitätsbewertung erforderlich ist?',
-        todo: 'Erforderlichkeit einer Konformitätsbewertung prüfen, begründen und dokumentieren (inkl. Verweis auf relevante Artikel/Anhänge).',
+        todo: 
+          'Erforderlichkeit einer Konformitätsbewertung prüfen, begründen und dokumentieren (inkl. Verweis auf relevante Artikel/Anhänge).',
         reference: 'EU AI Act (2024), Art. 43 ff.',
         referenceUrl: EU_AI_ACT_LINKS.ART_43,
         info:
@@ -793,7 +929,8 @@ export const obligationsCatalog = {
         id: 'KI_KONF_DURCHGEFUEHRT',
         question:
           'Wurde die Konformitätsbewertung durchgeführt und liegt ein dokumentiertes Ergebnis vor?',
-        todo: 'Konformitätsbewertung durchführen, Ergebnis dokumentieren und formale Freigabeentscheidung festhalten.',
+        todo: 
+          'Konformitätsbewertung durchführen, Ergebnis dokumentieren und formale Freigabeentscheidung festhalten.',
         reference: 'EU AI Act (2024), Art. 43 ff.',
         referenceUrl: EU_AI_ACT_LINKS.ART_43,
         info:
@@ -807,7 +944,8 @@ export const obligationsCatalog = {
         id: 'KI_KONF_PLAN_FALLS_OFFEN',
         question:
           'Gibt es einen datierten Plan mit Verantwortlichen, falls die Konformitätsbewertung noch aussteht?',
-        todo: 'Datieren und dokumentieren: Plan zur ausstehenden Konformitätsbewertung erstellen (Meilensteine, Verantwortliche, Freigabegates).',
+        todo: 
+          'Datieren und dokumentieren: Plan zur ausstehenden Konformitätsbewertung erstellen (Meilensteine, Verantwortliche, Freigabegates).',
         reference: 'EU AI Act (2024), Art. 43 ff.',
         referenceUrl: EU_AI_ACT_LINKS.ART_43,
         info:
@@ -822,7 +960,8 @@ export const obligationsCatalog = {
         canonicalId: 'KI_DOK_TECH_VOLLSTAENDIGKEIT',
         question:
           'Deckt die technische Dokumentation mindestens Zweck, Modellbeschreibung, Daten, Tests, Risiken und Betriebsvoraussetzungen ab?',
-        todo: 'Technische Dokumentation gemäß Mindestanforderungen (Anhang IV) erstellen/prüfen und Vollständigkeit dokumentieren.',
+        todo: 
+          'Technische Dokumentation gemäß Mindestanforderungen (Anhang IV) erstellen/prüfen und Vollständigkeit dokumentieren.',
         reference: 'EU AI Act (2024), Anhang IV',
         referenceUrl: EU_AI_ACT_LINKS.ANHANG_4,
         info:
@@ -837,7 +976,8 @@ export const obligationsCatalog = {
         canonicalId: 'KI_GOV_ROLLEN_VERANTWORTLICHKEITEN',
         question:
           'Sind Rollen (Anbieter/Betreiber) und Verantwortlichkeiten im Dokumentationspaket eindeutig beschrieben?',
-        todo: 'Rollen (Anbieter/Betreiber) und Verantwortlichkeiten eindeutig definieren und im Dokumentationspaket nachvollziehbar festhalten.',
+        todo: 
+          'Rollen (Anbieter/Betreiber) und Verantwortlichkeiten eindeutig definieren und im Dokumentationspaket nachvollziehbar festhalten.',
         reference: 'EU AI Act (2024), Art. 16 ff.',
         referenceUrl: EU_AI_ACT_LINKS.ART_16,
         info:
@@ -851,7 +991,8 @@ export const obligationsCatalog = {
         id: 'KI_AENDERUNGSMANAGEMENT_DOKU',
         question:
           'Gibt es einen dokumentierten Änderungsprozess, der Modelländerungen (Neutraining/Feinabstimmung) vor der Produktivsetzung freigibt?',
-        todo: 'Änderungsmanagement für Modelländerungen etablieren und dokumentieren (Auswirkungsanalyse, Freigabe, Rücksetzung/Überwachung).',
+        todo: 
+          'Änderungsmanagement für Modelländerungen etablieren und dokumentieren (Auswirkungsanalyse, Freigabe, Rücksetzung/Überwachung).',
         reference: 'EU AI Act (2024), Art. 11–12 (i. V. m. Governance)',
         referenceUrl: EU_AI_ACT_LINKS.ART_11,
         info:
@@ -873,7 +1014,8 @@ export const obligationsCatalog = {
         id: 'KI_REG_PFLICHT_GEPRUEFT',
         question:
           'Wurde geprüft und dokumentiert, ob das System registrierungspflichtig ist?',
-        todo: 'Registerpflicht des Systems prüfen, begründen und dokumentieren (inkl. Entscheidung zur Registrierungspflicht).',
+        todo:   
+          'Registerpflicht des Systems prüfen, begründen und dokumentieren (inkl. Entscheidung zur Registrierungspflicht).',
         reference: 'EU AI Act (2024), Art. 60',
         referenceUrl: EU_AI_ACT_LINKS.ART_60,
         info:
@@ -887,7 +1029,8 @@ export const obligationsCatalog = {
         id: 'KI_REG_DURCHGEFUEHRT',
         question:
           'Wurde die Registrierung durchgeführt und ist die Registrierungs-ID nachvollziehbar dokumentiert?',
-        todo: 'Registrierung durchführen und Registrierungs-ID inkl. Ablageort revisionssicher dokumentieren.',
+        todo: 
+          'Registrierung durchführen und Registrierungs-ID inkl. Ablageort revisionssicher dokumentieren.',
         reference: 'EU AI Act (2024), Art. 60',
         referenceUrl: EU_AI_ACT_LINKS.ART_49,
         info:
@@ -900,8 +1043,10 @@ export const obligationsCatalog = {
       {
         id: 'KI_REG_EU_DB_URL',
         canonicalId: 'KI_REG_EU_DB_URL',
-        question: 'Ist die EU-Datenbank-Referenz (URL/Eintrag) für das System dokumentiert und auffindbar?',
-        todo: 'EU-DB-URL bzw. Referenz auf den Registereintrag dokumentieren (inkl. Ablageort/Verantwortliche) und in der Systemdokumentation verlinken.',
+        question: 
+          'Ist die EU-Datenbank-Referenz (URL/Eintrag) für das System dokumentiert und auffindbar?',
+        todo: 
+          'EU-DB-URL bzw. Referenz auf den Registereintrag dokumentieren (inkl. Ablageort/Verantwortliche) und in der Systemdokumentation verlinken.',
         reference: 'EU AI Act (2024), Art. 60',
         referenceUrl: EU_AI_ACT_LINKS.ART_49,
         info:
@@ -914,8 +1059,10 @@ export const obligationsCatalog = {
       {
         id: 'KI_REG_GRFA_ZUSAMMENFASSUNG_VERFUEGBAR',
         canonicalId: 'KI_REG_GRFA_ZUSAMMENFASSUNG_VERFUEGBAR',
-        question: 'Ist (falls erforderlich) eine GRFA-Zusammenfassung als bereitstellbare Information erstellt und abgelegt?',
-        todo: 'GRFA-Zusammenfassung erstellen (falls GRFA erforderlich) und bereitstellbar ablegen (Ablageort, Version, Freigabe).',
+        question: 
+          'Ist (falls erforderlich) eine GRFA-Zusammenfassung als bereitstellbare Information erstellt und abgelegt?',
+        todo: 
+          'GRFA-Zusammenfassung erstellen (falls GRFA erforderlich) und bereitstellbar ablegen (Ablageort, Version, Freigabe).',
         reference: 'EU AI Act (2024), Art. 27 (i. V. m. Register-/Anhang-Informationen)',
         referenceUrl: EU_AI_ACT_LINKS.ART_27,
         info:
@@ -946,7 +1093,8 @@ export const obligationsCatalog = {
         id: 'KI_KENNZEICHNUNG_PFLICHT_PRUEFUNG',
         question:
           'Wurde geprüft und dokumentiert, ob eine Kennzeichnung erforderlich ist?',
-        todo: 'Prüfen und dokumentieren, ob eine Kennzeichnung (z. B. CE) erforderlich ist.',
+        todo: 
+          'Prüfen und dokumentieren, ob eine Kennzeichnung (z. B. CE) erforderlich ist.',
         reference: 'EU AI Act (2024), Art. 49 ff.',
         referenceUrl: EU_AI_ACT_LINKS.ART_49,
         info:
@@ -961,7 +1109,8 @@ export const obligationsCatalog = {
         canonicalId: 'KI_DOK_UNTERLAGEN_REPO_VERSIONIERUNG',
         question:
           'Sind Registrierungs- und Kennzeichnungsunterlagen versioniert, zugriffsgeschützt und auffindbar abgelegt?',
-        todo: 'Registrierungs- und Kennzeichnungsunterlagen versioniert, zugriffsgeschützt und eindeutig auffindbar ablegen.',
+        todo: 
+          'Registrierungs- und Kennzeichnungsunterlagen versioniert, zugriffsgeschützt und eindeutig auffindbar ablegen.',
         reference: 'EU AI Act (2024), Art. 49 ff.',
         referenceUrl: EU_AI_ACT_LINKS.ART_49,
         info:
@@ -1023,7 +1172,8 @@ export const obligationsCatalog = {
       {
         id: 'KI_GRFA_DOKUMENTIERT',
         canonicalId: 'KI_GRFA_DOKUMENTIERT',
-        question: 'Liegt eine GRFA dokumentiert vor?',
+        question: 
+          'Liegt eine GRFA dokumentiert vor?',
         todo:
           'GRFA durchführen und dokumentieren (Risiken/Betroffenheit, Maßnahmen, Restrisiko, Verantwortlichkeiten, Umsetzungsplan).',
         reference: 'EU AI Act (2024), Art. 27',
@@ -1038,7 +1188,8 @@ export const obligationsCatalog = {
       {
         id: 'KI_GRFA_UEBERPRUEFUNG_UND_FREIGABE',
         canonicalId: 'KI_GRFA_UEBERPRUEFUNG_UND_FREIGABE',
-        question: 'Wurde die GRFA reviewed und formal freigegeben?',
+        question: 
+          'Wurde die GRFA reviewed und formal freigegeben?',
         todo:
           'GRFA-Review und formale Freigabe durchführen (Rollen/RACI, Entscheidung, Auflagen, Abhilfemaßnahmen) und versioniert ablegen.',
         reference: 'EU AI Act (2024), Art. 27',
@@ -1052,7 +1203,8 @@ export const obligationsCatalog = {
       {
         id: 'KI_GRFA_MASSNAHMEN_NACHVERFOLGT',
         canonicalId: 'KI_GRFA_MASSNAHMEN_NACHVERFOLGT',
-        question: 'Werden GRFA-Maßnahmen im Betrieb nachverfolgt?',
+        question: 
+          'Werden GRFA-Maßnahmen im Betrieb nachverfolgt?',
         todo:
           'GRFA-Maßnahmen operationalisieren und nachverfolgen (Kontrollen, Überwachung, Beschwerde-/Feedback-Kanal, Wirksamkeitsreview).',
         reference: 'EU AI Act (2024), Art. 27',
@@ -1075,7 +1227,8 @@ export const obligationsCatalog = {
       {
         id: 'KI_UEBERWACHUNGS_PLAN',
         canonicalId: 'KI_UEBERWACHUNGS_PLAN',
-        question: 'Gibt es einen dokumentierten Plan zur Überwachung nach dem Inverkehrbringen?',
+        question: 
+          'Gibt es einen dokumentierten Plan zur Überwachung nach dem Inverkehrbringen?',
         todo:
           'Plan zur Überwachung nach dem Inverkehrbringen erstellen (Datenquellen, KPIs, Rollen/RACI, Review-Frequenz, Eskalationspfade, Maßnahmenlogik).',
         reference: 'EU AI Act (2024), Art. 72',
@@ -1090,7 +1243,8 @@ export const obligationsCatalog = {
       {
         id: 'KI_UEBERWACHUNGS_KPIS_UND_SCHWELLENWERTE',
         canonicalId: 'KI_UEBERWACHUNGS_KPIS_UND_SCHWELLENWERTE',
-        question: 'Sind KPIs/Schwellenwerte definiert inkl. Auslöser?',
+        question: 
+          'Sind KPIs/Schwellenwerte definiert inkl. Auslöser?',
         todo:
           'KPIs und Schwellenwerte definieren inkl. Auslöser/Eskalation.',
         reference: 'EU AI Act (2024), Art. 72',
@@ -1105,7 +1259,8 @@ export const obligationsCatalog = {
       {
         id: 'KI_PMM_UEBERPRUEFUNGEN_DURCHGEFUEHRT',
         canonicalId: 'KI_PMM_UEBERPRUEFUNGEN_DURCHGEFUEHRT',
-        question: 'Werden Reviews tatsächlich durchgeführt und dokumentiert?',
+        question: 
+          'Werden Reviews tatsächlich durchgeführt und dokumentiert?',
         todo:
           'Reviews durchführen, Feststellungen dokumentieren, Maßnahmen ableiten und Nachverfolgung sicherstellen (inkl. Verantwortlichkeiten/Fristen).',
         reference: 'EU AI Act (2024), Art. 72',
@@ -1128,7 +1283,8 @@ export const obligationsCatalog = {
       {
         id: 'KI_SVV_TRIGGER_DEFINIERT',
         canonicalId: 'KI_SVV_TRIGGER_DEFINIERT',
-        question: 'Sind Auslöser für „schwerwiegende Vorfälle“ definiert und organisatorisch verankert?',
+        question: 
+          'Sind Auslöser für „schwerwiegende Vorfälle“ definiert und organisatorisch verankert?',
         todo:
           'Auslöser-Definition für „schwerwiegende Vorfälle“ erstellen (Beispiele, Schweregrade, Abgrenzung zu normalen Vorfällen) und kommunizieren.',
         reference: 'EU AI Act (2024), Art. 73',
@@ -1143,7 +1299,8 @@ export const obligationsCatalog = {
       {
         id: 'KI_SVV_PROZESS_UND_ROLLEN',
         canonicalId: 'KI_SVV_PROZESS_UND_ROLLEN',
-        question: 'Gibt es einen dokumentierten Meldeprozess?',
+        question: 
+          'Gibt es einen dokumentierten Meldeprozess?',
         todo:
           'Meldeprozess definieren (Rollen/RACI, Fristen, Behördenkontakt, Eskalation, Zusammenarbeit mit Anbieter/Betreiber) und testen.',
         reference: 'EU AI Act (2024), Art. 73',
@@ -1158,7 +1315,8 @@ export const obligationsCatalog = {
       {
         id: 'KI_SVV_PROTOKOLLIERUNG_UND_UNTERLAGEN',
         canonicalId: 'KI_SVV_PROTOKOLLIERUNG_UND_UNTERLAGEN',
-        question: 'Werden Vorfälle/Meldungen revisionssicher protokolliert?',
+        question: 
+          'Werden Vorfälle/Meldungen revisionssicher protokolliert?',
         todo:
           'Vorfallsregister inkl. Ursachenanalyse, Maßnahmen und Abschlussdokumentation etablieren (auditfähig, versioniert, nachvollziehbar).',
         reference: 'EU AI Act (2024), Art. 73',
@@ -1401,7 +1559,7 @@ export const obligationsCatalog = {
         ],
       },
       {
-        id: 'DORA_RESILIENZ_MASSNAHMEN',
+        id: 'DORA_RESILIENZMAßNAHMEN',
         question:
           'Sind Resilienzmaßnahmen für die KI-relevanten Komponenten definiert?',
         todo:
@@ -1556,8 +1714,8 @@ export const obligationsCatalog = {
         ],
       },
       {
-        id: 'DORA_EXIT_STRATEGIE',
-        canonicalId: 'DORA_EXIT_STRATEGIE_MIGRATION_DATEN_RUECKGABE',
+        id: 'DORA_AUSSTIEGSSTRATEGIE',
+        canonicalId: 'DORA_AUSSTIEGSSTRATEGIE_MIGRATION_DATEN_RUECKGABE',
         question:
           'Gibt es eine dokumentierte Ausstiegsstrategie inklusive Datenrückgabe/-löschung und Übergangsplan?',
         todo:
@@ -2494,7 +2652,7 @@ export const obligationsCatalog = {
       },
       {
         id: 'DORA_AUSTIEGSPLAN',
-        canonicalId: 'DORA_EXIT_STRATEGIE_MIGRATION_DATEN_RUECKGABE',
+        canonicalId: 'DORA_AUSSTIEGSSTRATEGIE_MIGRATION_DATEN_RUECKGABE',
         question:
           'Ist eine Ausstiegsstrategie inklusive Datenmigration und Übergangsbetrieb dokumentiert?',
         todo:
@@ -2598,7 +2756,7 @@ export const obligationsCatalog = {
       {
         id: 'DORA_LIGHT_PROTOKOLLIERUNG',
         question:
-          'Ist Protokollierung für die KI-relevanten Systeme aktiviert und wird sie gemäß Aufbewahrungsvorgaben aufbewahrt?',
+          'Ist die Protokollierung für die KI-relevanten Systeme aktiviert und wird sie gemäß Aufbewahrungsvorgaben aufbewahrt?',
         todo:
           'Protokollierung für KI-relevante Systeme aktivieren, revisionssicher aufbewahren und für Audit/Vorfallaufklärung nutzbar machen.',
         reference: 'DORA (2022), Art. 9',
@@ -2749,7 +2907,7 @@ export const CONSISTENCY_LOCKS = {
   KI_HOCHRISIKO: 'KI_HOCHRISIKO',
 };
 
-export const decisionTree = {
+const baseDecisionTree = {
 /**
  * Entscheidungsbaum als flaches Objekt (id -> Knoten):
  * - type: 'question' oder 'leaf' (Leaf = Ergebnis/Clusterabschluss)
@@ -2764,18 +2922,18 @@ export const decisionTree = {
     id: 'A1',
     type: 'question',
     cluster: 'AI Act',
-    label: 'Handelt es sich um ein KI-System nach EU AI Act?',
+    label: 'Is the proposed solution an AI System according to the EU AI Act?',
     reference: 'EU AI Act (2024), Art. 3',
     referenceUrl: EU_AI_ACT_LINKS.ART_3,
     yes: 'A2',
     no: 'A0',
     info:
-      'Hier wird geprüft, ob das betrachtete System unter die Definition eines KI-Systems fällt. ' +
-      'Nur wenn dies bejaht wird, greifen die weiteren Pflichten des EU AI Act.',
+      'First, it is asserted whether the proposed solution fulfills the definition of an AI system. ' +
+      'Only if this is true, other requirements of the EU AI Act are relevant. ',
     examples: [
-      'Ein Machine-Learning-Modell, das Kreditrisiken automatisiert bewertet.',
-      'Ein statisches, rein regelbasiertes System ohne Lern- oder Inferenzlogik.',
-      'Ein externer LLM-/Basismodell-Dienst, der in Prozesse eingebunden wird.',
+      'A machine learning model that automatically rates credit scores.',
+      'A static, rule based system without learn or inference logic.',
+      'A third-party LLM provider is utilized in a critical process.',
     ],
   },
 
@@ -2854,7 +3012,7 @@ export const decisionTree = {
       'Checkpoint: Es besteht ein Hinweis auf eine potenziell verbotene Praxis. Bitte Prüfung/Eskalation vor Fortsetzung durchführen und Entscheidung kurz dokumentieren.',
   },
 
-  // AI Act – Scope & Rollen
+  // AI Act – Rollenfrage
 
   A2_ROLLE: {
     id: 'A2_ROLLE',
@@ -2916,8 +3074,8 @@ export const decisionTree = {
     cluster: 'AI Act',
     label:
       'Haben Sie die operative Kontrolle über die produktive KI-Komponente oder steuern Sie wesentliche Betriebsparameter, unabhängig davon, wo sie gehostet wird?',
-    yes: 'A2_ROLLE_KONFORMITAETSARTEFAKTE',
-    no: 'A2_ROLLE_KONFORMITAETSARTEFAKTE',
+    yes: 'A2_ROLLE_BETREIBER_EINSATZZWECK',
+    no: 'A2_ROLLE_BETREIBER_EINSATZZWECK',
     reference: 'EU AI Act (2024)',
     info:
       '„Hosting“ (wo läuft es) ist nicht gleich „Betrieb“ (wer steuert es). ' + 
@@ -2931,22 +3089,58 @@ export const decisionTree = {
     ],
   },
 
+  A2_ROLLE_BETREIBER_EINSATZZWECK: {
+    id: 'A2_ROLLE_BETREIBER_EINSATZZWECK',
+    type: 'question',
+    cluster: 'AI Act',
+    label:
+      'Nutzen Sie das KI-System für einen eigenen Geschäftsprozess und bestimmen Sie Zweck und Einsatzkontext?',
+    yes: 'A2_ROLLE_BETREIBER_DATENVERANTWORTUNG',
+    no: 'A2_ROLLE_SCOPE_UNSICHER',
+    reference: 'EU AI Act (2024)',
+    info:
+      'Betreiber ist typischerweise, wer ein KI-System in einem eigenen Prozess einsetzt und den Nutzungskontext festlegt.',
+    examples: [
+      'Sie setzen die KI in einem internen Prozess (z. B. Support, Recruiting, Risiko, Compliance) ein und definieren den Zweck.',
+      'Der Anbieter definiert Zweck und Einsatzkontext vollständig, bei Ihnen ist nur „Nutzung“ ohne Gestaltungsspielraum möglich.',
+    ],
+  },
+
+  A2_ROLLE_BETREIBER_DATENVERANTWORTUNG: {
+  id: 'A2_ROLLE_BETREIBER_DATENVERANTWORTUNG',
+  type: 'question',
+  cluster: 'AI Act',
+  label:
+    'Stellen Sie wesentliche Eingabedaten bereit und verantworten deren Auswahl/Qualität?',
+  yes: 'A2_ROLLE_KONFORMITAETSARTEFAKTE',
+  no: 'A2_ROLLE_SCOPE_UNSICHER',
+  reference: 'EU AI Act (2024)',
+  info:
+    'Wer relevante Eingabedaten liefert und deren Einsatz verantwortet, ist in der Praxis meist Betreiber oder trägt Betreiberpflichten.',
+  examples: [
+    'Sie speisen Kundendaten/Transaktionen/Dokumente ein und definieren, welche Daten genutzt werden dürfen.',
+    'Sie wählen Datenquellen aus und tragen Verantwortung für Datenqualität im Nutzungskontext.',
+  ],
+},
+
   A2_ROLLE_KONFORMITAETSARTEFAKTE: {
     id: 'A2_ROLLE_KONFORMITAETSARTEFAKTE',
     type: 'question',
     cluster: 'AI Act',
     label:
-      'Liefern Sie selbst die zentralen Konformitäts-/Sicherheitsartefakte, oder beziehen Sie diese vom Anbieter?',
+      'Liefern Sie selbst die wichtigsten Nachweise und Unterlagen zur Konformität bzw. Sicherheit?',
     yes: 'A2_ROLLE_SCOPE_ANBIETER',
     no: 'A2_ROLLE_SCOPE_BETREIBER',
     yesLabel: 'Wir liefern selbst',
     noLabel: 'Wir beziehen vom Anbieter',
     reference: 'EU AI Act (2024)',
     info:
-      'Wenn Sie die zentralen Artefakte selbst erstellen/liefern müssen, ist das ein starker Anbieter-Indikator.',
+      'Wenn Sie die zentralen Unterlagen selbst erstellen oder liefern müssen, ist das ein starker Hinweis auf die Rolle „Anbieter“.',
     examples: [
-      'Sie erstellen selbst eine technische Datei und Testnachweise.',
-      'Sie beziehen Konformitätsunterlagen vom Anbieter.',
+      'Sie erstellen und pflegen die technischen Unterlagen selbst (z. B. technische Dokumentation, Risikoanalyse, Tests).',
+      'Sie liefern die erforderlichen Nachweise zur Konformität/Sicherheit an Kunden oder Behörden.',
+      'Der Anbieter stellt die vollständigen Unterlagen bereit, sie übernehmen diese und nutzen sie (z. B. in Betrieb/Integration).',
+      'Sie erhalten vom Anbieter Konformitäts-/Sicherheitsnachweise und müssen diese nicht selbst erstellen.',
     ],
   },
 
@@ -3394,7 +3588,7 @@ export const decisionTree = {
     type: 'question',
     cluster: 'AI Act',
     label:
-      'Trifft einer der Anhang-III-Bereiche zu: Bildung, Beschäftigung/HR oder Zugang zu wesentlichen Dienstleistungen?',
+      'Trifft einer der Anhang-III-Bereiche zu: Bildung, Beschäftigung/Personalmanagement oder Zugang zu wesentlichen Dienstleistungen?',
     reference: 'EU AI Act (2024), Anhang III',
     referenceUrl: EU_AI_ACT_LINKS.ANHANG_III,
     yes: 'A3_HR_BETREIBER',
@@ -3404,7 +3598,7 @@ export const decisionTree = {
     examples: [
       'Bildung: Bewertung/Zulassung/Prüfungsentscheidungen.',
       'Beschäftigung: Recruiting, Beförderung, Leistungsbewertung.',
-      'WWesentliche Dienstleistungen: KI unterstützt oder beeinflusst maßgeblich Entscheidungen über Zugang/Anspruch zu zentralen Leistungen (z. B. Kredit/Versicherung, Wohnraum, Sozialleistungen) oder erstellt Einstufungen, die zu erheblichen Nachteilen führen können.',
+      'Wesentliche Dienstleistungen: KI unterstützt oder beeinflusst maßgeblich Entscheidungen über Zugang/Anspruch zu zentralen Leistungen (z. B. Kredit/Versicherung, Wohnraum, Sozialleistungen) oder erstellt Einstufungen, die zu erheblichen Nachteilen führen können.',
     ],
   },
 
@@ -3639,8 +3833,7 @@ export const decisionTree = {
     id: 'A4_TRANSPARENZ_ANWENDBAR',
     type: 'question',
     cluster: 'AI Act',
-    label:
-      'Interagiert das System direkt mit natürlichen Personen oder erzeugt es synthetische Inhalte (Text/Bild/Audio/Video), die gekennzeichnet werden müssen?',
+    label: 'Interagiert das System direkt mit natürlichen Personen oder erzeugt es synthetische Inhalte (Text/Bild/Audio/Video), die gekennzeichnet werden müssen?',
     reference: 'EU AI Act (2024), Art. 50',
     referenceUrl: EU_AI_ACT_LINKS.ART_50,
     yes: 'A4_KEIN_HR_MIT_TRANSPARENZPFLICHTEN',
@@ -3685,8 +3878,8 @@ export const decisionTree = {
 
   // AI Act – Warnungen / Inkonsistenzen
 
-  W_AI_HR_UEBERPRUEFUNG: {
-    id: 'W_AI_HR_UEBERPRUEFUNG',
+  W_KI_HR_UEBERPRUEFUNG: {
+    id: 'W_KI_HR_UEBERPRUEFUNG',
     type: 'leaf',
     cluster: 'AI Act',
     label: 'Warnung: Hochrisiko-Einstufung unklar -> Review und Dokumentation erforderlich.',
@@ -3751,8 +3944,7 @@ export const decisionTree = {
     id: 'D1_ART16_B4',
     type: 'question',
     cluster: 'DORA',
-    label:
-      'Darf für Ihr Unternehmen ein vereinfachter IKT-Risikomanagementrahmen nach Art. 16 angewendet werden?',
+    label: 'Darf für Ihr Unternehmen ein vereinfachter IKT-Risikomanagementrahmen nach Art. 16 angewendet werden?',
     reference: 'DORA (2022), Art. 16',
     referenceUrl: DORA_LINKS.ART_16,
     yes: 'D1_ART16_Y_B4',
@@ -3818,8 +4010,7 @@ export const decisionTree = {
     id: 'B1_SCOPE_NACHWEIS',
     type: 'question',
     cluster: 'DORA',
-    label:
-      'Ist die Einstufung als kritische oder wichtige Funktion nachvollziehbar dokumentiert und freigegeben?',
+    label: 'Ist die Einstufung als kritische oder wichtige Funktion nachvollziehbar dokumentiert und freigegeben?',
     reference: 'DORA (2022), Art. 8',
     referenceUrl: DORA_LINKS.ART_8,
     yes: 'B2',
@@ -3838,7 +4029,7 @@ export const decisionTree = {
     id: 'W_DORA_KRITISCHE_FUNKTION_SCOPE_UEBERPRUEFUNG',
     type: 'leaf',
     cluster: 'DORA',
-    label: 'Scope-Nachweis für kritische/wichtige Funktion fehlt -> Dokumentation/Freigabe nachholen.',
+    label: 'Nachweis für kritische/wichtige Funktion fehlt -> Dokumentation/Freigabe nachholen.',
     reference: 'DORA (2022), Art. 8',
     referenceUrl: DORA_LINKS.ART_8,
     obligations: ['DORA_KRITISCHE_FUNKTION_SCOPE'],
@@ -3888,8 +4079,7 @@ export const decisionTree = {
     id: 'B2_EFFECTIVE',
     type: 'question',
     cluster: 'DORA',
-    label:
-      'Werden KI-Empfehlungen in der Praxis überwiegend ohne substanzielle Prüfung übernommen oder automatisch umgesetzt?',
+    label: 'Werden KI-Empfehlungen in der Praxis überwiegend ohne substanzielle Prüfung übernommen oder automatisch umgesetzt?',
     reference: 'DORA (2022), Art. 6',
     referenceUrl: DORA_LINKS.ART_6,
     yes: 'B2_H',
@@ -3908,8 +4098,7 @@ export const decisionTree = {
     id: 'B2_COMPLIANCE',
     type: 'question',
     cluster: 'DORA',
-    label:
-      'Ist der Einsatz compliance-/risiko-/prüfungsnah oder regulatorisch entscheidend?',
+    label: 'Ist der Einsatz compliance-/risiko-/prüfungsnah oder regulatorisch entscheidend?',
     reference: 'DORA (2022), Art. 6',
     referenceUrl: DORA_LINKS.ART_6,
     yes: 'B2_M_ENH',
@@ -4019,8 +4208,7 @@ export const decisionTree = {
     id: 'T1_TLPT_APPLIES',
     type: 'question',
     cluster: 'DORA',
-    label:
-      'Unterliegt Ihr Unternehmen fortgeschrittenen Resilienztests (TLPT) nach DORA (Art. 26–27) bzw. einer entsprechenden behördlichen TLPT-Anordnung?',
+    label: 'Unterliegt Ihr Unternehmen fortgeschrittenen Resilienztests (TLPT) nach DORA (Art. 26–27) bzw. einer entsprechenden behördlichen TLPT-Anordnung?',
     reference: 'DORA (2022), Art. 26–27',
     referenceUrl: DORA_LINKS.ART_26,
     yes: 'T1_TLPT',
@@ -4070,8 +4258,7 @@ export const decisionTree = {
     id: 'B4_GENAI_LLM_SERVICE',
     type: 'question',
     cluster: 'DORA',
-    label:
-      'Wird ein Dienst für generative KI/LLM/Grundlagenmodell (API) genutzt oder ein vergleichbarer externer Dienst für generative KI?',
+    label: 'Wird ein Dienst für generative KI/LLM/Grundlagenmodell (API) genutzt oder ein vergleichbarer externer Dienst für generative KI?',
     reference: 'DORA (2022), Art. 9 / Art. 28–30',
     referenceUrl: DORA_LINKS.ART_9,
     yes: 'W_DORA_GENAI_LLM_KONTROLLEN',
@@ -4090,8 +4277,7 @@ export const decisionTree = {
     id: 'W_DORA_GENAI_LLM_KONTROLLEN',
     type: 'leaf',
     cluster: 'DORA',
-    label:
-      'Dienst für generative KI/LLM genutzt -> spezifische Kontrollen für generative KI prüfen/umsetzen.',
+    label: 'Dienst für generative KI/LLM genutzt -> spezifische Kontrollen für generative KI prüfen/umsetzen.',
     reference: 'DORA (2022), Art. 9 / Art. 28–30',
     referenceUrl: DORA_LINKS.ART_9,
     obligations: ['DORA_DATENUEBERMITTLUNG_EXTERNE_KI_SCHUTZ', 'DORA_GENERATIVE_KI_LLM_ALS_DIENST_KONTROLLEN'],
@@ -4105,8 +4291,7 @@ export const decisionTree = {
     id: 'B5',
     type: 'question',
     cluster: 'DORA',
-    label:
-      'Würde ein Ausfall des Dienstleisters kurzfristig eine kritische/wichtige Funktion oder wesentliche regulatorische Pflichten beeinträchtigen?',
+    label: 'Würde ein Ausfall des Dienstleisters kurzfristig eine kritische/wichtige Funktion oder wesentliche regulatorische Pflichten beeinträchtigen?',
     reference: 'DORA (2022), Art. 28–29',
     referenceUrl: DORA_LINKS.ART_28,
     yes: 'B5_SUBSTITUIERBARKEIT',
@@ -4125,8 +4310,7 @@ export const decisionTree = {
     id: 'B5_SUBSTITUIERBARKEIT',
     type: 'question',
     cluster: 'DORA',
-    label:
-      'Gibt es eine realistische Ausstiegs-/Substitutionsmöglichkeit (vertraglich + technisch) innerhalb einer definierten Frist?',
+    label: 'Gibt es eine realistische Ausstiegs-/Substitutionsmöglichkeit (vertraglich + technisch) innerhalb einer definierten Frist?',
     reference: 'DORA (2022), Art. 28–30',
     referenceUrl: DORA_LINKS.ART_28,
     yes: 'B5_KONZENTRATION',
@@ -4145,8 +4329,7 @@ export const decisionTree = {
     id: 'B5_KONZENTRATION',
     type: 'question',
     cluster: 'DORA',
-    label:
-      'Besteht ein Konzentrationsrisiko (gleicher Anbieter für mehrere kritische Dienste/Regionen/BCM-Szenarien)?',
+    label: 'Besteht ein Konzentrationsrisiko (gleicher Anbieter für mehrere kritische Dienste/Regionen/BCM-Szenarien)?',
     reference: 'DORA (2022), Art. 28–29',
     referenceUrl: DORA_LINKS.ART_28,
     yes: 'B5_C',
@@ -4171,7 +4354,7 @@ export const decisionTree = {
     next: 'B5_KRITIKALITAETS_UEBERPRUEFUNG',
     info:
       'Bei (potenziell) kritischen IKT-Drittanbietern gelten erweiterte Anforderungen aus DORA, ' +
-      'insbesondere zu Monitoring, Konzentrationsrisiken, Ausstiegsstrategien und ggf. Aufsichtsinteraktion.',
+      'insbesondere zu Überwachung, Konzentrationsrisiken, Ausstiegsstrategien und ggf. Aufsichtsinteraktion.',
     examples: [
       'Ein großer KI-Dienstleister, über den ein wesentlicher Teil der Kernprozesse läuft.',
       'Ein Cloud-Anbieter, der zentrale Datenhaltung und KI-Ausführung bündelt.',
@@ -4192,7 +4375,7 @@ export const decisionTree = {
       'für IKT-Drittanbieter, angemessen zum Risiko.',
     examples: [
       'Externe KI-Komponente für nicht-entscheidungsrelevante Auswertungen.',
-      'Dienstleister für vorverarbeitete Datenfeeds ohne direkten Kundenauswirkung.',
+      'Dienstleister für vorverarbeitete Datenfeeds ohne direkte Kundenauswirkung.',
     ],
   },
 
@@ -4447,11 +4630,136 @@ export const decisionTree = {
   },
 };
 
+const LOCALIZED_MODEL_CACHE = new Map();
+
+/**
+ * Merged nur die textrelevanten Felder eines Knotens aus dem Locale-Overlay.
+ */
+function mergeDecisionNode(node, translation) {
+  if (!translation || typeof translation !== 'object') return node;
+
+  return {
+    ...node,
+    label: translation.label ?? node.label,
+    info: translation.info ?? node.info,
+    examples: translation.examples ?? node.examples,
+    checkpointText: translation.checkpointText ?? node.checkpointText,
+    yesLabel: translation.yesLabel ?? node.yesLabel,
+    noLabel: translation.noLabel ?? node.noLabel,
+    reference: translation.reference ?? node.reference,
+  };
+}
+
+/**
+ * Merged nur die textrelevanten Felder eines Requirement-Items aus dem Locale-Overlay.
+ */
+function mergeObligationItem(item, translation) {
+  if (!translation || typeof translation !== 'object') return item;
+
+  return {
+    ...item,
+    question: translation.question ?? item.question,
+    todo: translation.todo ?? item.todo,
+    info: translation.info ?? item.info,
+    examples: translation.examples ?? item.examples,
+    reference: translation.reference ?? item.reference,
+  };
+}
+
+/**
+ * Ersetzt gespeicherte Basis-Links durch sprachspezifische Framework-Links.
+ */
+function localizeReferenceFields(entry, locale) {
+  if (!entry || typeof entry !== 'object') return entry;
+
+  return {
+    ...entry,
+    referenceUrl: localizeLegalReferenceUrl(entry.referenceUrl, locale),
+  };
+}
+
+/**
+ * Baut für eine Sprache ein lokalisiertes Modell und fällt für fehlende Keys auf die Basisdaten zurück.
+ */
+export function getLocalizedModel(locale = DEFAULT_LOCALE) {
+  if (LOCALIZED_MODEL_CACHE.has(locale)) {
+    return LOCALIZED_MODEL_CACHE.get(locale);
+  }
+
+  const messages = getModelMessages(locale) ?? {};
+  const localizedDecisionTree = Object.fromEntries(
+    Object.entries(baseDecisionTree).map(([id, node]) => [
+      id,
+      localizeReferenceFields(
+        mergeDecisionNode(node, messages?.decisionTree?.[id]),
+        locale
+      ),
+    ])
+  );
+
+  const localizedObligationsCatalog = Object.fromEntries(
+    Object.entries(baseObligationsCatalog).map(([pkgKey, pkg]) => {
+      const pkgTranslation = messages?.obligationsCatalog?.[pkgKey];
+      const itemTranslations = pkgTranslation?.items ?? {};
+
+      return [
+        pkgKey,
+        {
+          ...localizeReferenceFields(pkg, locale),
+          label: pkgTranslation?.label ?? pkg.label,
+          regulation: pkgTranslation?.regulation ?? pkg.regulation,
+          articles: pkgTranslation?.articles ?? pkg.articles,
+          items: (pkg.items ?? []).map((item) =>
+            localizeReferenceFields(
+              mergeObligationItem(item, itemTranslations?.[item.id]),
+              locale
+            )
+          ),
+        },
+      ];
+    })
+  );
+
+  const localizedModel = {
+    decisionTree: localizedDecisionTree,
+    obligationsCatalog: localizedObligationsCatalog,
+  };
+
+  LOCALIZED_MODEL_CACHE.set(locale, localizedModel);
+  return localizedModel;
+}
+
+export function getLocalizedDecisionTree(locale = DEFAULT_LOCALE) {
+  return getLocalizedModel(locale).decisionTree;
+}
+
+export function getLocalizedObligationsCatalog(locale = DEFAULT_LOCALE) {
+  return getLocalizedModel(locale).obligationsCatalog;
+}
+
+/**
+ * Normalisiert den Modellzugriff auf Basisdaten, Sprache oder ein bereits lokalisiertes Modell.
+ */
+function resolveModel(modelOrLocale) {
+  if (typeof modelOrLocale === 'string') {
+    return getLocalizedModel(modelOrLocale);
+  }
+
+  if (modelOrLocale?.decisionTree && modelOrLocale?.obligationsCatalog) {
+    return modelOrLocale;
+  }
+
+  return {
+    decisionTree: baseDecisionTree,
+    obligationsCatalog: baseObligationsCatalog,
+  };
+}
+
 /**
  * Aggregiert aus den Leaf-Knoten im Pfad interne "Locks" (z. B. Hochrisiko erreicht)
  * Diese Locks werden in validateNextNode genutzt, um spätere, widersprüchliche Navigation zu blockieren
  */
-function deriveConsistencyLocks({ pathIds }) {
+function deriveConsistencyLocks({ pathIds, decisionTree }) {
   const locks = new Set();
 
   const ids = Array.isArray(pathIds) ? pathIds : [];
@@ -4480,8 +4788,9 @@ function deriveConsistencyLocks({ pathIds }) {
  *
  * Hinweis: validateNextNode entscheidet ausschließlich die nächste Node-ID; Persistenz/State liegt in der UI
  */
-export function validateNextNode({ currentId, answer, nextId, answers, pathIds }) {
-  const locks = deriveConsistencyLocks({ answers, pathIds });
+export function validateNextNode({ currentId, answer, nextId, answers, pathIds, model }) {
+  const { decisionTree } = resolveModel(model);
+  const locks = deriveConsistencyLocks({ answers, pathIds, decisionTree });
 
   if (currentId === 'A2') {
     if (answer === 'yes') nextId = 'A2_Y';
@@ -4501,36 +4810,19 @@ export function validateNextNode({ currentId, answer, nextId, answers, pathIds }
   }
 
   if (currentId === 'A2_ROLLE_KONFORMITAETSARTEFAKTE') {
-    const initialRole = answers?.A2_ROLLE === 'yes' ? 'anbieter' : 'betreiber';
+    const yes = (k) => answers?.[k] === 'yes';
+    const no = (k) => answers?.[k] === 'no';
 
-    const providerSignals = [
-      'A2_ROLLE_BEREITSTELLUNG',
-      'A2_ROLLE_WESENTLICHE_AENDERUNG',
-      'A2_ROLLE_BETRIEB_KONTROLLE',
-      'A2_ROLLE_KONFORMITAETSARTEFAKTE',
-    ];
+    const mixedByControlAndProvider =
+      yes('A2_ROLLE_BETRIEB_KONTROLLE') &&
+      (yes('A2_ROLLE_BEREITSTELLUNG') || yes('A2_ROLLE_WESENTLICHE_AENDERUNG'));
 
-    const score = providerSignals.reduce(
-      (acc, k) => acc + (answers?.[k] === 'yes' ? 1 : 0),
-      0
-    );
-    
-    // Heuristik:
-    // - score >= 2 => starker Anbieter-Indikator
-    // - score == 0 => starker Betreiber-Indikator
-    // - sonst => Mischrolle/unklar
-    let recommended = 'mixed';
-    if (score >= 2) recommended = 'anbieter';
-    else if (score === 0) recommended = 'betreiber';
+    if (mixedByControlAndProvider) return { nextId: 'A2_ROLLE_SCOPE_UNSICHER' };
 
-    const conservativeReview =
-      (recommended === 'mixed') ||
-      (initialRole === 'anbieter' && score == 0 && answers?.A2_ROLLE_KONFORMITAETSARTEFAKTE !== 'no') ||
-      (initialRole === 'betreiber' && score == 1);
-      
-    if (conservativeReview) return { nextId: 'A2_ROLLE_SCOPE_UNSICHER' };
-    if (recommended === 'anbieter') return { nextId: 'A2_ROLLE_SCOPE_ANBIETER' };
-    return { nextId: 'A2_ROLLE_SCOPE_BETREIBER' }; 
+    if (yes('A2_ROLLE_KONFORMITAETSARTEFAKTE')) return { nextId: 'A2_ROLLE_SCOPE_ANBIETER' };
+    if (no('A2_ROLLE_KONFORMITAETSARTEFAKTE')) return { nextId: 'A2_ROLLE_SCOPE_BETREIBER' };
+
+    return { nextId: 'A2_ROLLE_SCOPE_UNSICHER' };
   }
 
   if (currentId === 'A3_GRFA_TRIGGER_BETREIBER' && answer === 'no') {
@@ -4585,7 +4877,8 @@ export function validateNextNode({ currentId, answer, nextId, answers, pathIds }
  * Falls das Item im obligationsCatalog eine canonicalId definiert, wird diese genutzt;
  * andernfalls fällt die Funktion auf den Instanz-Suffix (pkgKey__itemId) zurück
  */
-export function getCanonicalIdForRequirementInstance(instanceId) {
+export function getCanonicalIdForRequirementInstance(instanceId, model) {
+  const { obligationsCatalog } = resolveModel(model);
   if (!instanceId || !instanceId.includes('__req__') || instanceId.includes('__req__summary')) return null;
 
   const suffix = instanceId.split('__req__')[1];
@@ -4605,7 +4898,8 @@ export function getCanonicalIdForRequirementInstance(instanceId) {
  * Baut aus den obligations eines Leaf-Knotens eine lineare Liste von Requirement-Instanzen
  * Reihenfolge: obligationsCatalog[pkgKey].items in der im Katalog definierten Reihenfolge
  */
-export function getRequirementChain(leafId) {
+export function getRequirementChain(leafId, model) {
+  const { decisionTree, obligationsCatalog } = resolveModel(model);
   const leaf = decisionTree[leafId];
   const obligationKeys = leaf?.obligations ?? [];
 
@@ -4653,11 +4947,10 @@ export function getRequirementChain(leafId) {
  * Ermittelt auf Basis der aktuellen Requirement-Instanz den nächsten Schritt in derselben Leaf-Chain
  * Falls kein weiteres Requirement existiert, wird die Summary-ID zurückgegeben
  */
-export function getNextInRequirementChain(currentReqId) {
+export function getNextInRequirementChain(currentReqId, model) {
   const [leafId] = currentReqId.split('__req__');
-  const { reqs, summaryId } = getRequirementChain(leafId);
+  const { reqs, summaryId } = getRequirementChain(leafId, model);
   const idx = reqs.findIndex((r) => r.id === currentReqId);
   const nextReqId = idx >= 0 && idx + 1 < reqs.length ? reqs[idx + 1].id : undefined;
   return { leafId, nextReqId, summaryId };
 }
-
