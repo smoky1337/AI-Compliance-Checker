@@ -1,18 +1,844 @@
 {
   "decisionTree": {
     "A1": {
-      "label": "Is the proposed solution an AI system according to the EU AI Act?",
-      "info": "First, it is assessed whether the proposed solution meets the definition of an AI system. Only then do additional EU AI Act requirements become relevant.",
+      "label": "Is the proposed solution an AI System according to the EU AI Act?",
+      "info": "First, it is asserted whether the proposed solution fulfills the definition of an AI system. Only if this is true, other requirements of the EU AI Act are relevant. ",
       "examples": [
         "A machine learning model that automatically rates credit scores.",
-        "A static, rule-based system without learning or inference logic.",
-        "A third-party LLM is used in a critical process."
-      ]
+        "A static, rule based system without learn or inference logic.",
+        "A third-party LLM provider is utilized in a critical process."
+      ],
+      "reference": "EU AI Act (2024), Art. 3"
+    },
+    "A0": {
+      "label": "Not an AI system -> EU AI Act not applicable.",
+      "info": "If the system does not fall under the definition of an AI system, the specific EU AI Act obligations do not apply. DORA and internal governance/security requirements may still be relevant.",
+      "examples": [
+        "Pure data visualization without AI logic.",
+        "Classic workflow tool without an ML/AI component."
+      ],
+      "reference": "EU AI Act (2024), Art. 3"
+    },
+    "A2": {
+      "label": "Is there a potentially prohibited practice under the EU AI Act?",
+      "info": "This step checks whether the AI system falls into a category that is generally prohibited under the EU AI Act. If a prohibited practice applies, use is generally not allowed.",
+      "examples": [
+        "Systems that covertly manipulate people in order to influence decisions.",
+        "AI that deliberately exploits the vulnerability of certain groups of people (for example children or people in dependency situations) in order to materially influence their behaviour."
+      ],
+      "reference": "EU AI Act (2024), Art. 5"
+    },
+    "A2_Y": {
+      "label": "Prohibited practice -> prohibit use and trigger escalation.",
+      "info": "Prohibited practices are generally not allowed. Initiate escalation and stop the use of the system.",
+      "examples": [
+        "Stop the rollout and revoke production access.",
+        "Remove existing integrations and production environments.",
+        "Hand over to Compliance for a discontinue/re-scope decision."
+      ],
+      "reference": "EU AI Act (2024), Art. 5"
+    },
+    "G_AI_VERBOTENE_PRAKTIKEN_UEBERPRUEFUNG": {
+      "label": "Review gate: Has use been stopped and the escalation documented?",
+      "info": "Ensures that prohibited practices are not pursued further without a formal stop/escalation decision.",
+      "examples": "No-go decision, case ID, action plan, archived decision documentation.",
+      "checkpointText": "Checkpoint: There is an indication of a potentially prohibited practice. Please complete the review/escalation before continuing and briefly document the decision.",
+      "reference": "EU AI Act (2024), Art. 5"
+    },
+    "A2_ROLLE": {
+      "label": "Are you the deployer or provider of the AI system being integrated?",
+      "info": "This step clarifies the company’s role in the specific use case. The relevant definitions can be found in Art. 3 paras. 3-4.",
+      "examples": [
+        "Provider: you develop the AI system, place it on the market, or make it available.",
+        "Deployer: you use an AI system (internally developed or externally sourced) in your own process."
+      ],
+      "yesLabel": "Provider",
+      "noLabel": "Deployer",
+      "reference": "EU AI Act (2024), Art. 3"
+    },
+    "A2_ROLLE_BEREITSTELLUNG": {
+      "label": "Do you make the AI system available to third parties (or a variant under your brand) or place it on the market?",
+      "info": "Practical provider indicator: you make the system/product available to third parties.",
+      "examples": [
+        "You sell/distribute an AI product to customers (SaaS or on-prem)."
+      ],
+      "reference": "EU AI Act (2024)"
+    },
+    "A2_ROLLE_WESENTLICHE_AENDERUNG": {
+      "label": "Do you make substantial changes to the model/system that go beyond pure configuration?",
+      "info": "\"Substantial modification\" is a strong provider indicator. Pure configuration typically does not count.",
+      "examples": [
+        "Fine-tuning/retraining with your own training data.",
+        "Change of intended purpose.",
+        "New training/feature pipeline or new training data sources."
+      ],
+      "reference": "EU AI Act (2024)"
+    },
+    "A2_ROLLE_BETRIEB_KONTROLLE": {
+      "label": "Do you have operational control over the production AI component, or do you control key operating parameters, regardless of where it is hosted?",
+      "info": "\"Hosting\" (where it runs) is not the same as \"operations\" (who controls it). Answer \"Yes\" if you control production operation or define parameters that materially influence behaviour and risk profile. This is a strong indicator that you carry deployer obligations and, in certain constellations, may also move into the provider role.",
+      "examples": [
+        "Yes: you decide on production rollouts/approvals, define thresholds and rules, change prompt/policy templates, or configure the data sources.",
+        "Yes: you monitor operations (monitoring/logging), handle incidents, deploy updates or model changes, or control retraining/fine-tuning cycles.",
+        "No: the service provider fully operates and configures the AI; you only use it as a fixed service and can merely turn usage on/off or provide business inputs.",
+        "Borderline case (leaning yes): you can change production operating parameters (for example thresholds or feature flags), even though hosting and technical operations remain with the provider."
+      ],
+      "reference": "EU AI Act (2024)"
+    },
+    "A2_ROLLE_BETREIBER_EINSATZZWECK": {
+      "label": "Do you use the AI system in your own business process and determine its purpose and deployment context?",
+      "info": "A deployer is typically the party that uses an AI system in its own process and defines the usage context.",
+      "examples": [
+        "You use the AI in an internal process (for example support, recruiting, risk, compliance) and define its purpose.",
+        "The provider fully defines purpose and deployment context, and you only have \"use\" without any design discretion."
+      ],
+      "reference": "EU AI Act (2024)"
+    },
+    "A2_ROLLE_BETREIBER_DATENVERANTWORTUNG": {
+      "label": "Do you provide key input data and take responsibility for its selection/quality?",
+      "info": "In practice, whoever provides relevant input data and is responsible for its use is usually the deployer or carries deployer obligations.",
+      "examples": [
+        "You feed customer data/transactions/documents into the system and define which data may be used.",
+        "You select data sources and take responsibility for data quality in the usage context."
+      ],
+      "reference": "EU AI Act (2024)"
+    },
+    "A2_ROLLE_KONFORMITAETSARTEFAKTE": {
+      "label": "Do you provide the key evidence and documentation for conformity or security yourself?",
+      "info": "If you must prepare or deliver the central documentation yourself, that is a strong indicator of the \"provider\" role.",
+      "examples": [
+        "You create and maintain the technical documentation yourself (for example technical documentation, risk analysis, tests).",
+        "You provide the required conformity/security evidence to customers or authorities.",
+        "The provider supplies the full documentation, which you adopt and use (for example in operations/integration).",
+        "You receive conformity/security evidence from the provider and do not have to create it yourself."
+      ],
+      "yesLabel": "We provide it ourselves",
+      "noLabel": "We obtain it from the provider",
+      "reference": "EU AI Act (2024)"
+    },
+    "A2_ROLLE_SCOPE_ANBIETER": {
+      "label": "Role recommendation: Provider",
+      "reference": "EU AI Act (2024)"
+    },
+    "A2_ROLLE_SCOPE_BETREIBER": {
+      "label": "Role recommendation: Deployer",
+      "reference": "EU AI Act (2024) – Rollenklärung (intern)"
+    },
+    "A2_ROLLE_SCOPE_UNSICHER": {
+      "label": "Role unclear (uncertain)",
+      "info": "The answers are inconsistent.",
+      "reference": "EU AI Act (2024)"
+    },
+    "A2_GPAI_ANBIETER": {
+      "label": "Is a general-purpose AI model (GPAI) being used?",
+      "info": "A GPAI is a model that can be used for many different tasks and is not limited to one narrowly defined purpose. The term general-purpose AI is defined in Art. 3 para. 63.",
+      "examples": [
+        "Use of a large language model (LLM) via an external API for chat, summarisation, or drafting text.",
+        "Use of a pre-trained foundation model in an in-house application (for example classification, extraction, or generation)."
+      ],
+      "reference": "EU AI Act (2024), Art. 51–52"
+    },
+    "A2_GPAI_SCREENING_ANBIETER": {
+      "label": "GPAI detected -> review screening and supply-chain transparency",
+      "info": "Carry out the screening first; then clarify whether systemic risk is involved.",
+      "reference": "EU AI Act (2024), Art. 51–52"
+    },
+    "A2_GPAI_SYSTEMRISIKO_ANBIETER": {
+      "label": "Is this a GPAI with systemic risk?",
+      "info": "A GPAI with systemic risk is a model with very high capability and broad applicability whose use may have potentially large-scale, severe effects beyond individual cases. Indicators include very broad reach/adoption, high scalability, central dependency of many processes/products, and an increased potential for significant harm.",
+      "examples": [
+        "Yes: a very powerful foundation model is used across the company in many products/processes and is critical to operations.",
+        "Yes: the model is widely integrated into third-party products and, in case of malfunction/misuse, could cause scaled harm.",
+        "Likely no: a narrowly scoped, specialised model for a clearly delimited purpose, with limited reach and no broad reuse.",
+        "Unclear: if reach/capability or potential effects are not well evidenced, choose \"Yes\" conservatively and document the classification."
+      ],
+      "reference": "EU AI Act (2024), Art. 55"
+    },
+    "A2_GPAI_SYSTEMRISIKO_Y_ANBIETER": {
+      "label": "GPAI with systemic risk -> additional obligations",
+      "reference": "EU AI Act (2024), Art. 55"
+    },
+    "A2_GPAI_BETREIBER": {
+      "label": "Is a general-purpose AI model (GPAI) being used?",
+      "info": "A GPAI is a model that can be used for many different tasks and is not limited to one narrowly defined purpose. The term general-purpose AI is defined in Art. 3 para. 63.",
+      "examples": [
+        "Use of a large language model (LLM) via an external API for chat, summarisation, or drafting text.",
+        "Use of a pre-trained foundation model in an in-house application (for example classification, extraction, or generation)."
+      ],
+      "reference": "EU AI Act (2024), Art. 51–52"
+    },
+    "A2_GPAI_SCREENING_BETREIBER": {
+      "label": "GPAI detected -> review screening and supply-chain transparency",
+      "info": "Carry out the screening first; then clarify whether systemic risk is involved.",
+      "reference": "EU AI Act (2024), Art. 51–52"
+    },
+    "A2_GPAI_SYSTEMRISIKO_BETREIBER": {
+      "label": "Is this a GPAI with systemic risk?",
+      "info": "A GPAI with systemic risk is a model with very high capability and broad applicability whose use may have potentially large-scale, severe effects beyond individual cases. Indicators include very broad reach/adoption, high scalability, central dependency of many processes/products, and an increased potential for significant harm.",
+      "examples": [
+        "Yes: a very powerful foundation model is used across the company in many products/processes and is critical to operations.",
+        "Yes: the model is widely integrated into third-party products and, in case of malfunction/misuse, could cause scaled harm.",
+        "Likely no: a narrowly scoped, specialised model for a clearly delimited purpose, with limited reach and no broad reuse.",
+        "Unclear: if reach/capability or potential effects are not well evidenced, choose \"Yes\" conservatively and document the classification."
+      ],
+      "reference": "EU AI Act (2024), Art. 55"
+    },
+    "A2_GPAI_SYSTEMRISIKO_Y_BETREIBER": {
+      "label": "GPAI with systemic risk -> additional obligations (Art. 55)",
+      "reference": "EU AI Act (2024), Art. 55"
+    },
+    "A2_GPAI_UNSICHER": {
+      "label": "Is a general-purpose AI model (GPAI) being used?",
+      "info": "A GPAI is a model that can be used for many different tasks and is not limited to one narrowly defined purpose. The term general-purpose AI is defined in Art. 3 para. 63.",
+      "examples": [
+        "Use of a large language model (LLM) via an external API for chat, summarisation, or drafting text.",
+        "Use of a pre-trained foundation model in an in-house application (for example classification, extraction, or generation)."
+      ],
+      "reference": "EU AI Act (2024), Art. 51–52"
+    },
+    "A2_GPAI_SCREENING_UNSICHER": {
+      "label": "GPAI detected -> review screening and supply-chain transparency",
+      "info": "Carry out the screening first; then clarify whether systemic risk is involved.",
+      "reference": "EU AI Act (2024), Art. 51–52"
+    },
+    "A2_GPAI_SYSTEMRISIKO_UNSICHER": {
+      "label": "Is this a GPAI with systemic risk?",
+      "info": "A GPAI with systemic risk is a model with very high capability and broad applicability whose use may have potentially large-scale, severe effects beyond individual cases. Indicators include very broad reach/adoption, high scalability, central dependency of many processes/products, and an increased potential for significant harm.",
+      "examples": [
+        "Yes: a very powerful foundation model is used across the company in many products/processes and is critical to operations.",
+        "Yes: the model is widely integrated into third-party products and, in case of malfunction/misuse, could cause scaled harm.",
+        "Likely no: a narrowly scoped, specialised model for a clearly delimited purpose, with limited reach and no broad reuse.",
+        "Unclear: if reach/capability or potential effects are not well evidenced, choose \"Yes\" conservatively and document the classification."
+      ],
+      "reference": "EU AI Act (2024), Art. 55"
+    },
+    "A2_GPAI_SYSTEMRISIKO_Y_UNSICHER": {
+      "label": "GPAI with systemic risk -> additional obligations",
+      "reference": "EU AI Act (2024), Art. 55"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_ANBIETER_FINANZ": {
+      "label": "Does the Annex III domain \"finance\" apply?",
+      "info": "If this domain applies, high-risk classification is very likely. If uncertain, choose yes conservatively and document the review.",
+      "examples": [
+        "Creditworthiness/credit scoring of natural persons.",
+        "Pricing/risk assessment for life or health insurance."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_ANBIETER_SICHERHEITSBAUTEIL": {
+      "label": "Is the AI system a safety component or part of a product under Art. 6?",
+      "info": "A safety component is a hardware/software component of a product that performs a protective function or is essential to safe use.",
+      "examples": [
+        "AI as a safety-relevant component in a regulated product (for example control/monitoring of a protective function).",
+        "AI makes/supports decisions that directly influence safe operation of a device (for example emergency shutdown, collision avoidance, overheating protection).",
+        "AI is part of a system that is classified as safety-critical for conformity assessment (for example as a \"safety function\" in the technical dossier)."
+      ],
+      "reference": "EU AI Act (2024), Art. 6"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_ANBIETER_BIOMETRIE": {
+      "label": "Does the Annex III domain \"biometrics\" apply?",
+      "examples": [
+        "Biometric identification or biometric categorisation of natural persons."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_ANBIETER_KRIT_INFRA": {
+      "label": "Does the Annex III domain \"critical infrastructure\" apply?",
+      "examples": [
+        "AI for control/monitoring of critical infrastructure with potential safety impacts."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_ANBIETER_BILDUNG_ARBEIT_DIENSTE": {
+      "label": "Does any of the Annex III domains apply: education, employment/personnel management, or access to essential services?",
+      "info": "This combined question reduces false negatives when the use case is not \"finance\" but may still fall under Annex III.",
+      "examples": [
+        "Education: evaluation/admission/examination decisions.",
+        "Employment: recruiting, promotion, performance evaluation.",
+        "Essential services: access to services or classifications with significant effects."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_FIN_KREDIT_ANBIETER": {
+      "label": "Is the AI system intended for creditworthiness/credit scoring of natural persons (excluding pure financial fraud detection)?",
+      "info": "If the system is intended for creditworthiness/credit scoring, this is an explicit high-risk use case. Exception: pure financial fraud detection is excluded.",
+      "examples": [
+        "AI calculates a credit score and proposes a credit limit or interest rate for retail customers on that basis.",
+        "Automated creditworthiness decision recommendations that are effectively accepted.",
+        "Fraud detection only (for example transaction anomalies) -> likely no here."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_FIN_VERSICHERUNGS_ANBIETER": {
+      "label": "Is the AI system intended for risk assessment and pricing in life/health insurance for natural persons?",
+      "info": "Pricing/risk assessment in life and health insurance for natural persons is an explicit high-risk use case.",
+      "examples": [
+        "Pricing/insurance assistance that influences premiums or acceptance.",
+        "Risk classification for life/health insurance."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_ANBIETER": {
+      "label": "None of the previous Annex III/Art. 6 triggers applied clearly: is there nevertheless a high-risk case that must be documented?",
+      "info": "If yes, proceed conservatively as high-risk. The rationale/boundary assessment (Annex III/Art. 6) must be documented in an audit-ready manner.",
+      "examples": [
+        "The use case may fall into an Annex III domain that is not explicitly covered in the question tree.",
+        "Compliance classifies the case as high-risk (provisionally), but the rationale still has to be formalised.",
+        "Uncertainty: choose yes conservatively -> create a review record and classification rationale."
+      ],
+      "reference": "EU AI Act (2024), Art. 6"
+    },
+    "A3_HR_ANBIETER": {
+      "label": "High-risk AI -> apply high-risk obligations.",
+      "info": "The system is classified as high-risk AI. This triggers the extensive obligations (including risk, data, and governance requirements).",
+      "examples": [
+        "AI system for assessing the creditworthiness of natural persons (for example for lending, credit limits, or conditions).",
+        "Models with significant effects on access to financial products."
+      ],
+      "reference": "EU AI Act (2024), Art. 6"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_BETREIBER_FINANZ": {
+      "label": "Does the Annex III domain \"finance\" apply?",
+      "info": "If this domain applies, high-risk classification is very likely. If uncertain, choose yes conservatively and document the review.",
+      "examples": [
+        "Creditworthiness/credit scoring of natural persons.",
+        "Pricing/risk assessment for life or health insurance."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_BETREIBER_SICHERHEITSBAUTEIL": {
+      "label": "Is the AI system a safety component or part of a product under Art. 6?",
+      "info": "A safety component is a hardware/software component of a product that performs a protective function or is essential to safe use.",
+      "examples": [
+        "AI as a safety-relevant component in a regulated product (for example control/monitoring of a protective function).",
+        "AI makes/supports decisions that directly influence safe operation of a device (for example emergency shutdown, collision avoidance, overheating protection).",
+        "AI is part of a system that is classified as safety-critical for conformity assessment (for example as a \"safety function\" in the technical dossier)."
+      ],
+      "reference": "EU AI Act (2024), Art. 6"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_BETREIBER_BIOMETRIE": {
+      "label": "Does the Annex III domain \"biometrics\" apply?",
+      "examples": [
+        "Biometric identification or biometric categorisation of natural persons."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_BETREIBER_KRIT_INFRA": {
+      "label": "Does the Annex III domain \"critical infrastructure\" apply?",
+      "examples": [
+        "AI for control/monitoring of critical infrastructure with potential safety impacts."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_ANHANG_III_DOMAENE_BETREIBER_BILDUNG_ARBEIT_DIENSTE": {
+      "label": "Does any of the Annex III domains apply: education, employment/personnel management, or access to essential services?",
+      "info": "This combined question reduces false negatives when the use case is not \"finance\" but may still fall under Annex III.",
+      "examples": [
+        "Education: evaluation/admission/examination decisions.",
+        "Employment: recruiting, promotion, performance evaluation.",
+        "Essential services: AI materially supports or influences decisions on access/entitlement to key services (for example credit/insurance, housing, social benefits) or produces classifications that may lead to significant disadvantages."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_FIN_KREDIT_BETREIBER": {
+      "label": "Is the AI system intended for creditworthiness/credit scoring of natural persons (excluding pure financial fraud detection)?",
+      "info": "If the system is intended for creditworthiness/credit scoring, this is an explicit high-risk use case. Exception: pure financial fraud detection is excluded.",
+      "examples": [
+        "AI calculates a credit score and proposes a credit limit or interest rate for retail customers on that basis.",
+        "Automated creditworthiness decision recommendations that are effectively accepted.",
+        "Fraud detection only (for example transaction anomalies) -> likely no here."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_HR_FIN_VERSICHERUNGS_BETREIBER": {
+      "label": "Is the AI system intended for risk assessment and pricing in life/health insurance for natural persons?",
+      "info": "Pricing/risk assessment in life and health insurance for natural persons is an explicit high-risk use case.",
+      "examples": [
+        "Pricing/insurance assistance that influences premiums or acceptance.",
+        "Risk classification for life/health insurance."
+      ],
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "A3_BETREIBER": {
+      "label": "None of the previous Annex III/Art. 6 triggers applied clearly: is there nevertheless a high-risk case (for example another Annex III domain) that must be documented?",
+      "info": "If yes, proceed conservatively as high-risk. The rationale/boundary assessment (Annex III/Art. 6) must be documented in an audit-ready manner.",
+      "examples": [
+        "Despite negative triggers, the deployment context could still fall into a high-risk category (for example Annex III domains not explicitly covered here).",
+        "Internal pre-assessment sees high-risk indicators, but the formal classification is still missing.",
+        "Uncertainty: choose yes conservatively -> create a review record and classification rationale."
+      ],
+      "reference": "EU AI Act (2024), Art. 6"
+    },
+    "A3_HR_BETREIBER": {
+      "label": "High-risk AI -> apply high-risk obligations.",
+      "info": "The system is classified as high-risk AI. This triggers the extensive obligations (including risk, data, and governance requirements).",
+      "examples": [
+        "AI system for assessing the creditworthiness of natural persons (for example for lending, credit limits, or conditions).",
+        "Models with significant effects on access to financial products."
+      ],
+      "reference": "EU AI Act (2024), Art. 6"
+    },
+    "A3_GRFA_HEUR_ZUGANG_WESENTLICHE_DIENSTE": {
+      "label": "Can the system influence access to essential services/opportunities (directly or in practice)?",
+      "info": "FRIA risk indicator: if outcomes/decision access are influenced, a fundamental-rights impact is plausible.",
+      "examples": [
+        "Credit decisions/limits/conditions for natural persons.",
+        "Pricing/insurance processes with effects on premiums/acceptance."
+      ],
+      "reference": "EU AI Act (2024), Art. 27"
+    },
+    "A3_GRFA_HEUR_DISKRIMINIERUNG": {
+      "label": "Is there a plausible discrimination/fairness risk?",
+      "info": "FRIA is often triggered by discrimination risks (especially in decisions affecting persons).",
+      "examples": [
+        "Features correlate with protected characteristics.",
+        "Historical data contains structural biases."
+      ],
+      "reference": "EU AI Act (2024), Art. 27"
+    },
+    "A3_GRFA_HEUR_VULNERABLE_GRUPPEN": {
+      "label": "Are vulnerable groups affected, or is a special need for protection plausible?",
+      "info": "The greater the need for protection, the more appropriate a conservative FRIA approach becomes.",
+      "examples": [
+        "Particularly vulnerable customer groups, financial hardship, low digital literacy."
+      ],
+      "reference": "EU AI Act (2024), Art. 27"
+    },
+    "A3_GRFA_HEUR_AUTOMATISIERUNGSGRAD": {
+      "label": "Are recommendations typically accepted, or are control options limited?",
+      "info": "If the AI is effectively decision-driving, fundamental-rights risk increases.",
+      "examples": [
+        "High acceptance rate without substantive review.",
+        "Limited explainability/contestability for affected persons."
+      ],
+      "reference": "EU AI Act (2024), Art. 27"
+    },
+    "A3_GRFA_TRIGGER_BETREIBER": {
+      "label": "Is a fundamental rights impact assessment (FRIA) under Art. 27 required for this high-risk use case?",
+      "info": "FRIA is not limited to financial use cases. It must be assessed in context, for example for high-risk use cases under Annex III or where deployment may have significant effects on fundamental rights. Even if FRIA is not required, the obligation review (note/rationale) must still be documented in an audit-ready manner.",
+      "examples": [
+        "Yes: Creditworthiness/credit scoring or underwriting in life/health insurance (Annex III).",
+        "Yes: High-risk system with significant impact on access to essential services where fundamental-rights risks are plausible.",
+        "No: After documented review, no additional FRIA obligation applies; note/rationale is available."
+      ],
+      "reference": "EU AI Act (2024), Art. 27"
+    },
+    "W_KI_GRFA_REVIEW": {
+      "label": "FRIA: Conservative review required.",
+      "info": "At least one FRIA trigger was answered with yes. If uncertain, continue conservatively as if FRIA were required until the review is completed.",
+      "reference": "EU AI Act (2024), Art. 27"
+    },
+    "A3_HR_BETREIBER_GRFA": {
+      "label": "High-risk AI -> apply deployer obligations (including FRIA under Art. 27).",
+      "info": "FRIA is required: in addition to deployer obligations, FRIA documentation, review/approval, and action tracking must be implemented and evidenced.",
+      "reference": "EU AI Act (2024), Art. 26–27"
+    },
+    "A3_HR_BETREIBER_OHNE_GRFA": {
+      "label": "High-risk AI -> apply deployer obligations (FRIA not required; document the obligation review).",
+      "info": "FRIA is not required: no full FRIA package is triggered, but the FRIA obligation review itself (note/rationale) must be evidenced in an audit-ready way.",
+      "reference": "EU AI Act (2024), Art. 26–27"
+    },
+    "A3_KEIN_HR_PRUEFUNG": {
+      "label": "No high-risk classification identified: is that classification transparently justified in an appropriate document?",
+      "info": "Art. 50 does not apply automatically to non-high-risk systems. Before transparency is reviewed, the non-high-risk classification should be documented in a traceable way.",
+      "examples": [
+        "Short rationale including intended purpose, user group, and impact of the output.",
+        "Annex III check was performed and filed."
+      ],
+      "reference": "EU AI Act (2024), Art. 6"
+    },
+    "A4_TRANSPARENZ_ANWENDBAR": {
+      "label": "Does the system interact directly with natural persons, or does it generate synthetic content (text/image/audio/video) that must be labeled?",
+      "info": "Art. 50 is typically triggered by direct interaction with people or by synthetic content that requires disclosure/labelling.",
+      "examples": [
+        "Chatbot/customer assistant that interacts directly with customers.",
+        "Generation of text/image/audio/video for external use.",
+        "Purely internal tool with no direct interaction and no outputs requiring disclosure."
+      ],
+      "reference": "EU AI Act (2024), Art. 50"
+    },
+    "A4_KEIN_HR_MIT_TRANSPARENZPFLICHTEN": {
+      "label": "No high-risk classification -> Art. 50 transparency obligations apply.",
+      "info": "The system remains non-high-risk, but transparency requirements apply due to interaction/content output. AI literacy/knowledge must also be ensured.",
+      "examples": [
+        "Disclosure/notice in the user interface, policy, and evidence of training/instruction."
+      ],
+      "reference": "EU AI Act (2024), Art. 50"
+    },
+    "A4_KEIN_HR_NUR_GOVERNANCE_BASIS": {
+      "label": "No high-risk classification -> no Art. 50 triggers -> only ensure knowledge obligations.",
+      "info": "If no Art. 50 transparency triggers apply, the clear AI Act obligation remaining in the tool is to ensure AI literacy/knowledge.",
+      "reference": "EU AI Act (2024), Art. 4"
+    },
+    "W_KI_HR_UEBERPRUEFUNG": {
+      "label": "Warning: High-risk classification unclear -> review and documentation required.",
+      "info": "This node requires formal clarification before integration continues.",
+      "examples": "Review record, classification rationale, and external advice if needed.",
+      "checkpointText": "Checkpoint: The high-risk classification is not sufficiently evidenced. Please review and document the classification transparently, including purpose, context, and Annex III assessment, before proceeding.",
+      "reference": "EU AI Act (2024), Art. 6"
+    },
+    "W_KI_WIDERSPRUCH": {
+      "label": "Contradiction detected -> review/escalation required.",
+      "info": "Inconsistent answers should not lead to silent assumptions or implicit downgrading.",
+      "examples": "Review the path, revalidate decisions, involve the governance committee."
+    },
+    "A3_HR_BETREIBER_FIN": {
+      "label": "High-risk AI (finance, Annex III, point 5) -> apply deployer obligations including FRIA.",
+      "info": "FRIA is not limited to financial cases; it must be assessed in context (Art. 27). The decision tree therefore performs a separate FRIA decision and only triggers the full FRIA obligations if the answer is yes. If no, at least the obligation review itself (note/rationale) is still required as evidence.",
+      "reference": "EU AI Act (2024), Anhang III"
+    },
+    "D0": {
+      "label": "Does your organization fall within the scope of DORA?",
+      "info": "DORA only applies to financial entities within the meaning of Art. 2. If your organization does not fall within that scope, the DORA review is not continued.",
+      "examples": [
+        "Yes: credit institution, payment institution, investment firm, or insurance undertaking.",
+        "No: company outside the financial sector with no DORA scope."
+      ],
+      "reference": "DORA (2022), Art. 2"
+    },
+    "D1_ART16_B4": {
+      "label": "May a simplified ICT risk management framework under Art. 16 be applied to your organization?",
+      "info": "Art. 16 is not a general scaling-down based on size, but an explicitly regulated exception for certain, mostly smaller or exempt financial entities. For these entities, the detailed requirements of Arts. 5-15 do not apply; instead, a simplified ICT risk management framework is permitted.",
+      "examples": [
+        "Small and non-interconnected investment firm under the relevant MiFID/IFR criteria.",
+        "Payment institution treated as an 'exempted payment institution' under national PSD2 implementation (for example limited product scope or other PSD2 exemption cases).",
+        "E-money institution treated as an 'exempted e-money institution' under national implementation of the E-Money Directive (for example limited scope of activities or a national exemption).",
+        "'Exempted institution' within the meaning of CRD exemption categories, provided the member state does NOT use the DORA exemption under Art. 2(4) and DORA therefore still applies.",
+        "Small institution for occupational retirement provision that qualifies as 'small' under the relevant IORP rules/thresholds."
+      ],
+      "reference": "DORA (2022), Art. 16"
+    },
+    "D1_ART16_Y_B4": {
+      "label": "Art. 16 applicable -> implement simplified ICT RMF (minimum requirements).",
+      "info": "The light variant is audit-ready here because it is explicitly based on Art. 16, including supporting evidence.",
+      "reference": "DORA (2022), Art. 16"
+    },
+    "D1_ART16_N_B4": {
+      "label": "Art. 16 not applicable -> scaled baseline requirements.",
+      "info": "A scaled implementation is permissible, but the rationale must be traceable: Art. 16 is NOT the legal basis.",
+      "reference": "DORA (2022), Art. 4 i. V. m. Art. 5–15"
+    },
+    "B1": {
+      "label": "Does the AI system support a critical or important function?",
+      "info": "This question clarifies whether the AI system is used in processes that are critical or important for the organization. That determines how strict the ICT risk management and resilience requirements under DORA need to be. The exact definition can be found in Art. 3(22).",
+      "examples": [
+        "Critical: payments, lending, risk management.",
+        "Non-critical: internal knowledge search with no core-process impact."
+      ],
+      "reference": "DORA (2022), Art. 3"
+    },
+    "B1_SCOPE_NACHWEIS": {
+      "label": "Is the classification as a critical or important function documented and approved in a traceable way?",
+      "info": "For the classification to be audit-ready, the scope must be derived cleanly: which process is affected, which dependencies exist, and which impact/time tolerances apply.",
+      "examples": [
+        "Impact analysis including affected services/processes and business owners.",
+        "RTO/RPO or tolerance thresholds (for example MTPD) are documented and aligned.",
+        "Approval by risk management/BCM/management body or the responsible committee is stored in versioned form."
+      ],
+      "reference": "DORA (2022), Art. 8"
+    },
+    "W_DORA_KRITISCHE_FUNKTION_SCOPE_UEBERPRUEFUNG": {
+      "label": "Evidence for critical/important function missing -> complete documentation/approval.",
+      "info": "Without evidence on scope, dependencies, and tolerances, the classification is not governance- or audit-ready. Please document the rationale and approve it formally.",
+      "reference": "DORA (2022), Art. 8"
+    },
+    "B2": {
+      "label": "Does the AI system directly influence operational or financial decisions?",
+      "info": "Within critical/important functions, this question distinguishes whether the AI system itself directly makes/drives decisions or merely supports them. Direct influence leads to stricter control requirements.",
+      "examples": [
+        "Direct: AI makes/drives a credit decision or limits.",
+        "Indirect: AI provides recommendations that are reviewed manually."
+      ],
+      "reference": "DORA (2022), Art. 6"
+    },
+    "B2_H": {
+      "label": "High criticality -> DORA baseline + resilience testing.",
+      "info": "The system has high criticality and directly influences decisions. At minimum, the DORA baseline applies, plus additional internal controls and monitoring.",
+      "examples": [
+        "Credit-decision AI with immediate execution in the core banking system.",
+        "Liquidity management where AI recommendations are executed automatically."
+      ],
+      "reference": "DORA (2022), Art. 26"
+    },
+    "B2_EFFECTIVE": {
+      "label": "In practice, are AI recommendations mostly accepted without substantive review or implemented automatically?",
+      "info": "Even if a human formally decides, the AI may effectively drive the decision. If recommendations are typically accepted or automated, stronger controls are appropriate.",
+      "examples": [
+        "Recommendation is accepted without deviation in more than 80% of cases.",
+        "Workflows implement AI recommendations automatically.",
+        "Operations staff review systematically and document deviations (answer: no)."
+      ],
+      "reference": "DORA (2022), Art. 6"
+    },
+    "B2_COMPLIANCE": {
+      "label": "Is the use case compliance-, risk-, or audit-related, or otherwise regulatory-decisive?",
+      "info": "If AI use influences compliance, risk steering, or audit/evidence processes, the requirements usually need to be implemented more strictly: controls and evidence must be particularly robust. In such cases, a lean control setup is often insufficient.",
+      "examples": [
+        "AI creates or influences regulatory filings/reports (for example supervisory reporting or outward-facing internal risk reports).",
+        "AI influences controls or control evidence (for example which cases are reviewed, how exceptions are justified, or which evidence is produced).",
+        "AI is used in internal reviews/audits or changes audit paths (for example sampling logic or risk assessments)."
+      ],
+      "reference": "DORA (2022), Art. 6"
+    },
+    "B2_M": {
+      "label": "Medium criticality -> DORA baseline according to criticality.",
+      "info": "The system is relevant for important functions but does not make fully automated decisions. The DORA baseline can be implemented proportionately according to criticality and risk.",
+      "examples": [
+        "An assistance system that provides recommendations which staff review and approve before implementation.",
+        "Monitoring dashboards that provide warnings without triggering automatic actions."
+      ],
+      "reference": "DORA (2022), Art. 6"
+    },
+    "B2_M_ENH": {
+      "label": "Medium criticality -> enhanced DORA baseline.",
+      "info": "Even without direct decision authority, compliance-adjacent use cases can trigger heightened requirements. Here, the full DORA baseline applies, including governance and controls.",
+      "examples": [
+        "AI prioritizes/classifies findings in control testing or audit preparation.",
+        "AI supports regulatory reports that are subject to review."
+      ],
+      "reference": "DORA (2022), Art. 6"
+    },
+    "B3": {
+      "label": "Is AI used only in a supporting capacity?",
+      "info": "This checks whether the AI system is used, but only plays a subordinate, non-critical role. Even then, baseline DORA requirements may still be relevant.",
+      "examples": [
+        "AI-supported text block suggestions for internal documentation.",
+        "A chatbot for internal IT support requests."
+      ],
+      "reference": "DORA (2022), Art. 6"
+    },
+    "B3_N": {
+      "label": "Non-critical AI support -> DORA baseline according to criticality.",
+      "info": "The AI is used only in a supporting way and not in critical core processes. Baseline ICT controls apply, but they are less extensive.",
+      "examples": [
+        "Tool for automatic generation of meeting notes.",
+        "Internal recommendation systems with no direct customer impact."
+      ],
+      "reference": "DORA (2022), Art. 6"
+    },
+    "B3_R": {
+      "label": "Criticality unclear -> conservative classification and documentation.",
+      "info": "If criticality is unclear, a conservative classification should be chosen and documented properly. DORA requirements should be interpreted more strictly rather than too lightly.",
+      "examples": [
+        "Novel AI application whose impact on the process is not yet fully understood.",
+        "Pilot projects with limited but potentially growing significance."
+      ],
+      "reference": "DORA (2022), Art. 8"
+    },
+    "T1_TLPT_APPLIES": {
+      "label": "Is your organization subject to advanced resilience testing (TLPT) under DORA (Arts. 26-27) or to a corresponding supervisory TLPT order?",
+      "info": "TLPT does not become mandatory automatically just because of criticality. The obligation typically depends on the classification or order applicable to the organization. Even if TLPT does not apply, a general testing program under Arts. 24-25 is still required.",
+      "examples": [
+        "The organization is subject to TLPT or receives a corresponding supervisory requirement.",
+        "TLPT planning follows the threat-led approach with defined frequency and governance."
+      ],
+      "reference": "DORA (2022), Art. 26–27"
+    },
+    "T1_TLPT": {
+      "label": "TLPT required -> apply TLPT obligations in addition to the testing program.",
+      "info": "If TLPT applies, additional TLPT-specific requirements are added on top of the general testing-program obligations.",
+      "reference": "DORA (2022), Art. 26–27"
+    },
+    "B4": {
+      "label": "Is the system provided, wholly or partly, by an external ICT service provider?",
+      "info": "This question clarifies whether the AI system is obtained as an external service, for example via a cloud or AI platform. That determines which DORA requirements for ICT third-party providers apply.",
+      "examples": [
+        "Use of an external LLM API service or an AI platform from a large cloud provider.",
+        "Completely internally operated model with no external ICT service providers (answer: no)."
+      ],
+      "reference": "DORA (2022), Art. 28"
+    },
+    "B4_GENAI_LLM_SERVICE": {
+      "label": "Is a generative AI/LLM/foundation-model service (API) used, or a comparable external service for generative AI?",
+      "info": "This path addresses specific generative-AI risks such as data minimization/redaction, retention, provider assurances, model versioning/change notices, prompt/response logging, security filters, and abuse prevention. If you use an external ICT service but not an LLM/generative-AI service, choose no.",
+      "examples": [
+        "Integration of an external chat/text or image generation service via API.",
+        "Use of a hosted LLM/foundation model from a cloud service provider.",
+        "RAG chatbot that sends prompts/context to an external LLM service."
+      ],
+      "reference": "DORA (2022), Art. 9 / Art. 28–30"
+    },
+    "W_DORA_GENAI_LLM_KONTROLLEN": {
+      "label": "Generative AI/LLM service used -> review and implement specific generative-AI controls.",
+      "info": "This node generates additional findings/requirements for generative AI/LLM without interrupting the DORA path. It systematically addresses common audit gaps such as assurances against training on customer data, version/change management, logging, and security/abuse controls.",
+      "reference": "DORA (2022), Art. 9 / Art. 28–30"
+    },
+    "B5": {
+      "label": "Would a provider outage in the short term impair a critical/important function or key regulatory obligations?",
+      "info": "Potential criticality is assessed via impact and dependency. If an outage would break your RTO/RPO or your ability to meet regulatory obligations, that is a strong indicator of criticality.",
+      "examples": [
+        "Single point of failure: without the service, a critical process stops, such as a payments subprocess or AML workflow.",
+        "Provider outage leads to a regulatory breach, for example controls/reporting/BCM requirements can no longer be fulfilled.",
+        "RTO/RPO cannot be met without the provider."
+      ],
+      "reference": "DORA (2022), Art. 28–29"
+    },
+    "B5_SUBSTITUIERBARKEIT": {
+      "label": "Is there a realistic exit/substitution option, contractually and technically, within a defined timeframe?",
+      "info": "Exit does not only mean terminating the contract; it means being able to migrate in practice, including data portability, interfaces, migration path, and tested procedures.",
+      "examples": [
+        "Data portability: export/transfer of data and configurations is possible.",
+        "Model portability: an alternative provider or on-premises option is realistic.",
+        "Contract: termination/exit rights, rules for subcontractors, audit rights.",
+        "Migration has been validated at least as a plan, ideally as a test."
+      ],
+      "reference": "DORA (2022), Art. 28–30"
+    },
+    "B5_KONZENTRATION": {
+      "label": "Is there a concentration risk, for example the same provider serving multiple critical services, regions, or BCM scenarios?",
+      "info": "Concentration risk arises, for example, when the AI provider combines data hosting, inference, and core platform services, creating shared failure domains.",
+      "examples": [
+        "The same large cloud provider operates AI, the data platform, and the central application layer.",
+        "Shared failure domain: same region/control plane for multiple critical workloads.",
+        "Several critical processes depend on the same provider, contract, or subcontractor."
+      ],
+      "reference": "DORA (2022), Art. 28–29"
+    },
+    "B5_C": {
+      "label": "Potentially critical ICT third-party provider -> enhanced third-party obligations.",
+      "info": "Potentially critical ICT third-party providers are subject to enhanced DORA requirements, especially around monitoring, concentration risks, exit strategies, and possibly supervisory interaction.",
+      "examples": [
+        "A large AI service provider through which a substantial share of core processes runs.",
+        "A cloud provider that combines central data hosting and AI execution."
+      ],
+      "reference": "DORA (2022), Art. 28"
+    },
+    "B5_N": {
+      "label": "Non-critical ICT third-party provider -> standard obligations.",
+      "info": "The ICT service provider is not classified as critical. Normal DORA requirements for ICT third-party providers apply, proportionate to the risk.",
+      "examples": [
+        "External AI component for analytics that are not decision-relevant.",
+        "Provider for preprocessed data feeds with no direct customer impact."
+      ],
+      "reference": "DORA (2022), Art. 28"
+    },
+    "B5_KRITIKALITAETS_UEBERPRUEFUNG": {
+      "label": "Is the classification documented and formally approved by the compliance team?",
+      "info": "For the classification to be governance-ready, you need evidence and formal ownership through approval.",
+      "examples": [
+        "Dependency analysis including impact and RTO/RPO.",
+        "Concentration assessment covering shared provider failure domains.",
+        "Exit/substitution plan, ideally tested.",
+        "Formal approval by risk management/compliance/outsourcing stored in versioned form."
+      ],
+      "reference": "DORA (2022), Art. 28–30"
+    },
+    "W_DORA_DRITTANBIETER_UEBERPRUEFUNG": {
+      "label": "Third-party criticality: review/documentation required.",
+      "info": "Please complete the classification: dependency, concentration, exit strategy at least planned, plus formal approval.",
+      "reference": "DORA (2022), Art. 28–30"
+    },
+    "B6": {
+      "label": "No external ICT service provider -> internal responsibility (DORA baseline).",
+      "info": "The AI system is operated entirely in-house. The organization bears full technical and organizational responsibility for operation, security, and resilience.",
+      "examples": [
+        "Self-developed model operated on own infrastructure, on premises.",
+        "No use of external platforms for training or inference."
+      ],
+      "reference": "DORA (2022), Art. 6"
+    },
+    "B7": {
+      "label": "Are live customer, transaction, or other sensitive data transferred to external AI services?",
+      "info": "This question focuses on data flows: are sensitive or production data transferred to external AI services? That determines the requirements for safeguards, encryption, and contractual protections.",
+      "examples": [
+        "Sending customer data to an external LLM service for text analysis.",
+        "Use of test or dummy data without personal data (answer: no)."
+      ],
+      "reference": "DORA (2022), Art. 9"
+    },
+    "B7_S": {
+      "label": "Sensitive data -> safeguards for external AI.",
+      "info": "If production or sensitive data are transferred to external AI, strong safeguards are required: data classification, encryption, prevention of data loss, logging, and clear contractual protections.",
+      "examples": [
+        "Transfer of transaction data to an external anomaly-detection service.",
+        "Processing of personal data via an external AI module."
+      ],
+      "reference": "DORA (2022), Art. 9"
+    },
+    "B7_N": {
+      "label": "No sensitive data -> baseline measures sufficient.",
+      "info": "If no production or critical data are transferred to external AI, standard security measures are generally sufficient. Documenting the assumptions remains important, however.",
+      "examples": [
+        "Use of purely synthetic data for experiments.",
+        "Offline tests only, with no live customer data."
+      ],
+      "reference": "DORA (2022), Art. 6"
+    },
+    "B7_RUECKFALL": {
+      "label": "Is there a tested fallback procedure including RTO/RPO, roles, runbook, and decision criteria?",
+      "info": "What matters is not whether fallback is theoretically possible, but whether it actually works with clear roles, a runbook, and tested times such as RTO/RPO.",
+      "examples": [
+        "Runbook including stop criteria, for example hard shutdown criteria for quality or availability problems.",
+        "RTO/RPO are defined and met in testing.",
+        "Roles, deputies, and escalation paths are clear."
+      ],
+      "reference": "DORA (2022), Art. 11–12"
+    },
+    "B7_RUECKFALL_OK": {
+      "label": "Fallback procedure exists -> BCM requirements met.",
+      "info": "Evidence should be available: runbook, BCM mapping, and test records including date, scope, and result.",
+      "reference": "DORA (2022), Art. 11–12"
+    },
+    "B7_RUECKFALL_LUECKE": {
+      "label": "Fallback procedure missing -> BCM mapping and testing required.",
+      "info": "Without a tested fallback procedure, there is a risk that an AI or provider outage will stop critical processes or breach regulatory obligations.",
+      "reference": "DORA (2022), Art. 11–12"
+    },
+    "B8": {
+      "label": "Does the model change during operation?",
+      "info": "This checks whether the model changes during operation, meaning a dynamic model, or remains static. Dynamic models require stronger change-management and monitoring processes.",
+      "examples": [
+        "Regular retraining with new data on a monthly cycle.",
+        "Online-Lernen, das Gewichte im laufenden Betrieb anpasst.",
+        "Static models with infrequent, clearly planned releases (answer: no)."
+      ],
+      "reference": "DORA (2022), Art. 9"
+    },
+    "B8_D": {
+      "label": "Dynamic model -> monitoring/change management + incident management.",
+      "info": "For dynamic models, structured change, approval, and monitoring processes are mandatory: change monitoring, performance checks, documentation of changes, and clear escalation paths.",
+      "examples": [
+        "A fraud-detection model that is retrained regularly with current transaction data.",
+        "A recommendation system that continuously uses online learning."
+      ],
+      "reference": "DORA (2022), Art. 17"
+    },
+    "B8_S": {
+      "label": "Static model -> baseline measures + incident management.",
+      "info": "Even with static models, approvals and change management are required. Because updates usually happen less often, review and release activities can typically be planned at a lower cadence, but each change still needs to be documented transparently and reviewed before go-live. In addition, functioning incident management must be in place.",
+      "examples": [
+        "A classification model trained once and only updated when needed, for example annually.",
+        "A static rules/ML model with clearly defined release cycles."
+      ],
+      "reference": "DORA (2022), Art. 17"
+    },
+    "C1_KOMMUNIKATION_BENOETIGT": {
+      "label": "Could an outage or incident have customer, market, or reputational impact, such that external communication may be required?",
+      "info": "DORA requires communication plans and strategies for internal and external stakeholders. If customers or the public may be affected, a robust communication plan including approvals and severity levels should exist.",
+      "examples": [
+        "Service outage affects customer transactions or essential customer processes.",
+        "Incident may have market or reputational impact, for example data leakage, fraud, or large-scale outage.",
+        "Customer complaints, hotline volume, or media interest are plausible."
+      ],
+      "reference": "DORA (2022), Art. 14 i. V. m. Art. 17"
+    },
+    "W_DORA_KOMMUNIKATION_ERFORDERLICH": {
+      "label": "Communication plans/strategy required under DORA Art. 14.",
+      "info": "Add a communication plan to the incident runbook, internal and external, with approvals, audience logic, and templates.",
+      "reference": "DORA (2022), Art. 14"
+    },
+    "ENDE": {
+      "label": "Analysis completed.",
+      "checkpointText": "You can now download a PDF export. It contains the path taken, including steps and answers, the requirements not yet implemented if any, and any open obligation packages. Complete the remaining requirements first so the AI system can be integrated into your processes and systems in a safe and controlled way."
     }
   },
   "obligationsCatalog": {
     "AI_ACT_NICHT_ZUTREFFEND": {
       "label": "EU AI Act: Not applicable – baseline notes",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 3"
+      ],
       "items": {
         "KI_NZ_KLASSIFIZIERUNGSHINWEIS": {
           "question": "Is it documented why the system does not qualify as an AI system under the EU AI Act (definition/boundary)?",
@@ -21,99 +847,1860 @@
           "examples": [
             "A note explains the distinction from rule-based decision tables without a model.",
             "The system description lists inputs/outputs and explains which AI definition elements are missing."
-          ]
+          ],
+          "reference": "EU AI Act (2024), Art. 3"
+        },
+        "KI_NZ_GOVERNANCE_BASIS": {
+          "question": "Even if the EU AI Act is not applicable, are internal governance and approval controls for the system defined?",
+          "todo": "Define and document internal governance and approval controls for the system.",
+          "info": "Even where the EU AI Act does not apply, baseline controls reduce risk.",
+          "examples": [
+            "There is a documented approval process with accountable owners and review steps.",
+            "A RACI is defined (owner, IT security, data protection, compliance)."
+          ],
+          "reference": "EU AI Act (2024) – Governance-Basis (intern)"
         }
       }
     },
     "KI_VERBOTENE_PRAKTIKEN": {
-      "label": "EU AI Act: Prohibited practices – immediate measures & escalation"
+      "label": "EU AI Act: Prohibited practices – immediate measures & escalation",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 5"
+      ],
+      "items": {
+        "KI_VERB_STOPP_INBETRIEBNAHME": {
+          "question": "Has the use or planned go-live of the system been stopped and documented as a measure?",
+          "todo": "Stop use/go-live of the system and document the stop in a traceable way as a measure.",
+          "info": "The stop should be technically and organisationally effective (for example feature disabled, access blocked, rollback/deactivation in operations).",
+          "examples": [
+            "A ticket ID documents the deactivation and timestamp.",
+            "Operational approval was withdrawn and recorded in the approval body."
+          ],
+          "reference": "EU AI Act (2024), Art. 5"
+        },
+        "KI_VERB_ESKALATION": {
+          "question": "Has a formal escalation to Compliance/Risk Management been carried out and documented?",
+          "todo": "Carry out a formal escalation to Compliance/Risk Management and document it as a case file.",
+          "info": "The escalation should have a clear case file (case ID), and decision-making authority must be clearly defined.",
+          "examples": [
+            "Escalation email with case ID and summary of the prohibited practice.",
+            "Review record documents the decision and responsible persons."
+          ],
+          "reference": "EU AI Act (2024), Art. 5"
+        },
+        "KI_VERB_ENTSCHEID_SANIERUNG": {
+          "question": "Is there a documented decision on whether the initiative will be discontinued or re-scoped in a compliant way?",
+          "todo": "Bring about and document a decision: discontinue the initiative or re-scope it in a compliant way.",
+          "info": "If \"re-scope\": define a clear new scope, updated requirements, renewed classification, and formal approval.",
+          "examples": [
+            "Management decision: discontinue, including rationale and lessons learned.",
+            "Action plan describes new system boundaries and renewed classification."
+          ],
+          "reference": "EU AI Act (2024), Art. 5"
+        }
+      }
     },
     "KI_ROLLENKLAERUNG_NACHWEIS_BASIS": {
-      "label": "EU AI Act: Role clarification – baseline"
+      "label": "EU AI Act: Role clarification – baseline",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 25"
+      ],
+      "items": {
+        "KI_RK_ROLLEN_DEFINIERT": {
+          "question": "Are roles (provider/deployer) and responsibilities clearly described in the documentation package?",
+          "todo": "Define roles (provider/deployer) and responsibilities clearly and document them in a traceable way in the documentation package.",
+          "info": "The goal is an audit-ready, unambiguous allocation of roles and obligations (including SaaS constellations).",
+          "examples": [
+            "The RACI names provider/deployer and their respective obligations.",
+            "The contract/service description clearly distinguishes hosting, changes, artefacts, and operations."
+          ],
+          "reference": "EU AI Act (2024), Art. 25"
+        }
+      }
     },
     "KI_KENNTNIS_ART_4": {
-      "label": "EU AI Act: AI literacy (training & enablement)"
+      "label": "EU AI Act: AI literacy (training & enablement)",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 4"
+      ],
+      "items": {
+        "KI_LIT_TRAININGSPLAN": {
+          "question": "Is there a documented training plan for AI-relevant roles?",
+          "todo": "Create/update a training plan for AI-relevant roles.",
+          "info": "The plan should be role-based and define minimum scope.",
+          "examples": [
+            "Roles: developers, IT operations, product owners, compliance, risk management, support.",
+            "Minimum scope: onboarding plus annual refresh; ad hoc for major releases/regulatory changes."
+          ],
+          "reference": "EU AI Act (2024), Art. 4"
+        },
+        "KI_LIT_ROLLENMATRIX": {
+          "question": "Is there a role/skills matrix that maps required AI competencies by role and system context?",
+          "todo": "Define a role/skills matrix.",
+          "info": "The matrix should contain minimum competencies and responsibilities for each role.",
+          "examples": [
+            "Dev: data quality, bias, tests, monitoring; Compliance: obligation packages/review gates."
+          ],
+          "reference": "EU AI Act (2024), Art. 4"
+        },
+        "KI_LIT_TEILNAHME_LOGS": {
+          "question": "Are training attendances logged in a traceable way and evaluated by role?",
+          "todo": "Introduce/evaluate attendance logs.",
+          "info": "Attendance should be captured in an audit-ready way (who/what/when) and followed up through a defined process where gaps exist.",
+          "examples": [
+            "LMS export plus monthly report to team leads; escalation for mandatory training gaps."
+          ],
+          "reference": "EU AI Act (2024), Art. 4"
+        },
+        "KI_LIT_WISSENSCHECK": {
+          "question": "Is there a knowledge check/quiz or similar effectiveness assessment, including a minimum score?",
+          "todo": "Introduce a knowledge check.",
+          "info": "A knowledge check demonstrates effectiveness (not just attendance) and makes audit evidence easier.",
+          "examples": [
+            "Short quiz after training; minimum score 80%; repeat within 2 weeks."
+          ],
+          "reference": "EU AI Act (2024), Art. 4"
+        },
+        "KI_LIT_AUFFRISCHUNG": {
+          "question": "Is a regular refresh cycle defined, and are contents updated for material changes?",
+          "todo": "Define a refresh cycle and update contents for material changes/incidents.",
+          "info": "Define the cycle and triggers and document the update in a traceable way.",
+          "examples": [
+            "Possible triggers: major publication, new risk finding, incident/post-mortem, change to provider policy."
+          ],
+          "reference": "EU AI Act (2024), Art. 4"
+        }
+      }
     },
     "KI_GPAI_SCREENING_ART_51_52": {
-      "label": "EU AI Act: GPAI screening & supply-chain transparency"
+      "label": "EU AI Act: GPAI screening & supply-chain transparency",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 51–52"
+      ],
+      "items": {
+        "GPAI_SCR_MODELLIDENTITAET": {
+          "question": "Is it documented whether a general-purpose AI model (GPAI) is being used?",
+          "todo": "Document GPAI usage.",
+          "info": "Capture at least provider, model name/ID, version, region, and access path (API/endpoint) so the screening remains traceable.",
+          "examples": [
+            "Model registration: provider, model ID, region, SLA, data-processing terms."
+          ],
+          "reference": "EU AI Act (2024), Art. 51–52"
+        },
+        "GPAI_SCR_MODELLKARTE_ATTEST": {
+          "question": "Is a model card available?",
+          "todo": "Obtain the model card from the provider and store it internally; document and mitigate any gaps.",
+          "info": "The model card should cover intended use, known limitations/risks, and recommended security measures; missing information should be documented as a risk/open issue.",
+          "reference": "EU AI Act (2024), Art. 51–52"
+        },
+        "GPAI_SCR_TRAINING_COMPUTE": {
+          "question": "Is sufficient training information documented to assess whether the GPAI could pose a systemic risk?",
+          "todo": "Document training indicators (if available); otherwise justify missing information and substitute indicators.",
+          "info": "If the provider does not supply figures: documented request plus substitute indicators.",
+          "examples": [
+            "Substitute indicators: model family/size class, published security report, provider policy on risk controls."
+          ],
+          "reference": "EU AI Act (2024), Art. 51–52"
+        },
+        "GPAI_SCR_EINSTUFUNG_NOTIZ": {
+          "question": "Is there a classification note stating \"GPAI yes/no\" and \"systemic risk yes/no\", including rationale and approval?",
+          "todo": "Create a classification note (GPAI + systemic risk), including rationale, review, and approval.",
+          "info": "Store the basis for the decision (inputs, assumptions, uncertainties) and the approval (owner/date) in an audit-ready way.",
+          "examples": [
+            "Short note with decision, rationale, and open issues."
+          ],
+          "reference": "EU AI Act (2024), Art. 51–52"
+        },
+        "GPAI_SCR_LIEFERKETTE_TRANSPARENZ": {
+          "question": "Is the supply chain documented transparently (sub-providers, hosting, subprocessors, artefact ownership, etc.)?",
+          "todo": "Document the supply chain (sub-providers, hosting, subprocessors, artefact ownership, etc.).",
+          "info": "Document responsibilities and interfaces so obligations and expectations toward the provider remain clear.",
+          "examples": [
+            "Subprocessor list plus RACI: hosting (who), model updates (who), conformity artefacts (who), incident communication (how)."
+          ],
+          "reference": "EU AI Act (2024), Art. 51–52"
+        }
+      }
     },
     "KI_GPAI_SYSTEMISCHES_RISIKO_ART_55": {
-      "label": "EU AI Act: GPAI (systemic risk) – model assessment"
+      "label": "EU AI Act: GPAI (systemic risk) – model assessment",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 55"
+      ],
+      "items": {
+        "GPAI_SYS_REDTEAM": {
+          "question": "Are attack tests or equivalent model evaluations planned/performed and documented?",
+          "todo": "Perform and document model evaluations (scope, findings, etc.).",
+          "info": "The test scope should cover risks from the specific deployment context and include a retesting strategy.",
+          "examples": [
+            "Prompt injection, data exfiltration, jailbreaks, policy circumvention, misuse of tools."
+          ],
+          "reference": "EU AI Act (2024), Art. 55"
+        },
+        "GPAI_SYS_RISIKOREGISTER": {
+          "question": "Is there a risk register including mitigation measures?",
+          "todo": "Maintain a risk register (risks, measures, owners, deadlines, effectiveness) and review it regularly.",
+          "info": "The register should contain owners, deadlines, and evidence of effectiveness, and it should be fed by findings from tests/incidents.",
+          "examples": [
+            "One entry per risk with status (open/in progress/closed) and reference."
+          ],
+          "reference": "EU AI Act (2024), Art. 55"
+        },
+        "GPAI_SYS_INCIDENT_LOG": {
+          "question": "Is there an incident log including lessons learned and communication paths?",
+          "todo": "Establish an incident log (classification, SLA, escalation, lessons learned, provider interface).",
+          "info": "Capture security-relevant incidents in a traceable way, including cause, impact, measures, and communication.",
+          "examples": [
+            "Root cause, timeline, remediation, follow-up; ticket reference."
+          ],
+          "reference": "EU AI Act (2024), Art. 55"
+        },
+        "GPAI_SYS_CYBER_CONTROLS": {
+          "question": "Are cyber-protection measures for GPAI usage defined and demonstrably implemented?",
+          "todo": "Implement and evidence cyber controls for GPAI usage.",
+          "info": "Evidence controls around access, keys, monitoring/alerts, misuse prevention, and secure operating processes.",
+          "examples": [
+            "Least privilege, key rotation, anomaly detection, segregated environments."
+          ],
+          "reference": "EU AI Act (2024), Art. 55"
+        }
+      }
     },
     "KI_HR_ANBIETER": {
-      "label": "EU AI Act: High-risk AI – core obligations (provider)"
+      "label": "EU AI Act: High-risk AI – core obligations (provider)",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 9–15"
+      ],
+      "items": {
+        "KI_HR_RM_PROZESS": {
+          "question": "Is there a documented AI risk management process that identifies, assesses, and defines measures for risks?",
+          "todo": "Define, document, and implement an AI risk management process (identification, assessment, measures, responsibilities).",
+          "info": "The process should cover AI-specific risks (for example misclassification, bias, data quality, model change in the form of performance/data drift) and assign responsibilities clearly.",
+          "examples": [
+            "Risk register contains AI risks, assessments, and measures including responsible owners.",
+            "Approval record documents accepted residual risks."
+          ],
+          "reference": "EU AI Act (2024), Art. 9"
+        },
+        "KI_HR_RM_LEBENSZYKLUS": {
+          "question": "Are AI risks assessed before go-live and reviewed regularly during operation when relevant changes occur?",
+          "todo": "Establish regular risk reviews before go-live and during operation (including review for relevant changes).",
+          "info": "\"Relevant changes\" include, for example, model changes, retraining/fine-tuning, new data sources, new user groups, or process changes.",
+          "examples": [
+            "Monitoring report shows regular reviews."
+          ],
+          "reference": "EU AI Act (2024), Art. 9"
+        },
+        "KI_HR_DATENHERKUNFT_RECHTE": {
+          "question": "Are data sources, data provenance, and usage rights for training and testing documented?",
+          "todo": "Document data sources, provenance, and usage rights for training and testing completely and provide traceable evidence.",
+          "info": "Documentation should cover provenance, collection, purpose limitation, legal basis, and licensing/contractual status.",
+          "examples": [
+            "Data catalogue entry with source, purpose, owner, and legal basis.",
+            "Contracts/licences are versioned and stored in the repository."
+          ],
+          "reference": "EU AI Act (2024), Art. 10"
+        },
+        "KI_HR_DATENQUALITAET_KRITERIEN": {
+          "question": "Are data quality criteria defined, and are they demonstrably checked before the model is deployed?",
+          "todo": "Define data quality criteria and demonstrably review data quality before model deployment.",
+          "info": "Typical criteria include completeness, timeliness, consistency, representativeness, and handling of missing values and outliers.",
+          "examples": [
+            "Data quality report contains defined thresholds and results.",
+            "Approval decision references the test record and deviations."
+          ],
+          "reference": "EU AI Act (2024), Art. 10"
+        },
+        "KI_HR_BIAS_MINDERUNG": {
+          "question": "Are measures to identify and reduce bias in training and test data documented and implemented?",
+          "todo": "Define, document, and implement measures for bias detection and reduction (training and test data).",
+          "info": "Bias checks should be traceable for relevant groups/segments.",
+          "examples": [
+            "Fairness report compares metrics across groups and documents measures.",
+            "Action plan describes sampling, feature review, or post-processing."
+          ],
+          "reference": "EU AI Act (2024), Art. 10"
+        },
+        "KI_HR_TECH_DOKU_AKTUELL": {
+          "question": "Has technical documentation been created, and is it kept up to date when changes occur?",
+          "todo": "Create technical documentation and keep it consistently up to date when changes occur (versioned, traceable).",
+          "info": "Technical documentation should cover model, data, interfaces, operations, tests, risks, and governance, and it should be versioned.",
+          "examples": [
+            "Version history links releases to change requests.",
+            "Documentation package contains architecture diagram and model description."
+          ],
+          "reference": "EU AI Act (2024), Art. 11"
+        },
+        "KI_HR_PROTOKOLLIERUNG_FAEHIGKEIT": {
+          "question": "Are logging functions for relevant system events provided for and technically feasible?",
+          "todo": "Ensure and document logging capability for relevant system events (audit suitability, model version, IDs).",
+          "info": "Logs should be suitable for audit and incident analysis (for example model version, input/output references, user/system actions), taking data protection into account.",
+          "examples": [
+            "Specification defines mandatory fields (timestamp, request ID, model version).",
+            "Architecture describes where logs are generated/forwarded (for example to a SIEM)."
+          ],
+          "reference": "EU AI Act (2024), Art. 12"
+        },
+        "KI_HR_INFO_FUER_BETREIBER_BEREITGESTELLT": {
+          "question": "Are deployers provided with sufficient information for safe use?",
+          "todo": "Provide operational/use information for safe use (purpose, limits, operating prerequisites).",
+          "info": "At minimum: intended purpose, known limits, required data quality, suitable user roles, error scenarios, and safe operating parameters.",
+          "examples": [
+            "Manual contains a section on \"Purpose & limits\" and safe operating parameters.",
+            "Release notes state changes and risks per release."
+          ],
+          "reference": "EU AI Act (2024), Art. 13"
+        },
+        "KI_HR_MENSCHLICHE_AUFSICHT_MECHANISMEN": {
+          "question": "Are mechanisms for human oversight built into the system design?",
+          "todo": "Provide and document mechanisms for human oversight in the system design (intervention, manual review, shutdown/override capability).",
+          "info": "Oversight must be practically feasible (for example override process, clear intervention criteria, responsibilities, and training).",
+          "examples": [
+            "Override/stop function is described and technically provided for.",
+            "UX/process shows how a human can review/override decisions."
+          ],
+          "reference": "EU AI Act (2024), Art. 14"
+        },
+        "KI_HR_LEISTUNGSTESTS": {
+          "question": "Are measurable performance metrics defined and evidenced by tests before go-live?",
+          "todo": "Define performance metrics and evidence them through tests before go-live (including acceptance criteria).",
+          "info": "Metrics must be use-case specific (for example error rate, SLA/SLO) and include acceptance criteria.",
+          "examples": [
+            "Test report shows metrics vs. acceptance criteria and approval.",
+            "Approval record contains risk assessment for borderline cases."
+          ],
+          "reference": "EU AI Act (2024), Art. 15"
+        },
+        "KI_HR_ROBUSTHEITSTESTS": {
+          "question": "Has robustness against typical disturbance and failure scenarios been tested and documented?",
+          "todo": "Perform and document robustness tests against typical disturbance and failure scenarios (including measures for findings).",
+          "info": "Typical cases: faulty inputs, outliers, missing data, distribution shifts, system failures.",
+          "examples": [
+            "Test plan contains negative tests and abort/fallback behaviour.",
+            "Action plan describes identified weaknesses."
+          ],
+          "reference": "EU AI Act (2024), Art. 15"
+        },
+        "KI_HR_SICHERHEITSBEWERTUNG": {
+          "question": "Has a cybersecurity/security assessment for the AI component been performed and documented?",
+          "todo": "Perform, document, and follow up a security assessment (cybersecurity) for the AI component.",
+          "info": "Scope: threat model, access paths, data leakage, supply chain, model attacks (for example prompt injection in LLM use cases).",
+          "examples": [
+            "Threat model and measures are documented and implemented.",
+            "Penetration test covers relevant interfaces and roles."
+          ],
+          "reference": "EU AI Act (2024), Art. 15"
+        }
+      }
     },
     "KI_HR_BETREIBER": {
-      "label": "EU AI Act: High-risk AI – obligations (deployer) incl. Art. 26"
+      "label": "EU AI Act: High-risk AI – obligations (deployer) incl. Art. 26",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 26 i. V. m. Art. 12–14"
+      ],
+      "items": {
+        "KI_HR_BETRIEB_GEMAESS_ZWECKBESTIMMUNG": {
+          "question": "Is the high-risk AI system used in accordance with its intended purpose and operating instructions?",
+          "todo": "Ensure and document that the system is used in accordance with its intended purpose/operating instructions (permitted use, limits, prerequisites). Deviations only after formal review/approval.",
+          "info": "Art. 26 is central in audit terms: operation \"as intended\" plus documented deviations (including controls/gates).",
+          "examples": [
+            "SOP describes permitted use cases, inputs, thresholds, limits, and escalation.",
+            "Use outside scope is prohibited or requires formal approval."
+          ],
+          "reference": "EU AI Act (2024), Art. 26 i. V. m. Art. 13"
+        },
+        "KI_HR_BETRIEB_MENSCHLICHE_AUFSICHT": {
+          "question": "Is human oversight implemented in operations?",
+          "todo": "Implement and evidence human oversight in operations: roles/RACI, intervention criteria, training, override/shutdown process, and criteria for stop decisions.",
+          "info": "\"Human in the loop\" must be effective in operations and not just exist as a policy. Especially important in cases of automation bias.",
+          "examples": [
+            "Defined role may override recommendations and documents deviations.",
+            "Clear stop rules for drift, data errors, and outages."
+          ],
+          "reference": "EU AI Act (2024), Art. 26 i. V. m. Art. 14"
+        },
+        "KI_HR_BETRIEB_PROTOKOLLIERUNG_AKTIV": {
+          "question": "Are logs enabled in operation, and are they retained/evaluated appropriately?",
+          "todo": "Enable logging, define retention, and ensure evaluation for operations/incidents. Regulate access to logs.",
+          "info": "It only becomes audit-ready when logs are actually available (control, retention period, access) and used for monitoring.",
+          "examples": [
+            "Logs contain inputs/outputs, versions, overrides, and error states.",
+            "SIEM rules/alerts for anomalies, outages, and policy violations."
+          ],
+          "reference": "EU AI Act (2024), Art. 26 i. V. m. Art. 12"
+        },
+        "KI_HR_BETRIEB_UEBERWACHUNG": {
+          "question": "Is there ongoing operational monitoring including clear response and escalation processes?",
+          "todo": "Define and implement operational monitoring (quality, availability, data anomalies, incident process). Document response times, escalation, and remedial measures.",
+          "info": "Art. 26 requires \"operation under control\". Without monitoring, audit evidence is weak.",
+          "examples": [
+            "Drift checks with thresholds plus automatic stop.",
+            "Incident operations manual including communication to provider/stakeholders."
+          ],
+          "reference": "EU AI Act (2024), Art. 26"
+        },
+        "KI_HR_BETRIEB_VORFAELLE_BEHOERDEN_ZUSAMMENARBEIT": {
+          "question": "Are processes defined for handling serious incidents and cooperating with authorities/providers?",
+          "todo": "Define and rehearse a process for serious incidents (classification, escalation, information sharing with provider, authority communication where applicable). Define responsibilities and deadlines.",
+          "info": "Even though Art. 73 primarily addresses providers, deployers still need audit-ready escalation and a clear supplier interface.",
+          "examples": [
+            "Escalation matrix (critical/high/medium) plus provider contact points."
+          ],
+          "reference": "EU AI Act (2024), Art. 26"
+        },
+        "KI_HR_BETRIEB_DSFA_GRFA_VERZAHNUNG": {
+          "question": "Is the governance linkage to DPIA/FRIA/risk reviews documented?",
+          "todo": "Document the linkage: data protection impact assessment (DPIA), where applicable fundamental-rights/risk analyses, approvals/reviews, and operating conditions in production.",
+          "info": "In practice, reviewers expect a consistent chain: risk analysis -> approval -> operating controls -> monitoring/incidents.",
+          "examples": [
+            "Findings from DPIA/reviews are embedded as conditions in the operating manual.",
+            "Regular reviews including changes and incidents."
+          ],
+          "reference": "EU AI Act (2024), Art. 26"
+        }
+      }
     },
     "KI_TRANSPARENZ_ART_50": {
-      "label": "EU AI Act: Transparency obligations"
+      "label": "EU AI Act: Transparency obligations",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 50"
+      ],
+      "items": {
+        "KI_TP_INTERAKTIONSHINWEIS": {
+          "question": "Do users receive a clear notice that they are interacting with an AI system?",
+          "todo": "Provide a clear, visible notice of AI interaction in the user interface and obtain formal approval for it.",
+          "info": "The notice should be understandable, visible, and context-specific (not just hidden in footnotes).",
+          "examples": [
+            "The UI clearly displays \"AI-supported\"/\"AI system\" at the relevant step.",
+            "Approval of the notice text is documented."
+          ],
+          "reference": "EU AI Act (2024), Art. 50"
+        },
+        "KI_TP_GENERATIVE_OUTPUTS": {
+          "question": "Does the system generate content (text, image, audio, or video) that is delivered to users?",
+          "todo": "Review and document whether the system generates content delivered to users (text/image/audio/video).",
+          "info": "Relevant content includes both fully generated outputs and AI-assisted summaries/rephrasings.",
+          "examples": [
+            "Chatbot generates response texts for customers.",
+            "System automatically produces summaries from documents."
+          ],
+          "reference": "EU AI Act (2024), Art. 50"
+        },
+        "KI_TP_INHALTSKENNZEICHNUNG": {
+          "question": "Are AI-generated contents clearly labelled in all relevant cases?",
+          "todo": "Define labelling for AI-generated content and implement it consistently in all relevant cases.",
+          "info": "Labelling should be consistent (templates/policies) and define the cases in which it is required.",
+          "examples": [
+            "Output contains the label \"AI-generated\" in the UI/export.",
+            "Content policy describes exceptions and labelling rules."
+          ],
+          "reference": "EU AI Act (2024), Art. 50"
+        },
+        "KI_TP_ZWECKINFO": {
+          "question": "Is the purpose of the AI system documented and available to users?",
+          "todo": "Document the purpose of the AI system for users and make it easily accessible (UI/manual/intranet).",
+          "info": "The purpose should not only be described internally but be available where users make decisions.",
+          "examples": [
+            "Short description in the UI plus a detailed section in the manual.",
+            "Intranet page with purpose, contact details, and responsible owners."
+          ],
+          "reference": "EU AI Act (2024), Art. 50"
+        },
+        "KI_TP_GRENZEN_INFO": {
+          "question": "Are known boundaries and limitations of the system documented and available?",
+          "todo": "Document known boundaries and limitations of the system and make them available to users (including updates when changes occur).",
+          "info": "Limitations should be practically usable (for example \"not suitable for X\", \"reliable only under Y\").",
+          "examples": [
+            "Section \"Known limitations\" in the manual and release notes.",
+            "Documented error types and recommended controls."
+          ],
+          "reference": "EU AI Act (2024), Art. 50"
+        },
+        "KI_TP_ZULAESSIGE_NUTZUNG": {
+          "question": "Are rules on permitted use (allowed/prohibited) documented and available?",
+          "todo": "Document rules on permitted and prohibited use and provide them to users (including examples).",
+          "info": "\"Allowed/prohibited\" should contain concrete examples (for example data types, user roles, decision types).",
+          "examples": [
+            "Policy lists permitted data sources and prohibited content.",
+            "Training includes case examples and review/approval steps."
+          ],
+          "reference": "EU AI Act (2024), Art. 50"
+        }
+      }
     },
     "KI_KONFORMITAET_UND_DOKU": {
-      "label": "EU AI Act: Conformity assessment & technical documentation"
+      "label": "EU AI Act: Conformity assessment & technical documentation",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 16 ff., Art. 43 ff., Anhang IV"
+      ],
+      "items": {
+        "KI_KONF_PFLICHT_GEPRUEFT": {
+          "question": "Has it been determined and documented whether a conformity assessment is required for the system?",
+          "todo": "Review, justify, and document whether a conformity assessment is required (including reference to relevant articles/annexes).",
+          "info": "The decision should reference the classification (for example high-risk) and the relevant articles/annexes.",
+          "examples": [
+            "Note contains reference to the relevant article/annex and the rationale.",
+            "Approval is documented in a traceable way."
+          ],
+          "reference": "EU AI Act (2024), Art. 43 ff."
+        },
+        "KI_KONF_DURCHGEFUEHRT": {
+          "question": "Has the conformity assessment been performed, and is there a documented result?",
+          "todo": "Perform the conformity assessment, document the result, and record the formal approval decision.",
+          "info": "The report should contain scope, methodology, results, deviations, and measures.",
+          "examples": [
+            "Conformity report is versioned and approved.",
+            "Deviations are linked to measures and responsible owners."
+          ],
+          "reference": "EU AI Act (2024), Art. 43 ff."
+        },
+        "KI_KONF_PLAN_FALLS_OFFEN": {
+          "question": "Is there a dated plan with responsible owners if the conformity assessment is still pending?",
+          "todo": "Date and document a plan for the pending conformity assessment (milestones, owners, approval gates).",
+          "info": "The plan should contain concrete milestones and owners and define a risk or go/no-go criterion.",
+          "examples": [
+            "Project plan with dates, owners, dependencies, and approval gates.",
+            "RACI defines decision body and review functions."
+          ],
+          "reference": "EU AI Act (2024), Art. 43 ff."
+        },
+        "KI_DOK_ANHANG_IV_MINDESTUMFANG": {
+          "question": "Does the technical documentation cover at least purpose, model description, data, tests, risks, and operating prerequisites?",
+          "todo": "Create/review technical documentation in line with the minimum requirements (Annex IV) and document completeness.",
+          "info": "In practice, an index list helps map Annex IV points to concrete documents/sections.",
+          "examples": [
+            "Index list links to documentation sections/files for each Annex IV point.",
+            "Documentation package contains test reports, risk analysis, and operating requirements."
+          ],
+          "reference": "EU AI Act (2024), Anhang IV"
+        },
+        "KI_ROLLEN_DEFINIERT": {
+          "question": "Are roles (provider/deployer) and responsibilities clearly described in the documentation package?",
+          "todo": "Define roles (provider/deployer) and responsibilities clearly and document them in a traceable way in the documentation package.",
+          "info": "Where external parties are involved, responsibilities should also be clearly regulated contractually (for example service description, SLAs).",
+          "examples": [
+            "RACI names provider/deployer and their obligations.",
+            "Contract describes responsibilities and deliverables."
+          ],
+          "reference": "EU AI Act (2024), Art. 16 ff."
+        },
+        "KI_AENDERUNGSMANAGEMENT_DOKU": {
+          "question": "Is there a documented change process that approves model changes (retraining/fine-tuning) before go-live?",
+          "todo": "Establish and document change management for model changes (impact analysis, approval, rollback/monitoring).",
+          "info": "The change process should include risk/impact analysis, approval, and rollback and monitoring.",
+          "examples": [
+            "Record documents approval of the model change.",
+            "Release notes reference tests/impacts and approval."
+          ],
+          "reference": "EU AI Act (2024), Art. 11–12 (i. V. m. Governance)"
+        }
+      }
     },
     "KI_REGISTRIERUNG_UND_KENNZEICHNUNG": {
-      "label": "EU AI Act: Registration & marking"
+      "label": "EU AI Act: Registration & marking",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 49 ff., Art. 60"
+      ],
+      "items": {
+        "KI_REG_PFLICHT_GEPRUEFT": {
+          "question": "Has it been reviewed and documented whether the system is subject to registration?",
+          "todo": "Review, justify, and document whether the system is subject to registration (including the registration decision).",
+          "info": "The decision should document the classification and the registration criteria in a traceable way.",
+          "examples": [
+            "Note contains the decision including rationale and sources.",
+            "Registration decision is approved and versioned."
+          ],
+          "reference": "EU AI Act (2024), Art. 60"
+        },
+        "KI_REG_DURCHGEFUEHRT": {
+          "question": "Has registration been completed, and is the registration ID documented in a traceable way?",
+          "todo": "Complete the registration and document the registration ID, including storage location, in an audit-safe way.",
+          "info": "The storage location should be access-protected and audit-safe (including the date of registration).",
+          "examples": [
+            "Screenshot/PDF of the registration is stored in the repository.",
+            "Registration ID is referenced in system documentation and the approval file."
+          ],
+          "reference": "EU AI Act (2024), Art. 60"
+        },
+        "KI_REG_EU_DB_URL": {
+          "question": "Is the EU database reference (URL/entry) for the system documented and easy to find?",
+          "todo": "Document the EU DB URL or reference to the registry entry (including storage location/responsible owners) and link it in the system documentation.",
+          "info": "The reference must be unambiguous (URL or entry ID), and the storage location must be defined in an audit-safe way.",
+          "examples": [
+            "System documentation contains a link to the EU registry entry including the retrieval date.",
+            "Storage location and responsible owners for maintenance/updates are documented."
+          ],
+          "reference": "EU AI Act (2024), Art. 60"
+        },
+        "KI_REG_GRFA_ZUSAMMENFASSUNG_VERFUEGBAR": {
+          "question": "If required, has a FRIA summary been created and stored as information that can be provided?",
+          "todo": "Create a FRIA summary (if FRIA is required) and store it in a way that can be provided (storage location, version, approval).",
+          "info": "The summary should clearly state approval status, version, and the provision path.",
+          "examples": [
+            "Document contains version, date, and approval note.",
+            "Storage path is documented and access-protected."
+          ],
+          "reference": "EU AI Act (2024), Art. 27 (i. V. m. Register-/Anhang-Informationen)"
+        },
+        "KI_REG_DSFA_ZUSAMMENFASSUNG_VERFUEGBAR": {
+          "question": "If a DPIA already exists or is required under data-protection law: has a shareable summary been created and stored?",
+          "todo": "Only if a DPIA already exists or is required: create/store a shareable summary (storage location, version, approval). If no DPIA is required, document that decision (short rationale plus responsible owners).",
+          "info": "The EU AI Act does not require a DPIA here. However, if one exists/is required, a shareable, non-sensitive summary should be available.",
+          "examples": [
+            "Summary is approved and can be provided (without sensitive details).",
+            "Alternatively: decision \"DPIA not required\" including short rationale and approval is stored."
+          ],
+          "reference": "EU AI Act (2024), Art. 27"
+        },
+        "KI_KENNZEICHNUNG_PFLICHT_PRUEFUNG": {
+          "question": "Has it been reviewed and documented whether marking is required?",
+          "todo": "Review and document whether marking (for example CE) is required.",
+          "info": "For integrated systems, product conformity/CE logic should also be considered.",
+          "examples": [
+            "Compliance note describes the assessment of the marking requirement.",
+            "Conformity documents are stored and referenced."
+          ],
+          "reference": "EU AI Act (2024), Art. 49 ff."
+        },
+        "KI_UNTERLAGEN_REPOSITORY": {
+          "question": "Are registration and marking documents versioned, access-protected, and stored so they can be easily found?",
+          "todo": "Store registration and marking documents in a versioned, access-protected, and clearly discoverable way.",
+          "info": "Discoverability means: clear storage path plus clear naming convention plus access concept.",
+          "examples": [
+            "Repository link is referenced in the classification note.",
+            "Version history shows document changes over time."
+          ],
+          "reference": "EU AI Act (2024), Art. 49 ff."
+        }
+      }
     },
     "KI_GRFA_PFLICHTPRUEFUNG_ART_27": {
-      "label": "EU AI Act: FRIA – mandatory review (Art. 27) – evidence"
+      "label": "EU AI Act: FRIA – mandatory review (Art. 27) – evidence",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 27"
+      ],
+      "items": {
+        "KI_GRFA_PFLICHT_GEPRUEFT_UND_ABGEGRENZT": {
+          "question": "Has it been reviewed and documented whether a FRIA is required (including scope/rationale)?",
+          "todo": "Review and document the FRIA obligation (including scope/rationale, affected groups, process context, Annex III mapping).",
+          "info": "The review should document criteria, scope, and mapping to Annex III in a traceable way. Important: FRIA is not limited to financial use cases; it must be assessed based on context.",
+          "examples": [
+            "Note documents the FRIA decision including Annex III reference.",
+            "Scope identifies affected groups and process context."
+          ],
+          "reference": "EU AI Act (2024), Art. 27"
+        }
+      }
     },
     "KI_HR_GRUNDRECHTE_FOLGENABSCHAETZUNG_ART_27": {
-      "label": "EU AI Act: High-risk – fundamental rights impact assessment (FRIA) in operation"
+      "label": "EU AI Act: High-risk – fundamental rights impact assessment (FRIA) in operation",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 27"
+      ],
+      "items": {
+        "KI_GRFA_PFLICHT_GEPRUEFT_UND_ABGEGRENZT": {
+          "question": "Has it been reviewed and documented whether a FRIA is required (including scope/rationale)?",
+          "todo": "Review and document the FRIA obligation (including scope/rationale, affected groups, process context, Annex III mapping).",
+          "info": "The review should document criteria, scope, and mapping to Annex III in a traceable way.",
+          "examples": [
+            "Note documents the FRIA decision including Annex III reference.",
+            "Scope identifies affected groups and process context."
+          ],
+          "reference": "EU AI Act (2024), Art. 27"
+        },
+        "KI_GRFA_DOKUMENTIERT": {
+          "question": "Is a FRIA documented?",
+          "todo": "Conduct and document the FRIA (risks/affected parties, measures, residual risk, responsibilities, implementation plan).",
+          "info": "The document must clearly present risks, affected fundamental rights, controls, and residual risk.",
+          "examples": [
+            "FRIA contains an action plan with owners and deadlines.",
+            "Risk/control mapping links to concrete controls in operation."
+          ],
+          "reference": "EU AI Act (2024), Art. 27"
+        },
+        "KI_GRFA_UEBERPRUEFUNG_UND_FREIGABE": {
+          "question": "Has the FRIA been reviewed and formally approved?",
+          "todo": "Carry out FRIA review and formal approval (roles/RACI, decision, conditions, remedial measures) and store it in a versioned way.",
+          "info": "Approval must clearly document roles, decision, and conditions.",
+          "examples": [
+            "Review record documents the decision, conditions, and responsible owners."
+          ],
+          "reference": "EU AI Act (2024), Art. 27"
+        },
+        "KI_GRFA_MASSNAHMEN_NACHVERFOLGT": {
+          "question": "Are FRIA measures tracked in operation?",
+          "todo": "Operationalise and track FRIA measures (controls, monitoring, complaint/feedback channel, effectiveness review).",
+          "info": "Tracking must show status, effectiveness, and open issues in a traceable way.",
+          "examples": [
+            "Measure tracking contains status, responsible owner, deadline, and effectiveness criterion.",
+            "Complaint/feedback channel is documented and evaluated."
+          ],
+          "reference": "EU AI Act (2024), Art. 27"
+        }
+      }
     },
     "KI_UEBERWACHUNG_NACH_INVERKEHRBRINGEN_ART_72": {
-      "label": "EU AI Act: Post-market monitoring"
+      "label": "EU AI Act: Post-market monitoring",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 72"
+      ],
+      "items": {
+        "KI_UEBERWACHUNGS_PLAN": {
+          "question": "Is there a documented post-market monitoring plan?",
+          "todo": "Create a post-market monitoring plan (data sources, KPIs, roles/RACI, review frequency, escalation paths, action logic).",
+          "info": "The plan should specify data sources, KPIs, thresholds, responsibilities, and review cycles concretely.",
+          "examples": [
+            "Monitoring plan contains review frequency and escalation paths.",
+            "KPI definitions are versioned and approved."
+          ],
+          "reference": "EU AI Act (2024), Art. 72"
+        },
+        "KI_UEBERWACHUNGS_KPIS_UND_SCHWELLENWERTE": {
+          "question": "Are KPIs/thresholds defined, including triggers?",
+          "todo": "Define KPIs and thresholds including triggers/escalation.",
+          "info": "Thresholds must be measurable and include clear triggers for escalation, measures, or stop.",
+          "examples": [
+            "Trigger matrix links KPI thresholds to escalation levels.",
+            "KPI catalogue contains definition, data source, frequency, and responsible owner."
+          ],
+          "reference": "EU AI Act (2024), Art. 72"
+        },
+        "KI_PMM_UEBERPRUEFUNGEN_DURCHGEFUEHRT": {
+          "question": "Are reviews actually performed and documented?",
+          "todo": "Perform reviews, document findings, derive measures, and ensure follow-up (including responsibilities/deadlines).",
+          "info": "Reviews must include date, participants, findings, decisions, and measures including tracking.",
+          "examples": [
+            "Review record contains findings, responsible owner, deadline, and status.",
+            "Change documents link to reviews and monitoring reports."
+          ],
+          "reference": "EU AI Act (2024), Art. 72"
+        }
+      }
     },
     "KI_MELDUNG_SCHWERWIEGENDER_VORFAELLE_ART_73": {
-      "label": "EU AI Act: Reporting serious incidents – triggers, process, evidence"
+      "label": "EU AI Act: Reporting serious incidents – triggers, process, evidence",
+      "regulation": "EU AI Act",
+      "articles": [
+        "EU AI Act (2024), Art. 73"
+      ],
+      "items": {
+        "KI_SVV_TRIGGER_DEFINIERT": {
+          "question": "Are triggers for \"serious incidents\" defined and embedded organisationally?",
+          "todo": "Create and communicate a trigger definition for \"serious incidents\" (examples, severity levels, distinction from normal incidents).",
+          "info": "Triggers must clearly define when an incident qualifies as \"serious\" and who decides that.",
+          "examples": [
+            "Example catalogue contains typical cases and severity levels.",
+            "Training evidence documents communication to relevant roles."
+          ],
+          "reference": "EU AI Act (2024), Art. 73"
+        },
+        "KI_SVV_PROZESS_UND_ROLLEN": {
+          "question": "Is there a documented reporting process?",
+          "todo": "Define and test the reporting process (roles/RACI, deadlines, authority contact, escalation, cooperation with provider/deployer).",
+          "info": "The process should define contact points, deadlines, scope of information, and escalation levels concretely.",
+          "examples": [
+            "Contact list contains roles, deputies, and reachability.",
+            "Test record evidences tested workflows and identified gaps."
+          ],
+          "reference": "EU AI Act (2024), Art. 73"
+        },
+        "KI_SVV_PROTOKOLLIERUNG_UND_UNTERLAGEN": {
+          "question": "Are incidents/reports logged in an audit-safe way?",
+          "todo": "Establish an incident register including root-cause analysis, measures, and closure documentation (audit-ready, versioned, traceable).",
+          "info": "Audit safety means: immutable history, clear versions, and a traceable closure for each incident.",
+          "examples": [
+            "Root-cause analysis documents causes, contributing factors, and controls.",
+            "Action log contains responsible owners, deadlines, and effectiveness review."
+          ],
+          "reference": "EU AI Act (2024), Art. 73"
+        }
+      }
     },
     "DORA_BASIS": {
-      "label": "DORA: ICT risk management – baseline"
+      "label": "DORA: ICT risk management - baseline",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 5–16"
+      ],
+      "items": {
+        "DORA_GOV_ROLLEN": {
+          "question": "Are ICT governance and responsibilities for AI-relevant systems defined and documented?",
+          "todo": "Define and document ICT governance and responsibilities for AI-relevant systems in a binding way, including deputies and escalation paths.",
+          "info": "Governance should make clear who is responsible from the business, technical, and risk perspective, including deputies, escalation, and decision paths.",
+          "examples": [
+            "RACI names accountable owner, IT operations, IT security, risk management/compliance, and data protection.",
+            "Governance document describes committees, approvals, and escalation paths."
+          ],
+          "reference": "DORA (2022), Art. 5"
+        },
+        "DORA_IKT_RMF": {
+          "question": "Is there a documented ICT risk management framework including roles, controls, and an acceptable level of risk?",
+          "todo": "Document and formally adopt the ICT risk management framework, including roles and controls, and explicitly cover AI-relevant risks.",
+          "info": "The framework should explicitly cover AI-relevant risks, for example model operations, data pipelines, external AI services, and third-party dependencies.",
+          "examples": [
+            "Control catalog contains ICT controls for model operations, monitoring, and change management.",
+            "Risk methodology is documented and approved."
+          ],
+          "reference": "DORA (2022), Art. 6"
+        },
+        "DORA_GOV_DIG_RESILIENZ_STRATEGIE": {
+          "question": "Is there a digital operational resilience strategy approved by the management body, and is it reviewed regularly?",
+          "todo": "Create the digital operational resilience strategy, obtain approval from the management body, and review it regularly, at least annually or when material changes occur. Document alignment with the ICT RMF, risk profile, critical/important functions, tolerances, and the measures/investment plan.",
+          "info": "It becomes audit-ready through clear governance, meaning approval and review, and consistency with the actual ICT risk situation, including AI-relevant dependencies.",
+          "examples": [
+            "Strategy contains objectives, priorities, acceptable level of risk, responsibilities, and resources.",
+            "Minutes evidence approval and periodic review, including decisions and follow-up."
+          ],
+          "reference": "DORA (2022), Art. 5 i. V. m. Art. 6"
+        },
+        "DORA_GOV_IKT_AUDITPLAN": {
+          "question": "Is there an ICT audit/review plan approved by the management body, including the ICT RMF and AI-relevant systems, and is execution tracked?",
+          "todo": "Define the ICT audit/review plan, internal and external, obtain approval from the management body, document execution, and track findings/actions including deadlines, owners, and effectiveness review.",
+          "info": "The plan should explicitly include AI-relevant ICT components such as models, data pipelines, interfaces, and third-party providers.",
+          "examples": [
+            "Audit plan contains scope, frequency, review areas, responsible persons, and timetable.",
+            "Action register shows findings, owner, due date, status, and evidence of effectiveness."
+          ],
+          "reference": "DORA (2022), Art. 5"
+        },
+        "DORA_JAHRESBERICHT_IKT_AN_LEITUNGSORGAN": {
+          "question": "Is a report on ICT risk management and resilience status submitted to the management body at least annually?",
+          "todo": "Establish and document annual reporting to the management body: ICT risk status, major incidents, KPI/KRI, top risks, measures/roadmap, and control effectiveness. Store the report or presentation in versioned form.",
+          "info": "The aim is traceable information to the management body and, where relevant, resulting decisions and follow-up.",
+          "examples": [
+            "Materials contain KPI/KRI such as incidents, recovery times, findings, patch/vulnerability status, and provider risks.",
+            "Minutes document discussion, decisions, and follow-up."
+          ],
+          "reference": "DORA (2022), Art. 6"
+        },
+        "DORA_SCHULUNGS_AWARENESS_PROGRAMM": {
+          "question": "Is there a regular training and awareness program on ICT risks and operational resilience?",
+          "todo": "Define and run the training/awareness program, including target groups, content, frequency, mandatory completion rates, and effectiveness review.",
+          "info": "This prevents purely paper-based controls: awareness must be measurable, for example through participation, testing, and repetition.",
+          "examples": [
+            "Mandatory annual training plus role-specific deep dives, such as BCM or cloud operations.",
+            "Participation rate above X% and documented follow-up training."
+          ],
+          "reference": "DORA (2022), Art. 13–14"
+        },
+        "DORA_TECHNOLOGIE_BEOBACHTUNGSPROZESS": {
+          "question": "Is there a documented technology-watch process that evaluates new threats/technologies and regularly updates policies and controls?",
+          "todo": "Establish the technology-watch process, including sources, evaluation methodology, responsible persons, decision and update cycle, change log, and communication to affected teams.",
+          "info": "It becomes audit-ready through a closed evidence chain: observation -> assessment -> decision -> update -> communication -> evidence.",
+          "examples": [
+            "Monthly review of alerts with documented decisions.",
+            "Policy updates are versioned and communicated, for example update policy and cloud baseline."
+          ],
+          "reference": "DORA (2022), Art. 6 i. V. m. Art. 13"
+        },
+        "DORA_IKT_ASSET_INVENTAR": {
+          "question": "Is there an up-to-date inventory of the ICT assets used for the AI system?",
+          "todo": "Capture the inventory of AI-relevant ICT assets completely, keep it current, and document it transparently, including data sources, models, pipelines, and interfaces.",
+          "info": "What matters is that not only servers and cloud resources are captured, but also data sources, model artifacts, pipelines, interfaces, and operational tools.",
+          "examples": [
+            "CMDB or asset register lists model service, data pipeline, storage, secrets, and logging/SIEM.",
+            "Architecture diagram links to the relevant asset IDs."
+          ],
+          "reference": "DORA (2022), Art. 6-9"
+        },
+        "DORA_SEC_IAM_MINIMALE_RECHTE": {
+          "question": "Is access to AI-relevant components implemented according to the principle of least privilege?",
+          "todo": "Implement and evidence the principle of least privilege: define role and access concept, minimize privileged accounts, establish segregation of duties across development, operations, and review, and carry out regular recertification.",
+          "info": "It only becomes audit-ready through traceable role models, recertification, and clear segregation of duties.",
+          "examples": [
+            "Recertification of role permissions is documented at least quarterly.",
+            "No shared admin accounts; emergency access is defined and logged."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_SEC_UPDATE_SCHWACHSTELLENMANAGEMENT": {
+          "question": "Is there effective vulnerability and update management for AI-relevant systems?",
+          "todo": "Establish vulnerability and update management: regular scans, prioritization, update SLAs, documented exceptions, and tracked remediation.",
+          "info": "Update management also covers container images, third-party libraries, and AI dependencies.",
+          "examples": [
+            "Critical findings are remediated within defined SLAs.",
+            "Exceptions are time-limited, justified, and approved."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_SEC_HAERTUNG_BASIS": {
+          "question": "Is there a security baseline and hardening standard for AI-relevant components, and is it reviewed?",
+          "todo": "Define and enforce the hardening baseline: secure configurations, for example CIS/BSI, network segmentation, and regular configuration reviews.",
+          "info": "It becomes audit-ready through a defined baseline plus regular compliance measurement.",
+          "examples": [
+            "Configuration drift is detected and remediated."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_SEC_GEHEIMNISSE_MANAGEMENT": {
+          "question": "Are credentials for AI-relevant systems managed so they cannot be read or misused without authorization?",
+          "todo": "Implement secrets management: central storage, rotation, short lifetimes, access on a need-to-know basis, no hardcoding in code/configuration, and logging for access to secrets.",
+          "info": "Secrets management is a common audit finding: rotation and access evidence are critical.",
+          "examples": [
+            "Rotation für API-Keys mindestens alle X Tage (richtlinienbasiert) dokumentiert.",
+            "Repository-Scans verhindern Leaks von Geheimnissen."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_SEC_PROTOKOLLIERUNG_SIEM": {
+          "question": "Are security-relevant logs for AI-relevant systems complete, tamper-protected, and centrally analyzable?",
+          "todo": "Ensure logging/SIEM: log authentication and admin actions, data access, model and configuration changes; define retention periods; enable central correlation/alerting; and protect access to logs.",
+          "info": "For audit purposes the key questions are: what is logged, for how long, who reviews it, and which alerts exist?",
+          "examples": [
+            "Admin actions and model deployments are traceable, including who, when, and what.",
+            "Alerts for unusual data exfiltration and failed logins are active."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_SEC_SDLC_AENDERUNGSGATES": {
+          "question": "Are there secure approval gates in change management for AI-relevant changes, including a four-eyes principle?",
+          "todo": "Define approval gates: code reviews, approvals for deployments, separation of development and production, traceability, and a governed emergency process.",
+          "info": "Especially with AI, change is not just code: model versions, features, data sources, and prompt/policy changes all belong here.",
+          "examples": [
+            "Every deployment has a ticket reference and approval.",
+            "Production deployments are only possible through approved roles."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_RESILIENZMAßNAHMEN": {
+          "question": "Are resilience measures defined for the AI-relevant components?",
+          "todo": "Define and document resilience measures for AI-relevant components, including redundancy, switchover/failover, capacity planning, and defined fallback modes.",
+          "info": "Resilience also includes defined fallbacks, for example manual processes, and capacity planning for peak loads.",
+          "examples": [
+            "DR concept describes RTO/RPO, restart, and responsibilities.",
+            "Failover or switchover test record documents success and lessons learned."
+          ],
+          "reference": "DORA (2022), Art. 11–12"
+        },
+        "DORA_BACKUP_WIEDERHERSTELLUNG_TESTS": {
+          "question": "Are backup and recovery procedures for the AI-relevant systems tested and documented regularly?",
+          "todo": "Test and document backup and recovery procedures for AI-relevant systems regularly, including data, model artifacts, configurations, and keys.",
+          "info": "Tests should cover recovery of the relevant components, including data, model artifacts, configurations, and keys.",
+          "examples": [
+            "Test report shows recovery of model artifacts and configuration.",
+            "Records document test date, result, deviations, and actions."
+          ],
+          "reference": "DORA (2022), Art. 11–12"
+        }
+      }
     },
     "DORA_KRITISCHE_FUNKTION_SCOPE": {
-      "label": "DORA: Critical or important function (Art. 8)"
+      "label": "DORA: Critical/important function (Art. 8)",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 8"
+      ],
+      "items": {
+        "DORA_KF_SCOPE_IMPACT_ANALYSE": {
+          "question": "Is there an impact analysis explaining why the process is considered critical or important?",
+          "todo": "Create or update the impact analysis: affected business processes/services, customer impacts, regulatory obligations, thresholds, and rationale for criticality.",
+          "info": "The analysis must justify criticality in a traceable way, including impacts, thresholds, and affected services/outputs.",
+          "examples": [
+            "Document names affected services, customer impacts, and relevant thresholds.",
+            "Committee paper documents the classification and review cycle."
+          ],
+          "reference": "DORA (2022), Art. 8"
+        },
+        "DORA_KF_ABHAENGIGKEITEN_KARTE": {
+          "question": "Are dependencies for the critical or important process documented?",
+          "todo": "Create or update the dependency map: systems, data flows, interfaces, third-party providers, shared failure domains, and manual steps.",
+          "info": "Dependencies must be traceable end to end, including systems, data flows, interfaces, third-party providers, and manual steps.",
+          "examples": [
+            "Datenflussdiagramm zeigt Schnittstellen inkl. Drittanbietern.",
+            "Interface list is versioned and references the affected systems."
+          ],
+          "reference": "DORA (2022), Art. 8"
+        },
+        "DORA_KF_TOLERANZEN_RTO_RPO": {
+          "question": "Are impact tolerances and recovery targets, such as RTO/RPO or MTPD, defined, aligned, and consistent with BCM?",
+          "todo": "Define impact tolerances and RTO/RPO and link them to BCM, including assumptions, measurement methodology, and acceptance criteria.",
+          "info": "Definitions must be measurable and remain consistent with BCM, including assumptions, measurement methodology, and acceptance criteria.",
+          "examples": [
+            "RTO/RPO are documented in the catalog and mapped to the process.",
+            "Test records evidence that targets are achievable or that deviations are addressed."
+          ],
+          "reference": "DORA (2022), Art. 8"
+        },
+        "DORA_KF_FORMALE_FREIGABE": {
+          "question": "Is the classification, including scope, dependencies, and tolerances, formally approved and stored in versioned form?",
+          "todo": "Obtain formal approval and document it in versioned form, including accountable owner, risk management or BCM, and where relevant the management body or committee, plus conditions and review cycle.",
+          "info": "Approval must clearly document the decision, version, responsible persons, and conditions.",
+          "examples": [
+            "Approval record contains version, date, participants, and conditions.",
+            "Decision record links to scope, dependencies, and tolerances."
+          ],
+          "reference": "DORA (2022), Art. 8"
+        }
+      }
     },
     "DORA_DRITTANBIETER_STANDARD": {
-      "label": "DORA: ICT third-party providers – standard requirements"
+      "label": "DORA: ICT third-party providers - standard requirements",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 28–30"
+      ],
+      "items": {
+        "DORA_ANBIETER_REGISTER_RISIKO": {
+          "question": "Are ICT third-party providers maintained in a register and assessed on a risk basis?",
+          "todo": "Maintain ICT third-party providers in a register, map AI-relevant services clearly, and perform and document regular risk-based assessments.",
+          "info": "The register should clearly map the AI-relevant services, including service, data access, and criticality, and be updated regularly.",
+          "examples": [
+            "Register contains service description, criticality, accountable owner, data types, and region or hosting.",
+            "Review record documents the reassessment and actions."
+          ],
+          "reference": "DORA (2022), Art. 28"
+        },
+        "DORA_VERTRAGSREGISTER_MINDESTFELDER": {
+          "question": "Does the contract register contain minimum information on service, criticality, data access, subcontractors, and terms?",
+          "todo": "Extend the contract register with mandatory minimum fields and ensure that all AI-relevant services are maintained completely, including service, criticality, data access, subcontractors, and terms.",
+          "info": "Minimum fields help identify dependencies and risks quickly, for example data location, subcontractors, and exit options.",
+          "examples": [
+            "Template contains fields for data access, subcontractors, and contract terms.",
+            "Register-Auszug zeigt vollständige Einträge für KI-relevante Services."
+          ],
+          "reference": "DORA (2022), Art. 28–29"
+        },
+        "DORA_VERTRAG_MINDESTKLAUSELN": {
+          "question": "Do third-party contracts contain minimum clauses on security, audit rights, and incident reporting?",
+          "todo": "Add minimum clauses on security, audit/review rights, and incident reporting to third-party contracts and ensure enforceability, including deadlines, scope, and contacts.",
+          "info": "Clauses should be practically enforceable, including deadlines, contacts, evidence obligations, audit scope, and subcontractor rules.",
+          "examples": [
+            "Contract annex governs audit rights, security requirements, and reporting deadlines.",
+            "Service description defines operational and security services."
+          ],
+          "reference": "DORA (2022), Art. 30"
+        },
+        "DORA_AUSSTIEGSSTRATEGIE": {
+          "question": "Is there a documented exit strategy including data return/deletion and a transition plan?",
+          "todo": "Document the exit strategy and make it testable, including data return/deletion, transition plan, and migration/portability.",
+          "info": "The exit should be testable, for example by migration or portability, and include a plan B for critical outages or provider changes.",
+          "examples": [
+            "Exit plan describes data export format, deletion confirmation, and transition periods.",
+            "Migration runbook contains steps, responsible persons, and dependencies."
+          ],
+          "reference": "DORA (2022), Art. 28–30"
+        }
+      }
     },
     "DORA_DRITTANBIETER_ERWEITERT": {
-      "label": "DORA: (Potentially) critical ICT third-party provider – enhanced requirements"
+      "label": "DORA: Potentially critical ICT third-party provider - enhanced requirements",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 31–44"
+      ],
+      "items": {
+        "DORA_KONZENTRATIONSRISIKO": {
+          "question": "Has the concentration risk, meaning single point of failure, for the provider been assessed and documented?",
+          "todo": "Assess and document the provider concentration risk, meaning single point of failure, and record the risk decision including residual risks and conditions.",
+          "info": "Concentration risk includes technical, organizational, and market-related dependencies, for example a single cloud provider supporting several critical services.",
+          "examples": [
+            "Analysis shows dependencies and impact.",
+            "Risk decision documents accepted residual risks and conditions."
+          ],
+          "reference": "DORA (2022), Art. 28–29 (i. V. m. Governance)"
+        },
+        "DORA_KONZENTRATIONSRISIKO_MINDERUNG": {
+          "question": "Is there a documented strategy to reduce concentration risk?",
+          "todo": "Define, document, and approve the strategy to reduce concentration risk, for example a secondary provider or exit options.",
+          "info": "The strategy should contain concrete measures, for example multi-provider setup, contractual options, or standardized interfaces.",
+          "examples": [
+            "Multi-provider strategy defines criteria and target state, for example at least two providers.",
+            "Management approval documents budget, timeline, and responsible persons."
+          ],
+          "reference": "DORA (2022), Art. 28–30"
+        },
+        "DORA_SUBDIENSTLEISTER": {
+          "question": "Are subcontractors identified, contractually governed, and reviewed on a risk basis?",
+          "todo": "Identify subcontractors, govern them contractually, and review them regularly on a risk basis, including transparency on access, location, and changes.",
+          "info": "What matters is transparency about subcontractors and their access to data and systems, as well as change and approval obligations.",
+          "examples": [
+            "Subcontractor list names services, location or region, and data access.",
+            "Review documents risk assessment and actions where relevant."
+          ],
+          "reference": "DORA (2022), Art. 30"
+        },
+        "DORA_ANBIETER_UEBERWACHUNG": {
+          "question": "Are providers monitored regularly against defined KPIs and SLAs?",
+          "todo": "Monitor providers regularly against defined KPIs and SLAs and ensure escalation when thresholds are breached.",
+          "info": "Monitoring should cover both performance and security metrics, including thresholds and an escalation process.",
+          "examples": [
+            "SLA report shows availability and response times.",
+            "Security report shows update and vulnerability status and findings."
+          ],
+          "reference": "DORA (2022), Art. 28–30"
+        },
+        "DORA_AUFSICHTS_BEREITSCHAFT": {
+          "question": "Are internal processes defined to meet supervisory requirements for critical ICT third-party providers?",
+          "todo": "Define and implement internal processes for supervisory requirements relating to critical ICT third-party providers, including requests, audits, disclosures, deadlines, and artifacts.",
+          "info": "It should be clear who coordinates requests, which documents need to be kept ready, and how deadlines and interfaces are handled.",
+          "examples": [
+            "Process description defines roles, approvals, and storage locations for evidence.",
+            "Audit runbook contains checklist and standard responses or artifacts."
+          ],
+          "reference": "DORA (2022), Art. 31–44"
+        }
+      }
     },
     "DORA_KRITISCHE_IKT_DRITTANBIETER_AUFSICHTSREGIME": {
-      "label": "DORA: Critical ICT third-party providers"
+      "label": "DORA: Critical ICT third-party providers",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 31–44"
+      ],
+      "items": {
+        "DORA_CTPP_STATUS_UEBERWACHUNG": {
+          "question": "Is the provider's status as a potentially critical ICT third-party provider monitored continuously and considered in procurement and outsourcing?",
+          "todo": "Implement designation awareness: maintain provider status and watchlist, including owners, data sources, and review cycle, and anchor it in outsourcing and procurement controls.",
+          "info": "The goal is not just a one-time yes or no on criticality, but continuous tracking of whether a provider is or could become designated as a critical ICT third-party provider and which internal controls this triggers.",
+          "examples": [
+            "Regular review of a provider watchlist by outsourcing and risk management."
+          ],
+          "reference": "DORA (2022), Art. 31–44"
+        },
+        "DORA_CTPP_AUFSICHTS_INTERAKTION_BETRIEBSHANDBUCH": {
+          "question": "Is there a runbook for supervisory interactions involving critical ICT third-party providers?",
+          "todo": "Create the runbook: roles and contacts, including deputies, data and document provision, internal approvals, timing requirements, and communication channels; validate it in exercises.",
+          "info": "This avoids audit gaps where a provider is critical, or becomes critical, but roles, deadlines, and document routes are not implemented.",
+          "examples": [
+            "Kontaktliste enthält interne Verantwortlicher plus externe Anbieter-Kontakte.",
+            "Dokumentenliste: Verträge, DD-Reports, Ausstiegsplan, Konzentrationsanalyse, BCM-Mapping inkl. Ablageort."
+          ],
+          "reference": "DORA (2022), Art. 31–44"
+        }
+      }
     },
     "DORA_DATENUEBERMITTLUNG_EXTERNE_KI_SCHUTZ": {
-      "label": "DORA: Data transfers to external AI – safeguards"
+      "label": "DORA: Data transfer to external AI - safeguards",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 5–16 (i. V. m. IKT-Kontrollen)"
+      ],
+      "items": {
+        "DORA_DATENKLASSIFIKATION_UND_FREIGABE": {
+          "question": "Is there data classification and documented approval for transfers to external AI services?",
+          "todo": "Apply data classification and obtain documented approval for transfers to external AI services, including data types, purpose, recipient, safeguards, and channels.",
+          "info": "Approval should cover data types, purpose, recipient, safeguards, and permitted transfer channels.",
+          "examples": [
+            "Approval record names the classification, for example confidential, and the permitted channels.",
+            "Policy describes which data must never be transferred to external AI."
+          ],
+          "reference": "DORA (2022), Art. 6–9"
+        },
+        "DORA_VERSCHLUESSELUNG": {
+          "question": "Are data encrypted in transit and at rest for external AI services?",
+          "todo": "Implement and document encryption for data transfer and storage with external AI services, including TLS, encryption at rest, and key management.",
+          "info": "What matters is encryption in transit, encryption at rest, and governed key management, including rotation and access.",
+          "examples": [
+            "Architecture diagram shows TLS endpoints and encryption in storage.",
+            "Key-management documentation describes rotation and role-based access."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_PSEUDONYMISIERUNG": {
+          "question": "Are sensitive data pseudonymized before transfer to external AI services where required?",
+          "todo": "Pseudonymize sensitive data before transfer to external AI services where required and document the implementation in the data flow.",
+          "info": "Pseudonymization should be traceable, including mapping and key protection, and reflected in the data flow.",
+          "examples": [
+            "Data-flow diagram shows where pseudonymization occurs and where plaintext is prevented.",
+            "Concept describes mapping and key protection plus access controls."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_DLP_KONTROLLEN": {
+          "question": "Are data-loss prevention controls active for relevant channels to prevent data leakage when using external AI?",
+          "todo": "Activate, test, and monitor data-loss prevention controls for relevant channels to prevent data leakage when using external AI, including exceptions and approvals.",
+          "info": "Data-loss prevention should particularly cover upload and prompt channels, exports such as email/download/API, and exceptions or approvals.",
+          "examples": [
+            "Regelsets blockieren/warnen bei sensiblen Datenmustern (z. B. IBAN, Kundendaten).",
+            "Testprotokoll dokumentiert Wirksamkeit inkl. Faslch Positiv/Negativ."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_VERTRAG_DATENLOKATION": {
+          "question": "Is data location or hosting region contractually specified for external AI services?",
+          "todo": "Specify data location and hosting region contractually for external AI services and make changes subject to approval.",
+          "info": "The contract should name regions clearly and make changes, for example new regions, subject to approval.",
+          "examples": [
+            "Hosting addendum lists regions and subcontractor locations.",
+            "Contract contains a change clause for region."
+          ],
+          "reference": "DORA (2022), Art. 30"
+        },
+        "DORA_VERTRAG_LOESCHUNG_RUECKGABE": {
+          "question": "Are data return and deletion after contract termination governed contractually?",
+          "todo": "Govern data return and deletion after contract termination contractually, including deadlines, evidence or deletion certificate, return formats, and a documented deletion concept.",
+          "info": "The arrangement should include deadlines, evidence such as deletion confirmation, and formats for data return.",
+          "examples": [
+            "Contract describes deletion deadlines and mandatory deletion confirmation.",
+            "Deletion concept describes data classes, storage locations, and responsible persons."
+          ],
+          "reference": "DORA (2022), Art. 30"
+        },
+        "DORA_VERTRAG_SUBPROZESSOREN": {
+          "question": "Are subprocessors named transparently and is their use contractually governed?",
+          "todo": "Name subprocessors transparently and govern their use contractually, including notification periods, consent/objection rights, and equivalent security standards.",
+          "info": "Transparency also includes changes, such as replacement or new additions, and the obligation to ensure equivalent security standards.",
+          "examples": [
+            "Subprocessor list is versioned and updated when changes occur.",
+            "Contract governs consent and objection rights and notification periods."
+          ],
+          "reference": "DORA (2022), Art. 30"
+        }
+      }
     },
     "DORA_GENERATIVE_KI_LLM_ALS_DIENST_KONTROLLEN": {
-      "label": "DORA: Generative AI/LLM as a service – additional controls"
+      "label": "DORA: Generative AI/LLM as a service - additional controls",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 9",
+        "DORA (2022), Art. 28–30"
+      ],
+      "items": {
+        "DORA_GENAI_DATENMINIMIERUNG_SCHWAERZUNG": {
+          "question": "Are inputs to the LLM service designed according to the principle of data minimization?",
+          "todo": "Implement and document data minimization and redaction/masking before LLM calls.",
+          "info": "The goal is to avoid transferring unnecessary sensitive data to external generative-AI services; redaction or masking must be technically enforced and testable.",
+          "examples": [
+            "Maskierung personenbezogener Daten vor Prompt-Versand; Klartext ist in Protokollen/Exporten unterbunden.",
+            "Allowlist: only defined and approved fields may be included in prompts."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_GENAI_AUFBEWAHRUNG_UND_LOESCHUNG": {
+          "question": "Are retention and deletion for prompts, outputs, and logs defined and technically implemented both with the provider and internally?",
+          "todo": "Define and implement the retention and deletion concept for GenAI inputs and outputs, including retention periods, deletion paths, access protection, and evidence or deletion confirmations.",
+          "info": "Typical audit questions are how long prompts and outputs exist, where they are stored, and who can access them.",
+          "examples": [
+            "Provider settings: no retention, minimal retention, or explicitly defined retention is activated and contractually fixed.",
+            "Internal logs are automatically deleted or anonymized after X days."
+          ],
+          "reference": "DORA (2022), Art. 9 i. V. m. Art. 30"
+        },
+        "DORA_GENAI_Anbieter_ZUSICHERUNG_KEIN_TRAINING": {
+          "question": "Are there contractual assurances that customer data and prompts are not used for training or fine-tuning?",
+          "todo": "Ensure contractual assurances of no training and no fine-tuning with customer data and anchor them in procurement and outsourcing governance.",
+          "info": "For generative AI in particular, no training with customer data is a central control point, including for subcontractors and changes to contractual terms.",
+          "examples": [
+            "Contract annex includes no-training assurance plus evidence obligations; changes are subject to approval.",
+            "Subcontractors are transparently named; changes trigger a reassessment."
+          ],
+          "reference": "DORA (2022), Art. 30"
+        },
+        "DORA_GENAI_VERSIONIERUNG_UND_AENDERUNGSMITTEILUNGEN": {
+          "question": "Is model and endpoint versioning governed, and is there a process for provider changes?",
+          "todo": "Establish versioning and change management for LLM providers: fixed model IDs and endpoints, monitoring of change notices, impact analysis, repeat testing, approval gate, and revert or rollback options.",
+          "info": "LLM providers change models frequently. Without versioning and a change process, silent risk changes arise.",
+          "examples": [
+            "Only explicit model versions may be used; automatic upgrades are prohibited or require approval.",
+            "Change notice triggers regression testing and risk review before switchover."
+          ],
+          "reference": "DORA (2022), Art. 9 i. V. m. Art. 28–29"
+        },
+        "DORA_GENAI_PROMPT_ANTWORT_PROTOKOLLIERUNG": {
+          "question": "Is logging of prompts and outputs governed on a risk basis and implemented in an audit-ready way?",
+          "todo": "Define the logging concept for generative AI: when to log, which fields to log in masked form, access controls, retention, SIEM monitoring, and evidencing for incidents.",
+          "info": "This is a tradeoff: enough logging for audit and incidents, but still data-minimizing. The solution is metadata plus selective, masked payload logging.",
+          "examples": [
+            "Standard: metadata only, such as request ID, model version, token count, and policy ID; payload data only after debug or error-analysis approval.",
+            "Access to logs is restrictive and itself logged."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_GENAI_SICHERHEITSFILTER_UND_RICHTLINIENDURCHSETZUNG": {
+          "question": "Are security filters and policy enforcement implemented and tested?",
+          "todo": "Implement security controls: input validation, prompt-injection defenses, policy checks, regular testing, and tracking of findings.",
+          "info": "Generative AI introduces new attack surfaces. Without guardrails, security and compliance risks emerge.",
+          "examples": [
+            "System prompt is protected; tool calls are restricted to allowed tools; outputs are checked against policies."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_GENAI_MISSBRAUCHSPRAEVENTION_RATENBEGRENZUNG": {
+          "question": "Are misuse-prevention measures implemented?",
+          "todo": "Implement misuse prevention: rate limiting and quotas, anomaly detection, authentication and authorization by user and role, misuse processes, alerting, and evidence chain.",
+          "info": "This protects against prompt stuffing, data leakage, cost explosions, and unauthorized use.",
+          "examples": [
+            "Quotas per user and role; anomaly alerts for unusual prompt patterns or data volume.",
+            "Misuse process includes blocking, forensics, communication, and lessons learned."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        }
+      }
     },
     "DORA_MODELLBETRIEB_UEBERWACHUNG": {
-      "label": "DORA: Model operations – monitoring, change management and controls"
+      "label": "DORA: Model operations - monitoring, change management, and controls",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 5–16"
+      ],
+      "items": {
+        "DORA_MODELLAENDERUNG_Auswirkung": {
+          "question": "Is there a documented change process that only approves model changes after risk and impact analysis?",
+          "todo": "Establish and document the change process for model changes so that approvals are only granted after risk and impact analysis.",
+          "info": "The process should define triggers, for example retraining or fine-tuning, new features, or new data sources, and include re-testing and monitoring requirements.",
+          "examples": [
+            "Impact analysis evaluates security, resilience, and compliance effects.",
+            "Approval record links to tests, monitoring, and rollback plan."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_UEBERWACHUNG_LEISTUNG": {
+          "question": "Are model performance metrics monitored in operation, and are escalation thresholds defined?",
+          "todo": "Monitor performance metrics in operation and define thresholds including escalation and response process, including fallback or degraded mode.",
+          "info": "Define metrics, thresholds, owners, and response times, including fallback or degraded mode.",
+          "examples": [
+            "Dashboard shows metrics, for example error rate, latency, and abort rate, with thresholds.",
+            "Alert rules escalate to on-call support and the responsible owner."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_UEBERWACHUNG_DRIFT": {
+          "question": "Is model drift monitored, and are measures defined if thresholds are exceeded?",
+          "todo": "Monitor model drift and define and implement measures for threshold breaches, such as warning, analysis, mitigation, revert, or retraining.",
+          "info": "Drift monitoring should consider both data distribution and model performance; responses range from warning to revert or retraining.",
+          "examples": [
+            "Drift report shows distribution changes and affected features.",
+            "Runbook describes steps in case of drift, such as analysis, mitigation, retraining, and approval."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_UEBERWACHUNG_SICHERHEIT": {
+          "question": "Is there security monitoring for AI-relevant components?",
+          "todo": "Set up and operate security monitoring for AI-relevant components such as APIs, model endpoints, data access, and secrets, including alerting and follow-up.",
+          "info": "Security monitoring should cover relevant attack surfaces and be analyzable in a traceable way.",
+          "examples": [
+            "SIEM-Anwendungsfälle erkennt untypische Zugriffsmuster auf Modellendpunkte.",
+            "Alerting creates tickets and documents handling and closure."
+          ],
+          "reference": "DORA (2022), Art. 10"
+        },
+        "DORA_BETRIEBSHANDBUCH_MODELLVORFAELLE": {
+          "question": "Are there emergency runbooks for model failures including an escalation chain?",
+          "todo": "Create, test, and maintain emergency runbooks for model failures, including diagnosis, shutdown, fallback, or revert, with a clear escalation chain and decision authorities.",
+          "info": "Emergency runbooks should provide clear diagnosis and decision paths, for example shutdown, fallback, or revert, and responsibilities by level.",
+          "examples": [
+            "Runbook contains a checklist of symptoms, causes, actions, and communication template.",
+            "Escalation matrix defines levels 1, 2, and 3 and their decision authority."
+          ],
+          "reference": "DORA (2022), Art. 17"
+        },
+        "DORA_BETRIEBSHANDBUCH_CYBER_IKT_VORFAELLE": {
+          "question": "Are there emergency runbooks for cyber and ICT incidents in AI components, including an escalation chain?",
+          "todo": "Create, exercise, and maintain emergency runbooks for cyber and ICT incidents in AI components, including detection, containment, recovery, communication, and reporting obligations.",
+          "info": "Cyber emergency runbooks should address detection, containment, recovery, and communication and reporting obligations.",
+          "examples": [
+            "Runbook describes containment, forensics, restart, and lessons learned.",
+            "Exercises are documented and findings are tracked."
+          ],
+          "reference": "DORA (2022), Art. 17"
+        }
+      }
     },
     "DORA_KOMMUNIKATIONSPLAENE": {
-      "label": "DORA: Communication"
+      "label": "DORA: Communication",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 14; Art. 17"
+      ],
+      "items": {
+        "DORA_KOMM_PLAN": {
+          "question": "Is there a communication plan for major ICT incidents and vulnerabilities?",
+          "todo": "Create or update the communication plan, including severity levels, triggers, approval process, customer information, and responsible disclosure to the public and other financial entities, plus contact lists and escalation paths.",
+          "info": "The plan must define triggers, approvals, audiences, content, and channels for each severity level in a traceable way.",
+          "examples": [
+            "Defined criteria for when customers are actively informed, for example service outage greater than X or data leakage.",
+            "Freigabekette ist dokumentiert."
+          ],
+          "reference": "DORA (2022), Art. 14"
+        },
+        "DORA_KOMM_STRATEGIE": {
+          "question": "Is there a communication strategy for internal staff and external stakeholders?",
+          "todo": "Implement the communication strategy: define internal and external target groups, set roles and responsibilities, and standardize information channels and content by target group.",
+          "info": "The strategy must define target groups, roles, channels, and minimum content per situation report and keep them versioned.",
+          "examples": [
+            "External stakeholders: customers, partners, supervisors, media, and providers."
+          ],
+          "reference": "DORA (2022), Art. 14"
+        },
+        "DORA_KOMM_ANSPRECHPERSON": {
+          "question": "Is at least one responsible person named for implementing the communication strategy?",
+          "todo": "Define communication responsibility: named role or person, including deputy, for external communication and media, embedded in the incident and crisis organization.",
+          "info": "The designation must clearly document the role, deputy, availability, and approval authority.",
+          "examples": [
+            "Crisis spokesperson and deputy are named and reachable."
+          ],
+          "reference": "DORA (2022), Art. 14"
+        },
+        "DORA_KOMM_VORLAGEN": {
+          "question": "Are there prebuilt communication templates and have they been tested or exercised?",
+          "todo": "Create and exercise templates for customer notification, status-page updates, internal situation updates, and FAQs.",
+          "info": "Templates must be approved, current, and tested in exercises, including evidence of the approval chain.",
+          "examples": [
+            "Exercise 'cloud outage': communication chain and approvals were run through."
+          ],
+          "reference": "DORA (2022), Art. 14 i. V. m. Art. 17"
+        }
+      }
     },
     "DORA_VEREINFACHTE_BASIS": {
-      "label": "DORA: Simplified ICT risk management framework (Art. 16) – minimum requirements"
+      "label": "DORA: Simplified ICT risk management framework (Art. 16) - minimum requirements",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 16"
+      ],
+      "items": {
+        "DORA_ART16_EIGNUNG_DOKU": {
+          "question": "Is the applicability of Art. 16, meaning scope and eligibility, justified and documented in a traceable way?",
+          "todo": "Document Art. 16 eligibility: review entity type and scope, record the rationale, and version the decision including owner and date.",
+          "info": "The documentation must clearly evidence scope, criteria, and decision, including date and owner.",
+          "examples": [
+            "Decision paper contains scope, rationale, date, and responsible persons.",
+            "Richtlinienauszug referenziert die Anwendung des vereinfachten Rahmens."
+          ],
+          "reference": "DORA (2022), Art. 16"
+        },
+        "DORA_ART16_RMF_MINDESTUMFANG": {
+          "question": "Is a simplified ICT RMF, including roles, policies, and minimum controls, defined and embedded in operations?",
+          "todo": "Define the simplified ICT RMF: set roles and responsibilities, policies and standards, minimum controls, and operating processes.",
+          "info": "The minimum scope must cover roles, policies, controls, and operating processes and be maintained in versioned form.",
+          "examples": [
+            "RMF document references roles/RACI and minimum controls.",
+            "Control catalog is aligned and embedded in operations."
+          ],
+          "reference": "DORA (2022), Art. 16"
+        },
+        "DORA_ART16_DIG_RESILIENZ_STRATEGIE": {
+          "question": "Is the AI use case aligned with the digital operational resilience strategy and approved or regularly reviewed by the management body?",
+          "todo": "Evidence that the AI use case is considered in the digital operational resilience strategy and that approval or regular review by the management body is documented.",
+          "info": "Even under Art. 16, the management body should approve or review the strategic direction for operational resilience in a traceable way.",
+          "examples": [
+            "Kurzstrategie ist versioniert; Genehmigung/Review ist protokolliert."
+          ],
+          "reference": "DORA (2022), Art. 5 i. V. m. Art. 6"
+        },
+        "DORA_ART16_IKT_AUDITPLAN": {
+          "question": "Is there an ICT audit/review plan with approval by the management body and documented follow-up?",
+          "todo": "Define a minimum audit/review plan, obtain approval, and evidence follow-up of findings and actions, including owner, deadline, and effect.",
+          "info": "Minimum requirement means plannable and traceable: reviews are scheduled, documented, and lead to tracked actions.",
+          "examples": [
+            "Jährlicher Review des RMF + dokumentierte Stichprobenprüfungen im Jahr."
+          ],
+          "reference": "DORA (2022), Art. 5"
+        },
+        "DORA_ART16_UEBERWACHUNG": {
+          "question": "Is there ongoing monitoring of ICT risks and a review cycle?",
+          "todo": "Define monitoring and review cycle: KPIs/KRIs, regular reviews, change-driven reassessments, and findings tracking.",
+          "info": "The review cycle must define frequency, responsible persons, inputs such as KPIs/KRIs, and follow-up of findings.",
+          "examples": [
+            "Review record contains KPI/KRI status and decisions.",
+            "Backlog documents findings with owner, deadline, and status."
+          ],
+          "reference": "DORA (2022), Art. 16"
+        },
+        "DORA_ART16_CIA_SCHUTZ": {
+          "question": "Are minimum measures to protect confidentiality, integrity, and availability implemented?",
+          "todo": "Implement minimum measures: access control based on least privilege, logging, and backup/recovery.",
+          "info": "Minimum measures must be implemented and evidenced in an audit-ready way, including configuration, retention, and recovery testing.",
+          "examples": [
+            "IAM concept shows roles, recertification, and segregation of duties.",
+            "Backup plan contains recovery tests and documented results."
+          ],
+          "reference": "DORA (2022), Art. 16"
+        },
+        "DORA_ART16_VORFALLBEHANDLUNG": {
+          "question": "Is a minimum incident process defined, including escalation, emergency runbooks, and responsibilities?",
+          "todo": "Define the minimum incident process: severity levels and escalation, emergency runbooks, roles, lessons learned, and follow-up.",
+          "info": "The process must define severity levels, escalation, responsibilities, and evidence per incident.",
+          "examples": [
+            "Escalation matrix names responsible persons and response times."
+          ],
+          "reference": "DORA (2022), Art. 16"
+        }
+      }
     },
     "DORA_VORFALLMANAGEMENT": {
-      "label": "DORA: ICT incident management & reporting processes"
+      "label": "DORA: ICT incident management and reporting processes",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 17–23"
+      ],
+      "items": {
+        "DORA_VORFALL_PROZESS": {
+          "question": "Is there a documented process for recording, classifying, and handling ICT incidents?",
+          "todo": "Define, document, and integrate into operations the process for recording, classifying, and handling ICT incidents, including AI-specific incidents.",
+          "info": "The process should also consider AI-specific incidents, for example systematic wrong decisions, model changes, or data-quality incidents. Art. 17 refers to communication plans under Art. 14.",
+          "examples": [
+            "Ticket workflow contains categories, severities, and SLA response times.",
+            "Roles are defined, including accountable owner, IT security, and communication."
+          ],
+          "reference": "DORA (2022), Art. 17"
+        },
+        "DORA_VORFALL_SCHWELLENWERTE": {
+          "question": "Are criteria and thresholds for reportable ICT incidents documented and communicated in a binding way?",
+          "todo": "Define, document, and communicate criteria and thresholds for reportable ICT incidents in a binding way to the relevant teams.",
+          "info": "Thresholds should be concrete and operationalized, for example by user impact, duration, data loss, or critical services.",
+          "examples": [
+            "Policy contains decision matrix for severity and materiality.",
+            "Schulungsnachweis zeigt, dass relevante Teams die Kriterien kennen."
+          ],
+          "reference": "DORA (2022), Art. 18–19"
+        },
+        "DORA_VORFALL_MELDUNG_AUFSICHT": {
+          "question": "Is there a documented reporting process to the competent supervisor, including deadlines, roles, and templates?",
+          "todo": "Document and implement the reporting process to the competent supervisor, including deadlines, roles, templates, approvals, and information sources.",
+          "info": "The process should clearly define responsibilities for reporting, deadlines, and information sources for the submission.",
+          "examples": [
+            "Templates contain minimum information and contact persons.",
+            "RACI defines approval by compliance before submission."
+          ],
+          "reference": "DORA (2022), Art. 19–20"
+        },
+        "DORA_VORFALL_MELDEVORLAGEN_VERSIONIERUNG": {
+          "question": "Are reporting templates maintained and versioned so that the current content is always used?",
+          "todo": "Establish and govern reporting templates: responsible owner, approval process, versioning/change log, storage location, and regular reviews; ensure that incident and supervisory reports consistently cover the required data fields.",
+          "info": "Common audit trap: a template exists, but it is outdated or not reviewed. This item explicitly focuses on version governance and traceability.",
+          "examples": [
+            "Templates are stored centrally, for example in SharePoint, including version number.",
+            "Changes are approved and traceable."
+          ],
+          "reference": "DORA (2022), Art. 19–20"
+        },
+        "DORA_VORFALL_MELDEFRISTEN_PHASEN": {
+          "question": "Are reporting deadlines implemented in phases, such as initial, interim, and final report?",
+          "todo": "Implement deadlines by defining phases (initial/interim/final report), triggers per phase, internal timers/SLAs, responsibilities, and escalation; structure the operating manual so known and not-yet-known information can be clearly separated and supplemented later.",
+          "info": "The most common gap is not a missing report, but poor control of deadlines and phases, including who provides which content and when.",
+          "examples": [
+            "Operating manual contains a checklist of content for initial vs. interim vs. final report.",
+            "Escalation is triggered if information is not available in time."
+          ],
+          "reference": "DORA (2022), Art. 19–20"
+        },
+        "DORA_VORFALL_NACHBEREITUNG": {
+          "question": "Are major ICT incidents documented with a final report, root-cause analysis, and action plan?",
+          "todo": "Perform and document post-incident follow-up for major ICT incidents, including final report, root-cause analysis, and action plan with owner, deadline, and effectiveness review.",
+          "info": "Post-incident actions should be measurable, with owner, deadline, and success criterion, and should feed back into controls and monitoring.",
+          "examples": [
+            "Final report contains timeline, root cause, impact, and lessons learned.",
+            "Action tracker documents implementation and effectiveness review."
+          ],
+          "reference": "DORA (2022), Art. 19–20"
+        }
+      }
     },
     "DORA_MELDUNG_ERHEBLICHER_CYBERBEDROHUNGEN": {
-      "label": "DORA: (Voluntary) reporting of significant cyber threats"
+      "label": "DORA: (Voluntary) reporting of significant cyber threats",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 19–20"
+      ],
+      "items": {
+        "DORA_BEDROHUNGSMELDUNG_KRITERIEN": {
+          "question": "Are criteria defined for when a significant cyber threat, without an actual incident, is reported?",
+          "todo": "Define criteria and thresholds for voluntary cyber-threat reporting, including threat categories, relevance criteria, and distinction from an incident; document the decision matrix and communicate it to the relevant teams.",
+          "info": "The goal is to make cyber-threat intelligence and early warnings governable, and to decide traceably rather than reporting every indicator of compromise.",
+          "examples": [
+            "Criteria: high likelihood plus high impact plus potential sector-wide relevance."
+          ],
+          "reference": "DORA (2022), Art. 19–20"
+        },
+        "DORA_BEDROHUNGSMELDUNG_PROZESS": {
+          "question": "Is there a documented process for threat reporting?",
+          "todo": "Document the process for threat reporting, including roles such as incident manager and compliance, approvals, reporting channel, minimum content, confidentiality review, and coordination with parallel authority processes.",
+          "info": "The process must define roles, approvals, channel/format, documentation, and follow-up clearly.",
+          "examples": [
+            "Operating manual contains a go/no-go gate plus approval by compliance.",
+            "Clear channel and format, including who sends, who receives, and how it is documented."
+          ],
+          "reference": "DORA (2022), Art. 19–20"
+        },
+        "DORA_BEDROHUNGSMELDUNG_NACHWEISE": {
+          "question": "Are decisions and reports on cyber threats documented in a traceable way?",
+          "todo": "Establish evidence keeping: decision log including rationale, timestamp, content, and approvals; document feedback and follow-up; feed lessons learned back into threat and incident processes.",
+          "info": "Documentation is only audit-ready if non-reports and their rationale are also captured transparently.",
+          "examples": [
+            "Decision log also shows cases where a report was consciously not made, including the rationale."
+          ],
+          "reference": "DORA (2022), Art. 19–20"
+        }
+      }
     },
     "DORA_TESTPROGRAMM": {
-      "label": "DORA: ICT testing program (without TLPT)"
+      "label": "DORA: ICT testing program (without TLPT)",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 24–25"
+      ],
+      "items": {
+        "DORA_TESTPLAN": {
+          "question": "Is there a documented ICT testing program?",
+          "todo": "Define the testing program: mix of test types, for example vulnerability management/penetration testing and scenario tests, as well as frequencies, roles, independence/competence, and remediation governance.",
+          "info": "Audit-ready means a closed evidence chain: plan -> execution -> findings -> remediation -> effectiveness review.",
+          "examples": [
+            "Test calendar is aligned, versioned, and followed.",
+            "Test types cover relevant components such as model, data pipeline, and infrastructure/cloud."
+          ],
+          "reference": "DORA (2022), Art. 24–25"
+        },
+        "DORA_TESTUMFANG_ABHAENGIGKEITEN": {
+          "question": "Does the test scope also cover critical dependencies and interfaces, including ICT third-party providers?",
+          "todo": "Define the test scope so that third-party interfaces and critical dependencies are included, including contractual participation, scope, and receipt of reports.",
+          "info": "The scope must clearly govern interfaces, dependencies, and participation of third-party providers.",
+          "examples": [
+            "Test scope names third-party interfaces and critical paths.",
+            "Contract clauses govern receipt of reports and participation obligations."
+          ],
+          "reference": "DORA (2022), Art. 25"
+        },
+        "DORA_FESTSTELLUNGEN_NACHVERFOLGUNG": {
+          "question": "Is there a process that prioritizes test findings, assigns actions, and tracks them on time?",
+          "todo": "Establish a process to prioritize, assign, and follow up findings on time, including severity, owner, deadlines, and effectiveness review.",
+          "info": "Governance note: findings should be reviewed regularly, escalated if deadlines are missed, and after implementation the effectiveness of the action must be evidenced.",
+          "examples": [
+            "Findings tracker contains severity, owner, due date, and status.",
+            "Status report is reviewed regularly in the committee and escalated in case of delay."
+          ],
+          "reference": "DORA (2022), Art. 25"
+        }
+      }
     },
     "DORA_TLPT": {
-      "label": "DORA: TLPT (Threat-Led Penetration Testing)"
+      "label": "DORA: TLPT (Threat-Led Penetration Testing)",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 26–27"
+      ],
+      "items": {
+        "DORA_TLPT_SCOPE_PRUEFUNG": {
+          "question": "Has it been reviewed and documented whether the AI system or its infrastructure falls within the TLPT scope?",
+          "todo": "Review and document the TLPT scope, including system boundaries, critical paths, dependencies including ICT third-party providers, and the relevant criteria/rationale.",
+          "info": "TLPT is institution-specific. What matters is the documented scope/path definition and the traceability of the rationale.",
+          "examples": [
+            "Scope is aligned by risk management, BCM, and IT and stored in versioned form.",
+            "Dependencies on critical ICT third-party providers are reflected in the scope."
+          ],
+          "reference": "DORA (2022), Art. 26–27"
+        }
+      }
     },
     "DORA_DRITTANBIETER_SORGFALTSPRUEFUNG": {
-      "label": "DORA: Third-party providers – due diligence, contracts and monitoring"
+      "label": "DORA: Third-party providers - due diligence, contracts, and monitoring",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 28–30, 31–44"
+      ],
+      "items": {
+        "DORA_SORGFALTSPRUEFUNG_MINDESTUMFANG": {
+          "question": "Does the due diligence cover at least security, resilience, subcontractors, and data processing, and is it documented?",
+          "todo": "Carry out and document risk-based due diligence covering security, resilience, subcontractors, data processing, and dependencies.",
+          "info": "Due diligence is the structured, documented ex-ante and periodic review of an ICT service provider in order to assess its suitability and the relevant risks for your organization.",
+          "examples": [
+            "Due diligence report assesses security/resilience, subcontractors, and data access.",
+            "Risk decision documents accepted risks and conditions."
+          ],
+          "reference": "DORA (2022), Art. 28–29"
+        },
+        "DORA_VERTRAG_AUDIT_RECHTE": {
+          "question": "Are audit and review rights vis-a-vis the provider contractually agreed?",
+          "todo": "Contractually define audit and review rights, including for subcontractors, and set clear evidence obligations, deadlines, scope, and remediation measures.",
+          "info": "Audit rights should also cover subcontractors and define clear evidence obligations and timelines.",
+          "examples": [
+            "Contract governs scope, prior notice, receipt of reports, and remediation measures.",
+            "Clause covers access to relevant evidence, such as reports, logs, and policies."
+          ],
+          "reference": "DORA (2022), Art. 30"
+        },
+        "DORA_VERTRAG_SICHERHEIT_SLA": {
+          "question": "Are security requirements contractually agreed?",
+          "todo": "Set measurable security requirements contractually, including KPIs/SLAs, thresholds, reporting frequency, and escalation, and ensure they can be verified.",
+          "info": "Requirements should be measurable and verifiable, for example by KPI/SLA, thresholds, reporting frequency, and escalation.",
+          "examples": [
+            "Security addendum defines minimum standards, for example update times, MFA, and logging.",
+            "SLA annex contains metrics, reports, and escalation levels."
+          ],
+          "reference": "DORA (2022), Art. 30"
+        },
+        "DORA_AUSTIEGSPLAN": {
+          "question": "Is an exit strategy, including data migration and transitional operation, documented?",
+          "todo": "Document and implement the exit strategy, including data migration and transitional operation.",
+          "info": "Exit planning should also consider transitional operation, such as parallel run, and fallback options.",
+          "examples": [
+            "Exit plan contains steps, deadlines, owner, and required accesses/artifacts.",
+            "Migration runbook describes tests and acceptance."
+          ],
+          "reference": "DORA (2022), Art. 28–30"
+        },
+        "DORA_ANBIETER_PRUEF_FREQUENZ": {
+          "question": "Are third-party providers reviewed and reassessed regularly on a risk basis using defined KPIs?",
+          "todo": "Define risk-based review frequency for third-party providers and perform and document regular KPI reviews, including reassessment when changes occur.",
+          "info": "Review frequency should depend on risk, for example critical provider means more frequent review, and should include follow-up of findings and actions.",
+          "examples": [
+            "Review log documents KPI trends, incidents, and actions.",
+            "Reassessment is triggered when changes occur."
+          ],
+          "reference": "DORA (2022), Art. 28–30"
+        }
+      }
     },
     "DORA_BASIS_KRITIKALITAET": {
-      "label": "DORA: ICT risk management – baseline requirements by criticality"
+      "label": "DORA: ICT risk management - baseline requirements by criticality",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 5–16"
+      ],
+      "items": {
+        "DORA_LIGHT_MINDESTKONTROLLEN": {
+          "question": "Are risk-based minimum controls defined and documented?",
+          "todo": "Define, document, and operationalize risk-based minimum controls appropriate to the level of criticality, for example access, logging, and backup.",
+          "info": "Art. 6 requires a well-documented ICT risk management framework that includes, among other things, strategies/policies, procedures, and records/tools to adequately protect information and ICT assets.",
+          "examples": [
+            "There is a versioned baseline control catalog with criticality levels and mandatory controls per level.",
+            "Each AI-relevant component such as model, pipeline, interface, or infrastructure is assigned to a criticality level with rationale.",
+            "For each baseline control it is clearly defined what the evidence looks like, for example IAM export, log retention settings, backup report, or restore test record.",
+            "Patch and vulnerability management: regular scans run; SLAs per criticality are documented and deviations are tracked.",
+            "Backups/recovery: at least one successful recovery test per critical component is documented, including date, result, and actions."
+          ],
+          "reference": "DORA (2022), Art. 6"
+        },
+        "DORA_LIGHT_VERANTWORTLICHKEITEN": {
+          "question": "Are responsibilities for operation and security of AI-relevant systems defined?",
+          "todo": "Define and document responsibilities for operation and security of AI-relevant systems.",
+          "info": "Even in smaller setups, responsibilities should be unambiguous, including escalation paths.",
+          "examples": [
+            "RACI names accountable owner, operations, IT security, and deputies.",
+            "Role description contains responsibilities and decision rights."
+          ],
+          "reference": "DORA (2022), Art. 5"
+        },
+        "DORA_LIGHT_DIG_RESILIENZ_STRATEGIE": {
+          "question": "Is there a digital operational resilience strategy approved/reviewed by the management body?",
+          "todo": "Document the resilience strategy to an appropriate extent: objectives/priorities, key ICT/AI dependencies, accepted level of risk, and action plan. Evidence approval/review by the management body at least annually or when triggered.",
+          "info": "The digital operational resilience strategy is the guiding framework for handling ICT/AI risks: it sets resilience objectives and priorities, identifies critical dependencies, and describes the accepted level of risk, meaning risk tolerance, as well as the measures for prevention, detection, response, and recovery.",
+          "examples": [
+            "1-3 page strategy plus action list, approved and versioned."
+          ],
+          "reference": "DORA (2022), Art. 5 i. V. m. Art. 6"
+        },
+        "DORA_LIGHT_IKT_AUDITPLAN": {
+          "question": "Is there an appropriate ICT audit/review plan with approval by the management body and follow-up of findings?",
+          "todo": "Define an appropriate review plan, including scope and frequency, obtain approval, and follow up findings and actions with owner, deadline, and effect.",
+          "info": "Even light setups need traceable, planned reviews rather than ad hoc checks.",
+          "examples": [
+            "Quarterly checklist plus annual review with minuted approval."
+          ],
+          "reference": "DORA (2022), Art. 5"
+        },
+        "DORA_LIGHT_PROTOKOLLIERUNG": {
+          "question": "Is logging enabled for AI-relevant systems and retained in line with retention requirements?",
+          "todo": "Enable logging for AI-relevant systems, retain it in an audit-safe way, and make it usable for audit and incident investigation.",
+          "info": "Logs should be usable for audit and incident investigation while respecting data protection requirements.",
+          "examples": [
+            "Example logs contain timestamp, request ID, and model version/deployment.",
+            "Retention requirements are documented and technically enforced."
+          ],
+          "reference": "DORA (2022), Art. 9"
+        },
+        "DORA_MRM_VERZAHNUNG": {
+          "question": "Is the AI system integrated with the existing model risk management framework?",
+          "todo": "Ensure integration with model risk management: maintain model inventory, define validation/revalidation cycles, document independent reviews, and track findings.",
+          "info": "If a model risk management framework already exists, integrate the AI system into it cleanly and avoid duplicate structures.",
+          "examples": [
+            "Model is recorded in the inventory.",
+            "Validation/review is dated, independent, and documented in a traceable way."
+          ],
+          "reference": "DORA (2022), Art. 6"
+        },
+        "DORA_GOV_FREIGABEGATES": {
+          "question": "Are there defined management approvals or committee decisions for go-live and material changes?",
+          "todo": "Document approval gates with management or committee decisions and apply them in operations.",
+          "info": "Management approvals ensure that go-lives and material changes do not slip through informally, but are reviewed in advance against clear criteria and receive a traceable decision from the responsible management or committee.",
+          "examples": [
+            "Before go-live, a documented approval exists, including decision, responsible persons, go/no-go criteria, risk assessment, and conditions if applicable.",
+            "Material changes, for example model change, new data source, changed interfaces, or new subcontractors, must go through a formal change process.",
+            "Exceptions and emergency changes are governed, including who may decide, subsequent documentation/review, and deadlines for follow-up actions."
+          ],
+          "reference": "DORA (2022), Art. 5"
+        }
+      }
+    },
+    "DORA_DRITTANBIETER_KRITIKALITAET_UEBERPRUEFUNG": {
+      "label": "DORA: Third-party providers - criticality assessment (evidence and approval)",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 28–30"
+      ],
+      "items": {
+        "DORA_TP_KRITIKALITAET_DOKU": {
+          "question": "Is the criticality assessment documented?",
+          "todo": "Document the criticality assessment, including dependency analysis with impact and RTO/RPO, concentration assessment for shared failure areas, and exit/substitution plan covering technical and contractual aspects.",
+          "info": "The assessment must document the criteria, analysis results, and rationale in a traceable way.",
+          "examples": [
+            "Analysis contains RTO/RPO linkage and shared failure areas.",
+            "Exit/substitution plan names technical and contractual measures."
+          ],
+          "reference": "DORA (2022), Art. 28–29"
+        },
+        "DORA_TP_KRITIKALITAET_FREIGABE": {
+          "question": "Is there formal approval of the assessment by the risk, compliance, or outsourcing function?",
+          "todo": "Obtain and document in versioned form the formal approval by risk management, compliance, or outsourcing for the assessment, including conditions and remedial actions.",
+          "info": "Approval must clearly record the decision, conditions, responsible persons, and review cycle.",
+          "examples": [
+            "Approval record contains version, date, participants, and conditions."
+          ],
+          "reference": "DORA (2022), Art. 5"
+        }
+      }
+    },
+    "DORA_BCM_AUSWEICHVERFAHREN": {
+      "label": "DORA: BCM/fallback - fallback procedures, runbook, and tests",
+      "regulation": "DORA",
+      "articles": [
+        "DORA (2022), Art. 11–12"
+      ],
+      "items": {
+        "DORA_BCM_AUSWEICHVERFAHREN_BETRIEBSHANDBUCH": {
+          "question": "Is there a documented runbook including roles, escalation, and stop criteria for failure of the AI system or provider?",
+          "todo": "Create or update the runbook: roles and responsibilities, including backup roles, escalation paths, stop criteria, communication plan, and operational steps for fallback operation.",
+          "info": "The runbook must define criteria, steps, responsibilities, and communication routes for fallback operation in a traceable way.",
+          "examples": [
+            "Stop criteria are defined and linked to responsible persons.",
+            "Communication plan contains internal and external contacts and approval chain."
+          ],
+          "reference": "DORA (2022), Art. 11–12"
+        },
+        "DORA_BCM_AUSWEICHVERFAHREN_RTO_RPO": {
+          "question": "Are RTO/RPO and manual process steps for fallback operation defined and anchored in the BCM process?",
+          "todo": "Define RTO/RPO and manual process steps and anchor them in BCM/process documentation, including triggers, responsibilities, and dependencies.",
+          "info": "RTO/RPO and manual steps must be aligned with BCM and described in a way that can be tested.",
+          "examples": [
+            "BCM links process steps with systems, dependencies, and RTO/RPO.",
+            "Process documentation names triggers and responsible persons for fallback operation."
+          ],
+          "reference": "DORA (2022), Art. 11–12"
+        },
+        "DORA_BCM_AUSWEICHVERFAHREN_TEST": {
+          "question": "Has the fallback procedure been tested and are findings tracked?",
+          "todo": "Perform and document fallback testing, including scenarios, scope, success criteria, and results; track findings with owner, deadline, and follow-up through remediation tracking.",
+          "info": "Tests must document success criteria, deviations, findings, and follow-up through completion.",
+          "examples": [
+            "Test record contains scenario, date, participants, success criteria, and result.",
+            "Finding log contains owner, deadline, status, and effectiveness review."
+          ],
+          "reference": "DORA (2022), Art. 11–12"
+        }
+      }
     }
   }
 }
